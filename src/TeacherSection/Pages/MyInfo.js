@@ -35,13 +35,19 @@ const MyInfo = () => {
 
 
    
-    
+    function getMainDomain(url) {
+        let parts = url.split('.').reverse();
+        if (parts[0] === "localhost:3000") {
+            return "localhost:3000";
+        }
+
+        let mainDomain = parts[1] + '.' + parts[0];
+        return mainDomain;
+    }
     const handleLanguageChange = (ln) => {
-        document.cookie = `googtrans=/auto/${ln}`;
-
-        window.doGTranslate('en'+'|'+ln);
+        document.cookie = `googtrans=/auto/${ln};`;
+        document.cookie = `googtrans=/auto/${ln}; domain=.${getMainDomain(window.location.hostname)}; path=/`;
         window.location.reload();
-
     }
 
     function get_current_lang() {
