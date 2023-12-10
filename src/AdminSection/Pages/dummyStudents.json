@@ -1,0 +1,317 @@
+[
+  {
+    "name": "Aarav Patel",
+    "id": 1,
+    "image": "https://randomuser.me/api/portraits/men/1.jpg",
+    "status": "Present",
+    "createdAt": "2023-10-15T01:39:54.866Z",
+    "modifiedAt": "2023-10-25T16:05:35.366Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Sia Sharma",
+    "id": 2,
+    "image": "https://randomuser.me/api/portraits/women/2.jpg",
+    "status": "Absent",
+    "createdAt": "2022-07-06T19:59:37.371Z",
+    "modifiedAt": "2022-12-13T04:05:10.068Z",
+    "class": "1st"
+  },
+  {
+    "name": "Vivaan Kumar",
+    "id": 3,
+    "image": "https://randomuser.me/api/portraits/men/3.jpg",
+    "status": "Present",
+    "createdAt": "2023-06-04T00:24:54.739Z",
+    "modifiedAt": "2023-07-16T20:40:17.906Z",
+    "class": "5th"
+  },
+  {
+    "name": "Anaya Singh",
+    "id": 4,
+    "image": "https://randomuser.me/api/portraits/women/4.jpg",
+    "status": "Present",
+    "createdAt": "2022-02-15T13:08:47.590Z",
+    "modifiedAt": "2022-07-29T16:27:08.478Z",
+    "class": "4th"
+  },
+  {
+    "name": "Advait Desai",
+    "id": 5,
+    "image": "https://randomuser.me/api/portraits/men/5.jpg",
+    "status": "Absent",
+    "createdAt": "2022-01-14T00:01:42.288Z",
+    "modifiedAt": "2023-10-15T07:04:21.830Z",
+    "class": "5th"
+  },
+  {
+    "name": "Zoya Gupta",
+    "id": 6,
+    "image": "https://randomuser.me/api/portraits/women/6.jpg",
+    "status": "Absent",
+    "createdAt": "2021-11-15T15:01:23.169Z",
+    "modifiedAt": "2022-03-16T12:02:53.101Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Vihaan Shah",
+    "id": 7,
+    "image": "https://randomuser.me/api/portraits/men/7.jpg",
+    "status": "Absent",
+    "createdAt": "2022-03-03T08:38:31.629Z",
+    "modifiedAt": "2022-10-30T17:10:17.248Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Aanya Mishra",
+    "id": 8,
+    "image": "https://randomuser.me/api/portraits/women/8.jpg",
+    "status": "Present",
+    "createdAt": "2022-05-08T20:06:11.847Z",
+    "modifiedAt": "2023-01-13T11:10:06.505Z",
+    "class": "5th"
+  },
+  {
+    "name": "Kabir Chauhan",
+    "id": 9,
+    "image": "https://randomuser.me/api/portraits/men/9.jpg",
+    "status": "Absent",
+    "createdAt": "2021-11-04T13:05:16.111Z",
+    "modifiedAt": "2022-07-13T20:12:50.087Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Siya Reddy",
+    "id": 10,
+    "image": "https://randomuser.me/api/portraits/women/10.jpg",
+    "status": "Present",
+    "createdAt": "2022-05-19T05:34:54.571Z",
+    "modifiedAt": "2022-11-05T05:41:14.165Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Aarav Patel",
+    "id": 11,
+    "image": "https://randomuser.me/api/portraits/men/11.jpg",
+    "status": "Present",
+    "createdAt": "2022-06-27T03:33:40.724Z",
+    "modifiedAt": "2023-08-26T08:08:04.636Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Sia Sharma",
+    "id": 12,
+    "image": "https://randomuser.me/api/portraits/women/12.jpg",
+    "status": "Absent",
+    "createdAt": "2021-08-18T19:25:45.653Z",
+    "modifiedAt": "2023-06-20T12:06:11.942Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Vivaan Kumar",
+    "id": 13,
+    "image": "https://randomuser.me/api/portraits/men/13.jpg",
+    "status": "Absent",
+    "createdAt": "2023-06-13T08:45:54.774Z",
+    "modifiedAt": "2023-07-10T23:25:13.340Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Anaya Singh",
+    "id": 14,
+    "image": "https://randomuser.me/api/portraits/women/14.jpg",
+    "status": "Present",
+    "createdAt": "2021-11-26T23:26:24.907Z",
+    "modifiedAt": "2022-09-23T14:19:09.038Z",
+    "class": "1st"
+  },
+  {
+    "name": "Advait Desai",
+    "id": 15,
+    "image": "https://randomuser.me/api/portraits/men/15.jpg",
+    "status": "Absent",
+    "createdAt": "2021-08-01T16:34:01.663Z",
+    "modifiedAt": "2023-01-07T22:34:38.005Z",
+    "class": "5th"
+  },
+  {
+    "name": "Zoya Gupta",
+    "id": 16,
+    "image": "https://randomuser.me/api/portraits/women/16.jpg",
+    "status": "Absent",
+    "createdAt": "2021-05-31T06:12:07.305Z",
+    "modifiedAt": "2021-10-04T03:21:21.691Z",
+    "class": "1st"
+  },
+  {
+    "name": "Vihaan Shah",
+    "id": 17,
+    "image": "https://randomuser.me/api/portraits/men/17.jpg",
+    "status": "Present",
+    "createdAt": "2021-08-06T00:12:25.426Z",
+    "modifiedAt": "2023-01-07T10:23:03.043Z",
+    "class": "1st"
+  },
+  {
+    "name": "Aanya Mishra",
+    "id": 18,
+    "image": "https://randomuser.me/api/portraits/women/18.jpg",
+    "status": "Absent",
+    "createdAt": "2021-04-10T02:03:05.950Z",
+    "modifiedAt": "2022-12-06T14:19:28.422Z",
+    "class": "1st"
+  },
+  {
+    "name": "Kabir Chauhan",
+    "id": 19,
+    "image": "https://randomuser.me/api/portraits/men/19.jpg",
+    "status": "Present",
+    "createdAt": "2021-08-11T08:44:18.988Z",
+    "modifiedAt": "2022-04-30T03:07:32.570Z",
+    "class": "5th"
+  },
+  {
+    "name": "Siya Reddy",
+    "id": 20,
+    "image": "https://randomuser.me/api/portraits/women/20.jpg",
+    "status": "Absent",
+    "createdAt": "2021-12-18T16:05:46.680Z",
+    "modifiedAt": "2022-05-19T03:21:11.127Z",
+    "class": "4th"
+  },
+  {
+    "name": "Arjun Gupta",
+    "id": 21,
+    "image": "https://randomuser.me/api/portraits/men/21.jpg",
+    "status": "Absent",
+    "createdAt": "2021-08-13T04:42:13.234Z",
+    "modifiedAt": "2022-01-18T05:12:28.749Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Ishika Verma",
+    "id": 22,
+    "image": "https://randomuser.me/api/portraits/women/22.jpg",
+    "status": "Present",
+    "createdAt": "2022-03-31T12:58:27.715Z",
+    "modifiedAt": "2022-06-25T22:41:20.154Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Yuvraj Singh",
+    "id": 23,
+    "image": "https://randomuser.me/api/portraits/men/23.jpg",
+    "status": "Present",
+    "createdAt": "2022-05-04T22:42:15.827Z",
+    "modifiedAt": "2022-06-08T03:16:03.882Z",
+    "class": "4th"
+  },
+  {
+    "name": "Aaradhya Sharma",
+    "id": 24,
+    "image": "https://randomuser.me/api/portraits/women/24.jpg",
+    "status": "Absent",
+    "createdAt": "2023-06-05T15:14:30.935Z",
+    "modifiedAt": "2023-06-12T07:05:46.319Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Rohan Patel",
+    "id": 25,
+    "image": "https://randomuser.me/api/portraits/men/25.jpg",
+    "status": "Absent",
+    "createdAt": "2021-07-10T13:48:37.164Z",
+    "modifiedAt": "2023-07-20T01:37:37.904Z",
+    "class": "5th"
+  },
+  {
+    "name": "Prisha Kumar",
+    "id": 26,
+    "image": "https://randomuser.me/api/portraits/women/26.jpg",
+    "status": "Absent",
+    "createdAt": "2022-09-14T01:09:52.130Z",
+    "modifiedAt": "2023-10-14T11:15:37.544Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Kartik Reddy",
+    "id": 27,
+    "image": "https://randomuser.me/api/portraits/men/27.jpg",
+    "status": "Absent",
+    "createdAt": "2021-10-15T22:43:19.535Z",
+    "modifiedAt": "2023-06-02T09:54:17.746Z",
+    "class": "5th"
+  },
+  {
+    "name": "Shreya Gupta",
+    "id": 28,
+    "image": "https://randomuser.me/api/portraits/women/28.jpg",
+    "status": "Present",
+    "createdAt": "2021-09-14T11:34:57.822Z",
+    "modifiedAt": "2023-05-17T02:01:46.284Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Nikhil Chauhan",
+    "id": 29,
+    "image": "https://randomuser.me/api/portraits/men/29.jpg",
+    "status": "Present",
+    "createdAt": "2022-02-13T01:13:46.202Z",
+    "modifiedAt": "2023-06-28T09:12:40.256Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Akshara Mishra",
+    "id": 30,
+    "image": "https://randomuser.me/api/portraits/women/30.jpg",
+    "status": "Absent",
+    "createdAt": "2023-11-13T04:24:24.681Z",
+    "modifiedAt": "2023-11-15T10:43:19.992Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Amit Sharma",
+    "id": 31,
+    "image": "https://randomuser.me/api/portraits/men/31.jpg",
+    "status": "Present",
+    "createdAt": "2021-01-17T20:11:08.674Z",
+    "modifiedAt": "2021-09-14T21:12:55.175Z",
+    "class": "3rd"
+  },
+  {
+    "name": "Meera Verma",
+    "id": 32,
+    "image": "https://randomuser.me/api/portraits/women/32.jpg",
+    "status": "Absent",
+    "createdAt": "2022-06-15T12:13:42.483Z",
+    "modifiedAt": "2023-03-29T19:30:20.411Z",
+    "class": "2nd"
+  },
+  {
+    "name": "Rajat Singh",
+    "id": 33,
+    "image": "https://randomuser.me/api/portraits/men/33.jpg",
+    "status": "Present",
+    "createdAt": "2022-08-06T22:47:29.016Z",
+    "modifiedAt": "2022-08-12T09:41:32.694Z",
+    "class": "1st"
+  },
+  {
+    "name": "Kavya Patel",
+    "id": 34,
+    "image": "https://randomuser.me/api/portraits/women/34.jpg",
+    "status": "Absent",
+    "createdAt": "2021-10-18T15:41:28.234Z",
+    "modifiedAt": "2022-12-15T04:01:01.746Z",
+    "class": "5th"
+  },
+  {
+    "name": "Vikram Reddy",
+    "id": 35,
+    "image": "https://randomuser.me/api/portraits/men/35.jpg",
+    "status": "Absent",
+    "createdAt": "2021-02-13T04:58:40.525Z",
+    "modifiedAt": "2021-09-10T01:07:49.174Z",
+    "class": "3rd"
+  }
+]

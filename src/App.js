@@ -1,0 +1,105 @@
+import React, { useState, useEffect } from 'react';
+import Login from './Login';
+import TeacherMain from './TeacherSection/TeacherMain';
+import AdminMain from './AdminSection/AdminMain';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import './App.css';
+
+const App = () => {
+  const [userType, setUserType] = useState("");
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const [loading, setLoading] = useState(true);
+
+
+
+  const preLoad = () => {
+    if (userInfo) {
+      setUserType(userInfo.userType);
+      const dbs = document.body.style;
+      if (userInfo.userType === "teacher" && !loading) {
+        //apply padding to the body 65px
+        dbs.paddingBottom = "65px";
+        dbs.paddingLeft = "20px";
+        dbs.paddingRight = "20px";
+      }
+
+    }
+    setTimeout(() => {
+    setLoading(false);
+    }, 1000);
+  }
+
+  useEffect(() => {
+
+    preLoad();
+  }
+    , [userInfo, userType])
+
+
+    // const translate = () => {
+    //   const gtranslateSettings = {
+    //     default_language: 'en',
+    //     languages: ['en', 'hi', 'mr', 'gu'],
+    //     wrapper_selector: '.gtranslate_wrapper',
+    //   };
+  
+    //   // Create a script element
+    //   const scriptElement = document.createElement('script');
+    //   scriptElement.defer = true;
+    //   scriptElement.src = 'https://cdn.gtranslate.net/widgets/latest/ln.js';
+  
+    //   // Append the script element to the document body
+    //   document.body.appendChild(scriptElement);
+  
+    //   // Set translation settings after the script has loaded
+    //   scriptElement.onload = () => {
+    //     window.gtranslateSettings = gtranslateSettings;
+    //   };
+
+    // }
+
+
+  
+  const LoadingScreen = () => {
+    return (
+      <Box sx={{ position: "fixed", display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", width: "100vw",backgroundColor:"colors.main" }}>
+        <CircularProgress   size={75} thickness={3} sx={{color: "#fff"}}/>
+        <Typography variant="h3" sx={{color: "#fff", marginLeft: "10px"}}>Loading...</Typography>
+      </Box>
+    )
+  }
+
+{/* <div class="gtranslate_wrapper"></div>
+<script>window.gtranslateSettings = {"default_language":"en","languages":["en","hi","mr","gu"],"wrapper_selector":".gtranslate_wrapper"}</script>
+<script src="https://cdn.gtranslate.net/widgets/latest/ln.js" defer></script> */}
+
+
+  return (
+    <div>
+      {/* {
+        userType === "admin" ? (
+          <AdminMain />
+        ) : userType === "teacher" ? (
+          <TeacherMain />
+        ) : (
+          <Login />
+        )
+      } */}
+      {loading ? <LoadingScreen /> : (
+        <>
+          {
+            userType === "admin" ? (
+              <AdminMain />
+            ) : userType === "teacher" ? (
+              <TeacherMain />
+            ) : (
+              <Login />
+            )
+          }
+        </>
+      )}
+    </div>
+  );
+}
+
+export default App;
