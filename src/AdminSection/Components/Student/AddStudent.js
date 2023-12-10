@@ -203,7 +203,7 @@ const AddNewStudent = (props) => {
         </Alert>
       )}
       <div style={{ position: 'fixed', bottom: '75px', right: '20px' }}>
-        <Zoom in={true} timeout={500}>
+        <Zoom in={true} timeout={300}>
           <Fab
             aria-label="add"
             onClick={handleFabClick}

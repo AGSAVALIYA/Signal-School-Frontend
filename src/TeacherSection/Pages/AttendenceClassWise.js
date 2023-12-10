@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import StudentDataDummyData from '../dummy/StudentChipDummy.json'
-import { Box, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, InputAdornment, Skeleton, TextField, Typography } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import StudentChip from '../components/Students/StudentChip';
 import axios from 'axios';
@@ -11,6 +11,8 @@ const AttendenceClassWise = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [loading, setLoading] = useState(true);
     const [filteredStudents, setFilteredStudents] = useState([]);
+    const [classData, setClassData] = useState([]);
+    const [classLoading, setClassLoading] = useState(false);
     const params = useParams();
     const id = params.id;
     const accessToken = localStorage.getItem('accessToken');
@@ -21,10 +23,13 @@ const AttendenceClassWise = () => {
 
     const getStudentData = () => {
         //sort by name
+        setClassLoading(true);
         axios.get(`${process.env.REACT_APP_API_BACKEND}/student/getAll/${id}`, { headers })
             .then((res) => {
                 setStudentData(res.data.students);
                 setFilteredStudents(res.data.students);
+                setClassData(res.data.classDetails);
+                setClassLoading(false)
                 setLoading(false);
             })
             .catch((err) => {
@@ -59,8 +64,18 @@ const AttendenceClassWise = () => {
     return (
         <div>
             <div>
-            <h1>Class {id}</h1>  
-            </div>
+          
+            {
+                    classLoading ? <Skeleton height={"60px"} sx={{ marginTop: "15px" }} />
+                        : <>
+                            {classData &&
+                                <Typography variant="h3" sx={{ color: "colors.main", marginBottom: "10px", marginTop: "15px" }}>
+                                    {classData.name}
+                                </Typography>
+                            }
+                        </>
+                }
+           </div>
             <TextField
                 placeholder="Search by name"
                 variant="outlined"

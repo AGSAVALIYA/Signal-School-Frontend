@@ -85,6 +85,9 @@ const StudentDetail = () => {
     // Simulated update function
     axios.put(`${process.env.REACT_APP_API_BACKEND}/student/update/${params.id}`, student, { headers }).then((res) => {
       setSuccess(res.data.message);
+      setTimeout(() => {
+        setSuccess("");
+      }, 2000);
     }
     ).catch((err) => {
       console.log(err);
@@ -238,8 +241,8 @@ const StudentDetail = () => {
               </Typography>
               <div>
                 {basicDetailEditMode ? (
-                  <IconButton aria-label="save" onClick={() => handleStudentUpdate(studentBasicData)}>
-                    <SaveIcon sx={{ color: "primary.main" }} />
+                  <IconButton aria-label="save" onClick={() => handleStudentUpdate(studentBasicData)} sx={{ color: "primary.main" }}>
+                    <SaveIcon sx={{ color: "primary.main" }} /> Save
                   </IconButton>
                 ) : (
                   <IconButton aria-label="edit" onClick={handleEditButtonClick}>

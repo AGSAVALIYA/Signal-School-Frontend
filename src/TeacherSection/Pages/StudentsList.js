@@ -146,7 +146,7 @@ const StudentList = () => {
             </div>
 
         
-            <AddNewStudent />    
+            <AddNewStudent fetchStudents={getStudentData} />
             <input type="password" name='fake-password' autoComplete='new-password' tabIndex='-1' style={{ ...fakeInputStyle }} />
         </div>
     );

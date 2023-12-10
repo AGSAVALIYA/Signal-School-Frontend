@@ -69,8 +69,8 @@ const StudentBasicDetails = (props) => {
 
 
   return (
-    <Zoom in={true} timeout={500}>
-    <TableContainer component={Paper} sx={{ backgroundColor: "transparentBG.bgcolor", minWidth: "300px"}}>
+    <Zoom in={true} timeout={300}>
+    <TableContainer component={Paper} sx={{ backgroundColor: "transparentBG.bgcolor", minWidth: "300px", borderRadius: "20px" }}>
       <Table >
         <TableBody>
           

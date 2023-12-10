@@ -12,7 +12,12 @@ const MyInfo = () => {
         if (!userInfo) {
             navigate('/login');
         }
-        setCurrLanguage(get_current_lang());
+        // is current language is not set, set it to english
+        if (!currLanguage) {
+            setCurrLanguage(get_current_lang());
+        }
+        
+
     }, [userInfo]);
 
     if (!userInfo) {
@@ -57,7 +62,7 @@ const MyInfo = () => {
 
 
     return (
-        <Zoom in={true} timeout={500}>
+        <Zoom in={true} timeout={300}>
 
             <Box>
                 <Paper elevation={3} sx={{ backgroundColor: "transparentBG.bgcolor", borderRadius: "20px", padding: "20px 30px", marginTop: "20px" }}>

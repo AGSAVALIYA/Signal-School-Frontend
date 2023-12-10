@@ -12,7 +12,7 @@ const AcademicDetails = ({ academicData }) => {
   };
 
   return (
-    <Zoom in={true} timeout={500}>
+    <Zoom in={true} timeout={300}>
     <div
       className="flex-container"
       style={{
