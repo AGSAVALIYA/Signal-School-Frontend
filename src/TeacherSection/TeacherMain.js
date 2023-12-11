@@ -40,7 +40,7 @@ const TeacherMain = () => {
   return (
     // https://i.postimg.cc/L55296qv/Untitled-design.png
     <div>
-      {/* <GTranslateComponent /> */}
+
       <Outlet />
       {!isLoginPage &&
         <div style={{

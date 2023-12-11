@@ -4,6 +4,7 @@ import TeacherMain from './TeacherSection/TeacherMain';
 import AdminMain from './AdminSection/AdminMain';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import './App.css';
+//import logo.svg from './logo.svg';
 
 const App = () => {
   const [userType, setUserType] = useState("");
@@ -63,8 +64,13 @@ const App = () => {
   const LoadingScreen = () => {
     return (
       <Box sx={{ position: "fixed", display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", width: "100vw",backgroundColor:"colors.main" }}>
-        <CircularProgress   size={75} thickness={3} sx={{color: "#fff"}}/>
-        <Typography variant="h3" sx={{color: "#fff", marginLeft: "10px"}}>Loading...</Typography>
+        {/* <CircularProgress   size={75} thickness={3} sx={{color: "#fff"}}/>} */}
+        <div className='loading-div'>
+          <div>
+        <img src="https://i.postimg.cc/YSBS2Nzp/logo.png" alt="logo" className='loading-img' />
+        </div>
+        <CircularProgress size={30} thickness={4} sx={{ color: "#fff" }} />
+        </div>
       </Box>
     )
   }
@@ -76,15 +82,6 @@ const App = () => {
 
   return (
     <div>
-      {/* {
-        userType === "admin" ? (
-          <AdminMain />
-        ) : userType === "teacher" ? (
-          <TeacherMain />
-        ) : (
-          <Login />
-        )
-      } */}
       {loading ? <LoadingScreen /> : (
         <>
           {

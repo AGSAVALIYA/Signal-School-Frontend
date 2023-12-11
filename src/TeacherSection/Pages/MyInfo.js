@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Chip, Typography, Box, Paper, Zoom, Button } from "@mui/material";
-import GTranslateComponent from "../../GTranslateWraper";
+
 
 const MyInfo = () => {
     const navigate = useNavigate();
@@ -50,8 +50,13 @@ const MyInfo = () => {
         return mainDomain;
     }
     const handleLanguageChange = (ln) => {
-        document.cookie = `googtrans=/auto/${ln};`;
-        document.cookie = `googtrans=/auto/${ln}; domain=.${getMainDomain(window.location.hostname)}; path=/`;
+        // document.cookie = `googtrans=/auto/${ln};`;
+        // document.cookie = `googtrans=/auto/${ln}; domain=.${getMainDomain(window.location.hostname)}; path=/`;
+        //with expire of 7 days
+        document.cookie = `googtrans=/auto/${ln}; domain=.${getMainDomain(window.location.hostname)}; path=/; expires=${new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toUTCString()}`;
+        document.cookie = `googtrans=/auto/${ln}; path=/; expires=${new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000).toUTCString()}`;
+        setCurrLanguage(ln);
+
         window.location.reload();
     }
 
