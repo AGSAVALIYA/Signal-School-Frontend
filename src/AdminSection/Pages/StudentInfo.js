@@ -21,6 +21,7 @@ import {
 import StudentDetails from '../Components/Student/StudentDetails';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import StudentTimeline from '../Components/Student/StudentTimeline';
 
 
 const studentTimeline = [
@@ -167,17 +168,9 @@ const StudentInfoPage = () => {
         )}
 
         {activeTab === 1 && (
-          <div>
-            <Typography variant="h5" sx={{ marginBottom: 2, marginTop: 3 }}>
-              Student Timeline
-            </Typography>
-            <ul>
-              {studentTimeline.map((event, index) => (
-                <li key={index}>
-                  <strong>{event.date}:</strong> {event.event}
-                </li>
-              ))}
-            </ul>
+          // <div style={{ marginTop: "20px", boxShadow: "inset 0px 0px 10px 0px rgba(42, 42, 42, 0.101)", borderRadius: "20px" }}>
+          <div style={{ marginTop: "20px", boxShadow: "inset 0px 0px 10px 0px rgba(42, 42, 42, 0.596)", borderRadius: "20px" }}>
+            <StudentTimeline />
           </div>
         )}
 

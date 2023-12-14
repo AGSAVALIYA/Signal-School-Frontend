@@ -106,8 +106,10 @@ const AttendenceClassWise = () => {
                         filteredStudents.length === 0 ?
                             <Typography variant="subtitle1" sx={{ margin: "auto" }}>No students found</Typography>
                             :
-                            filteredStudents.map((item) => (
-                                <StudentChip key={item.id} name={item.name} id={item.id} image={item.imageLink} />
+                            filteredStudents.map((item, i) => (
+                                <StudentChip key={i} name={item.name} id={item.id} image={item.imageLink} todayStatus={item.todayStatus}
+                                timeline={item.StudentTimelines}
+                                />
                             ))
 
                             

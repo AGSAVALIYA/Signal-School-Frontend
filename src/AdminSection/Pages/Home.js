@@ -8,7 +8,7 @@ const dummyData = [
   { label: 'Total Students', value: 150 },
   { label: 'Teachers', value: 12 },
   { label: 'Courses', value: 25 },
-  { label: 'Events', value: 5 },
+  { label: 'Events', value: 0 },
 ];
 
 // Dummy data for Bar Chart

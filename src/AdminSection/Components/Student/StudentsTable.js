@@ -51,7 +51,7 @@ const StudentsTable = (props) => {
                 {/* <Chip label="Present" color="success"  sx={{borderRadius: "10px", backgroundColor: "#6cbf6c", fontWeight: "500"}}/>
                 <Chip label="Absent" color="success"  sx={{borderRadius: "10px", backgroundColor: "#6cb5bf", fontWeight: "500"}}/> */}
                 {
-                  student.status === "Present" ? <Chip label="Present" color="success"  sx={{borderRadius: "10px", backgroundColor: "#6cbf6c", fontWeight: "500"}}/> 
+                  student.todayStatus === "present" ? <Chip label="Present" color="success"  sx={{borderRadius: "10px", backgroundColor: "#6cbf6c", fontWeight: "500"}}/> 
                   : 
                   <Chip label="Absent" color="success"  sx={{borderRadius: "10px", backgroundColor: "#6cb5bf", fontWeight: "500"}}/>
                 }

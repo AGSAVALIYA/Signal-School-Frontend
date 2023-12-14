@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from "axios";
 
-const StudentChip = ({ name, id, image }) => {
+const StudentChip = ({ name, id, image, todayStatus, timeline }) => {
   const [status, setStatus] = useState();
   const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState("");
@@ -27,7 +27,7 @@ const StudentChip = ({ name, id, image }) => {
     const file = event.target.files[0];
     console.log("Selected File:", file);
 
-    if (file && file.size > 0) {
+    if (file) {
       setSelectedFile(file);
     } else {
       console.error("Invalid file selected");
@@ -38,17 +38,18 @@ const StudentChip = ({ name, id, image }) => {
     setStatus(st);
     const formData = new FormData();
 
-    if (selectedFile) { 
-      formData.append("timelineImg", selectedFile, selectedFile.name);
+    //const date to iso string
+    let date = new Date().toISOString();
 
-    }
+
+    formData.append("timelineImg", selectedFile);
     formData.append("studentId", id);
     formData.append("progress", progress);
     formData.append("attendanceStatus", st);
-    formData.append("date", new Date().toISOString());
+    formData.append("date", date);
 
 
-    axios.post(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/create`, formData, {
+    axios.post(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/create/${id}`, formData, {
       headers
     })
       .then((res) => {
@@ -63,6 +64,21 @@ const StudentChip = ({ name, id, image }) => {
     handleClose();
   }
 
+  // useEffect(() => {
+  //   if (todayStatus === "present") {
+  //     setStatus("present");
+  //   }
+  //   else if (todayStatus === "absent") {
+  //     setStatus("absent");
+  //   }
+  // }, [todayStatus]);
+
+  useEffect(() => {
+    if(timeline.length > 0){
+      setStatus(timeline[0].attendanceStatus);
+    }
+  }
+  , [timeline]);
 
   return (
     <div>
@@ -111,6 +127,7 @@ const StudentChip = ({ name, id, image }) => {
               component="span"
               startIcon={<CloudUploadIcon />}
               sx={{ borderRadius: "30px" }}
+              name="timelineImg"
             >
               Upload Photo
             </Button>
