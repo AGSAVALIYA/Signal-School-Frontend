@@ -7,49 +7,9 @@ import { Avatar, IconButton } from "@mui/material";
 import Skeleton from "@mui/material/Skeleton";
 import StudentBasicDetails from "../components/Students/StudentBasicData";
 import StudentTimeline from "../components/Students/StudentTimeline";
-import AcademicDetails from "../components/Students/AcademicDetails";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import UploadAvatar from "../components/Students/UploadAvatar";
-
-const academicData = [
-  {
-    Math: {
-      Grade: "A",
-      Credits: 3,
-      Professor: "Dr. Smith",
-    },
-    Science: {
-      Grade: "B+",
-      Credits: 4,
-      Professor: "Dr. Johnson",
-    },
-    History: {
-      Grade: "A-",
-      Credits: 3,
-      Professor: "Dr. Davis",
-    },
-  },
-  {
-    English: {
-      Grade: "B",
-      Credits: 3,
-      Professor: "Dr. Wilson",
-    },
-    Physics: {
-      Grade: "A",
-      Credits: 4,
-      Professor: "Dr. Clark",
-    },
-    Chemistry: {
-      Grade: "B-",
-      Credits: 3,
-      Professor: "Dr. Turner",
-    },
-  },
-];
-
-
 
 const StudentDetail = () => {
   const [studentBasicData, setStudentBasicData] = useState();
@@ -252,9 +212,7 @@ const StudentDetail = () => {
               </div>
             </div>
             <StudentBasicDetails student={studentBasicData} editMode={basicDetailEditMode} setStudent={setStudentBasicData} loading={loading} classes={classes} />
-            <div style={{ display: "flex", alignItems: "center", marginTop: "20px" }}>
-              <AcademicDetails academicData={academicData} />
-            </div>
+            
           </div>
         )}
 
