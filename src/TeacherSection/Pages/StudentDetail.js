@@ -10,6 +10,7 @@ import StudentTimeline from "../components/Students/StudentTimeline";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import UploadAvatar from "../components/Students/UploadAvatar";
+import AcademicDetails from "../components/Students/AcademicDetails";
 
 const StudentDetail = () => {
   const [studentBasicData, setStudentBasicData] = useState();
@@ -93,7 +94,7 @@ const StudentDetail = () => {
   };
 
   return (
-    <div style={{ position: "fixed", top: "0", left: "0", right: "0", bottom: "0", overflow: "auto" }}>
+    <div style={{ position: "fixed", top: "0", left: "0", right: "0", bottom: "0", overflow: "auto", paddingBottom: "20px" }}>
      {success && (
         <Alert onClose={() => setSuccess("")} severity="success" sx={{ position: 'fixed', top: '50px', left: '0', right: '0', zIndex: '10000', width: 'max-content', margin: 'auto' }}>
           {success}
@@ -212,7 +213,7 @@ const StudentDetail = () => {
               </div>
             </div>
             <StudentBasicDetails student={studentBasicData} editMode={basicDetailEditMode} setStudent={setStudentBasicData} loading={loading} classes={classes} />
-            
+            <AcademicDetails studentBasicData={studentBasicData} studentDataLoading={loading}/>
           </div>
         )}
 
