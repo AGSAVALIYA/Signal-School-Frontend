@@ -20,6 +20,9 @@ const NewStudentTab = ({ classes, name, selectedClass, age, dob, address, setNam
           onChange={(e) => setSelectedClass({ name: e.target.value, id: e.target.value })}
           label="Class"
           name="class"
+          //height of menu item
+          MenuProps={{ PaperProps: { style: { maxHeight: 300 } } }}
+          
         >
           {classes.map((classItem) => (
             <MenuItem key={classItem.id} value={classItem.id}>

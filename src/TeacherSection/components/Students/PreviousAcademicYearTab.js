@@ -52,6 +52,7 @@ const PreviousAcademicYearTab = ({ searchedNames, loading, name, classes, select
           name="class"
           //if no value then disable
           disabled={!name}
+          MenuProps={{ PaperProps: { style: { maxHeight: 300 } } }}
         >
           {classes.map((classItem) => (
             <MenuItem key={classItem.id} value={classItem.id}>

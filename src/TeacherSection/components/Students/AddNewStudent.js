@@ -54,7 +54,15 @@ const AddNewStudent = (props) => {
     axios
       .get(`${process.env.REACT_APP_API_BACKEND}/class/getAll`, { headers })
       .then((res) => {
-        setClasses(res.data.classes);
+        const sortedClasses = res.data.classes.sort((a, b) => {
+          if (a.id < b.id) {
+            return -1;
+          }
+          if (a.id > b.id) {
+            return 1;
+          }
+        });
+        setClasses(sortedClasses);
       })
       .catch((err) => {
         console.log(err);
@@ -222,7 +230,7 @@ const AddNewStudent = (props) => {
           
           <Tabs value={tabValue} onChange={(e, newValue) => resetFormAndTab(newValue)} aria-label="basic tabs example">
             <Tab label="New Student" />
-            <Tab label="From Previous Academic Year" />
+            <Tab label="From Previous A.Y." />
           </Tabs>
           {tabValue === 0 && (
             <NewStudentTab
