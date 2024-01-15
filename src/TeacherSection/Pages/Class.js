@@ -59,7 +59,16 @@ const Standard = () => {
         axios.get(`${process.env.REACT_APP_API_BACKEND}/class/getAll`, { headers })
             .then((res) => {
                 console.log(res.data);
-                setClassData(res.data.classes);
+                // setClassData(res.data.classes);
+                const sortedClasses = res.data.classes.sort((a, b) => {
+                    if (a.id < b.id) {
+                      return -1;
+                    }
+                    if (a.id > b.id) {
+                      return 1;
+                    }
+                  });
+                    setClassData(sortedClasses);
                 setLoading(false);
             }).catch((err) => {
                 console.log(err);
