@@ -44,7 +44,7 @@ const TeacherMain = () => {
       <Outlet />
       {!isLoginPage &&
         <div style={{
-          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: "10000", backgroundColor: "#fff",
+          position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: "1000", backgroundColor: "#fff",
           borderRadius: '20px 20px 0 0', boxShadow: '0px 0px 10px 0px #0000001a'
         }}>
           <BottomNavigation showLabels value={value} onChange={handleChange} sx={{ height: "60px", borderRadius: "20px 20px 0 0" }}>

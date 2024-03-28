@@ -37,6 +37,13 @@ const theme = createTheme({
         },
     },
     components: {
+        MuiDialog: {
+            styleOverrides: {
+                paper: {
+                    borderRadius: '20px',
+                },
+            },
+        },
         MuiCssBaseline: {
             styleOverrides: {
                 body: {

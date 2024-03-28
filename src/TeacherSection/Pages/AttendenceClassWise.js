@@ -13,6 +13,7 @@ const AttendenceClassWise = () => {
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [classData, setClassData] = useState([]);
     const [classLoading, setClassLoading] = useState(false);
+    const [subjects, setSubjects] = useState([]);
     const params = useParams();
     const id = params.id;
     const accessToken = localStorage.getItem('accessToken');
@@ -29,14 +30,26 @@ const AttendenceClassWise = () => {
                 setStudentData(res.data.students);
                 setFilteredStudents(res.data.students);
                 setClassData(res.data.classDetails);
-                setClassLoading(false)
-                setLoading(false);
+                getSubjects();
             })
             .catch((err) => {
                 console.log(err);
             })
 
     }
+
+    const getSubjects = () => {
+        axios.get(`${process.env.REACT_APP_API_BACKEND}/subject/getAll/${id}`, { headers })
+            .then((res) => {
+                setSubjects(res.data.subjects);
+                setClassLoading(false);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
 
     useEffect(() => {
         getStudentData();
@@ -107,8 +120,13 @@ const AttendenceClassWise = () => {
                             <Typography variant="subtitle1" sx={{ margin: "auto" }}>No students found</Typography>
                             :
                             filteredStudents.map((item, i) => (
-                                <StudentChip key={i} name={item.name} id={item.id} image={item.imageLink} todayStatus={item.todayStatus}
+                                <StudentChip key={i} 
+                                name={item.name} 
+                                id={item.id} 
+                                image={item.imageLink} 
+                                todayStatus={item.todayStatus}
                                 timeline={item.StudentTimelines}
+                                subjects={subjects}
                                 />
                             ))
 
