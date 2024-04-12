@@ -106,13 +106,6 @@ const AttendenceClassWise = () => {
                 }}
             />
             <Box style={{ display: "flex", flexWrap: "wrap", borderRadius: "30px", padding: "5px" }} sx={{ backgroundColor: "transparentBG.bgcolor" }}>
-                {/* {
-                filteredStudents.length === 0 ?
-                 <Typography variant="subtitle1" sx={{ margin: "auto" }}>No students found</Typography> 
-                 :
-                filteredStudents.map((item) => (
-                    <StudentChip key={item.id} name={item.name} id={item.id} image={item.imageLink} />
-                ))} */}
                 {
                     loading ? <Typography variant="subtitle1" sx={{ margin: "auto" }}>Loading...</Typography>
                         :
@@ -127,6 +120,8 @@ const AttendenceClassWise = () => {
                                 todayStatus={item.todayStatus}
                                 timeline={item.StudentTimelines}
                                 subjects={subjects}
+                                setStudentData={setStudentData}
+                                setFilteredStudents={setFilteredStudents}
                                 />
                             ))
 

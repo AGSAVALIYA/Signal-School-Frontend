@@ -43,7 +43,7 @@ const StudentsTable = (props) => {
                 /> */}
                 <Avatar src={student.imageLink} sx={{ width: '40px', height: '40px', borderRadius: '50%' }} />
               </TableCell>
-              <TableCell component="th" scope="row" sx={{fontSize: "1rem"}}>
+              <TableCell component="th" scope="row" sx={{fontSize: "1rem", cursor: "pointer"}} onClick={() => navigateToStudent(student.id)}>
                 {student.name}
               </TableCell>
               <TableCell align="center" sx={{fontSize: "1rem"}}>{student.Class.name}</TableCell>

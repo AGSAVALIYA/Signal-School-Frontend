@@ -14,6 +14,7 @@ import {
   Skeleton,
   Select,
     MenuItem,
+    Box,
     FormControl,
     InputLabel,
     Chip,
@@ -220,6 +221,11 @@ const StudentDetails = ({
             </Table>
           </TableContainer>
         </Grid>
+        {/* <Grid item xs={12} md={12}>
+          <Box sx={{ marginTop: 3 , boxShadow: 'inset 0px 0px 10px 0px rgba(42, 42, 42, 0.596)', borderRadius: '20px'}}>
+                    Attendance
+          </Box>
+          </Grid> */}
       </Grid>
       
     </div>

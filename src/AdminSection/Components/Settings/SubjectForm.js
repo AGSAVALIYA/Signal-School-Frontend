@@ -16,10 +16,9 @@ const SubjectForm = () => {
     }
 
     useEffect(() => {
-        // Fetch academic years from the API
         axios.get(`${process.env.REACT_APP_API_BACKEND}/class/getAll`, { headers })
             .then(response => setclasses(response.data.classes))
-            .catch(error => console.error('Error fetching academic years:', error));
+            .catch(error => console.error('Error fetching classes:', error));
 
     }, []);
 

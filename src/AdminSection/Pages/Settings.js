@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ClassForm from "../Components/Settings/ClassForm";
 import { Typography, Tabs, Tab, Grid } from "@mui/material";
 import SubjectForm from "../Components/Settings/SubjectForm";
+import SyllabusForm from "./SyllabusForm";
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState(0);
