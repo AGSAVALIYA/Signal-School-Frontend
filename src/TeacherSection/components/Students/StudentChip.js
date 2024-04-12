@@ -6,7 +6,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from "dayjs";
 
-const StudentChip = ({ name, id, image, todayStatus, timeline, subjects }) => {
+const StudentChip = ({ name, id, image, todayStatus, subjects, setStudentData, setFilteredStudents}) => {
   
   const [open, setOpen] = useState(false);
   const [progress, setProgress] = useState("");
@@ -14,6 +14,7 @@ const StudentChip = ({ name, id, image, todayStatus, timeline, subjects }) => {
   const [attendenceDate, setAttendenceDate] = useState();
   const [selectedSubjects, setSelectedSubjects] = useState([]);
   const [subjectsList, setSubjectsList] = useState(subjects);
+  const [isPresent, setIsPresent] = useState(todayStatus);
   const token = localStorage.getItem("accessToken");
   const headers = {
     "Content-Type": "multipart/form-data",
@@ -31,7 +32,6 @@ const StudentChip = ({ name, id, image, todayStatus, timeline, subjects }) => {
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
-    console.log("Selected File:", file);
 
     if (file) {
       setSelectedFile(file);
@@ -48,14 +48,27 @@ const StudentChip = ({ name, id, image, todayStatus, timeline, subjects }) => {
     formData.append("studentId", id);
     formData.append("progress", progress);
     formData.append("attendanceStatus", st);
-    formData.append("attendenceDate", attendenceDate);
+    formData.append("attendenceDate", dayjs(attendenceDate).format("YYYY-MM-DD"));
     formData.append("subjects", JSON.stringify(selectedSubjects.map(subject => subject.id)));
 
     axios.post(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/create/${id}`, formData, {
       headers
     })
       .then((res) => {
-        console.log(res);
+        if (dayjs(attendenceDate).format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")) {
+          if (st === "present") {
+            setIsPresent("present");
+          } else if (st === "absent") {
+            setIsPresent("absent");
+          }
+        }
+
+        setProgress("");
+        setSelectedFile(null);
+        setAttendenceDate(null);
+        setSelectedSubjects([]);
+
+        handleClose();
       }
       )
       .catch((err) => {
@@ -63,7 +76,7 @@ const StudentChip = ({ name, id, image, todayStatus, timeline, subjects }) => {
       }
       )
 
-    handleClose();
+    
   }
 
 
@@ -73,7 +86,7 @@ const StudentChip = ({ name, id, image, todayStatus, timeline, subjects }) => {
       <Chip
         avatar={<Avatar alt={name} src={image} />}
         label={name}
-        sx={{ margin: "7px 5px", backgroundColor: todayStatus === 'present' ? '#4caf50' : (todayStatus === 'absent' ? '#f44336' : '#e8e8e8'), fontSize: "15px" }}
+        sx={{ margin: "7px 5px", backgroundColor: isPresent === 'present' ? '#4caf50' : (isPresent === 'absent' ? '#f44336' : '#e8e8e8'), fontSize: "15px" }}
         onClick={handleOpen}
       />
       <Dialog open={open} onClose={handleClose} sx={{ zIndex: 1000 }}>

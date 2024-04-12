@@ -81,13 +81,13 @@ function StudentTimeline() {
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    backgroundColor: '#ffffff84',
+                    backgroundColor: '#ffffffc1',
                     padding: '10px',
                     borderRadius: '10px',
                     boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
                     width: '50vw'
                   }}>
-                    <Grid container alignItems="center" spacing={2}>
+                    <Grid container alignItems="center" spacing={2} >
                       <Grid item xs={12} sm={9}>
                         <Typography variant="body1" sx={{ fontSize: '1rem', margin: 0, color: '#333' }}>
                           {dayData.progress}
@@ -95,7 +95,7 @@ function StudentTimeline() {
                       </Grid>
                       <Grid item xs={12} sm={3}>
                         {dayData.image && (
-                          <Button color="primary" onClick={() => openImageView(dayData.image)} size="small" sx={{ fontSize: "10px" ,backgroundColor: '#60d219', color: '#fff', '&:hover': { backgroundColor: '#1565c0' } }}>
+                          <Button color="primary" onClick={() => openImageView(dayData.image)} size="small" sx={{ fontSize: "10px" ,backgroundColor: '#3d8300ff', color: '#fff', '&:hover': { backgroundColor: '#1565c0' } }}>
                             <VisibilityIcon sx={{ marginRight: '5px', fontSize: '1rem' }} />
                             View
                           </Button>
@@ -104,13 +104,7 @@ function StudentTimeline() {
                       <Grid item xs={12} sm={12}>
                         {
                           dayData.Subjects && dayData.Subjects.map((subject, index) => (
-                            // <Paper key={index} sx={{ backgroundColor: '#f0f2f5', padding: '5px', borderRadius: '5px', margin: '5px 0' }}>
-                            //   <Typography variant="body2" sx={{ color: '#333' }}>
-                            //     {subject.name}
-                            //   </Typography>
-                            // </Paper>
-                            <Chip key={index} label={subject.name} color="primary" sx={{ margin: '5px 5px 5px 0' }} />
-
+                            <Chip key={index} label={subject.name} sx={{ margin: '5px 5px 5px 0' }} />
                           ))
                         }
                         </Grid>

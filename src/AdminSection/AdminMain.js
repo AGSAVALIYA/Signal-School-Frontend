@@ -15,7 +15,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { AccountTreeOutlined, Dashboard, DashboardOutlined, EmojiPeopleOutlined, PeopleOutline, SchoolOutlined, SettingsOutlined } from '@mui/icons-material';
+import { AccountTreeOutlined, Dashboard, DashboardOutlined, EmojiPeopleOutlined, FactCheckOutlined, ImportContacts, ImportContactsOutlined, MenuBookOutlined, PeopleOutline, SchoolOutlined, SettingsOutlined } from '@mui/icons-material';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Home from './Pages/Home';
 import StudentsList from './Pages/StudentsList';
@@ -28,6 +28,8 @@ import OrganizationForm from './Pages/OrganizationForm';
 import PreLoad from './PreLoad';
 import SchoolForm from './Pages/SchoolForm';
 import Settings from './Pages/Settings';
+import Attendance from './Pages/Attendance';
+import SyllabusForm from './Pages/SyllabusForm';
 
 const drawerWidth = 200;
 
@@ -298,6 +300,35 @@ export default function AdminMain() {
                 <ListItemText primary="Settings" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={() => navigate('/syllabus')}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                  backgroundColor: location.pathname === '/syllabus' && 'colors.main',
+                  color: location.pathname === '/syllabus' ? 'white' : 'colors.main',
+                  '&:hover': {
+                    backgroundColor: 'colors.main',
+                    color: 'white',
+                  },
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                    color: "inherit",
+                  }}
+                >
+                  <MenuBookOutlined />
+                </ListItemIcon>
+                <ListItemText primary="Syllabus" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+
     
         </List>
         <Divider />
@@ -358,17 +389,39 @@ export default function AdminMain() {
                 <ListItemText primary="Students" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={() => navigate('/attendence')}>
+              <ListItemButton 
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                  backgroundColor: location.pathname === '/attendence' && 'colors.main',  
+                  color: location.pathname === '/attendence' ? 'white' : 'colors.main',
+                  '&:hover': {
+                    backgroundColor: 'colors.main',
+                    color: 'white',
+                  }
+                  
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                    color: "inherit",
+                  }}
+                >
+                  <FactCheckOutlined />
+                </ListItemIcon>
+                <ListItemText primary="Attendence" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {/* <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-         
-        </Typography> */}
+
         <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/school" element={<SchoolInfo/>} />
@@ -379,6 +432,8 @@ export default function AdminMain() {
             <Route path='/create-organization' element={<OrganizationForm/>} />
             <Route path="/create-school" element={<SchoolForm/>} />
             <Route path='/settings' element={<Settings />} />
+            <Route path="/attendence" element={<Attendance />} />
+            <Route path="/syllabus" element={<SyllabusForm />} />
         </Routes>
       </Box>
     </Box>
