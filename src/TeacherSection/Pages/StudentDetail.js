@@ -138,7 +138,7 @@ const StudentDetail = () => {
               />
             )
           }
-           <UploadAvatar studentId={params.id} setSuccess={setSuccess} setError={setError} setStudentBasicData={setStudentBasicData} studentBasicData={studentBasicData} />
+           <UploadAvatar studentId={params.id} setStudentBasicData={setStudentBasicData} studentBasicData={studentBasicData} />
           {!loading ? (
             <h1 style={{ color: "#FFFFFF" }}>{studentBasicData.name}</h1>
           ) : (

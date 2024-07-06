@@ -9,7 +9,6 @@ const Attendance = () => {
     const [endDate, setEndDate] = useState(dayjs());
     const [attendanceData, setAttendanceData] = useState({});
     const [loading, setLoading] = useState(false);
-
     const accessToken = localStorage.getItem('accessToken');
     const headers = {
         'Authorization': `Bearer ${accessToken}`

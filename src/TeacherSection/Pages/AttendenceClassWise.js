@@ -5,6 +5,7 @@ import { Box, InputAdornment, Skeleton, TextField, Typography } from '@mui/mater
 import { Search } from '@mui/icons-material';
 import StudentChip from '../components/Students/StudentChip';
 import axios from 'axios';
+import BulkAttendence from '../components/Students/BulkAttendence';
 
 const AttendenceClassWise = () => {
     const [studentData, setStudentData] = useState([]);
@@ -78,15 +79,17 @@ const AttendenceClassWise = () => {
         <div>
             <div>
           
-            {
+                {
                     classLoading ? <Skeleton height={"60px"} sx={{ marginTop: "15px" }} />
-                        : <>
+                        : <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             {classData &&
                                 <Typography variant="h3" sx={{ color: "colors.main", marginBottom: "10px", marginTop: "15px" }}>
                                     {classData.name}
                                 </Typography>
+                                
                             }
-                        </>
+                            <BulkAttendence subjects={subjects} classId={id} studentData={studentData} />
+                        </div>
                 }
            </div>
             <TextField
