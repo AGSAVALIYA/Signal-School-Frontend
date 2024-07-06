@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { AddPhotoAlternate, Close as CloseIcon } from "@mui/icons-material";
-import { Button, Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Alert, Button, CircularProgress, Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
 import axios from "axios";
 
-const UploadAvatar = ({ studentId, setSuccess, setError, studentBasicData, setStudentBasicData }) => {
+const UploadAvatar = ({ studentId, studentBasicData, setStudentBasicData }) => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  
   const accessToken = localStorage.getItem("accessToken");
   const headers = {
     Authorization: `Bearer ${accessToken}`,
@@ -31,9 +34,10 @@ const UploadAvatar = ({ studentId, setSuccess, setError, studentBasicData, setSt
   const handleUpload = async () => {
     if (!selectedFile) {
       // Handle error, no file selected
+      setError("Please select a file to upload");
       return;
     }
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("avatar", selectedFile);
 
@@ -46,7 +50,7 @@ const UploadAvatar = ({ studentId, setSuccess, setError, studentBasicData, setSt
             ...prevData,
             imageLink: res.data.imageLink,
         }));
-
+        setLoading(false);
         setSuccess(res.data.message);
         setTimeout(() => {
             setSuccess("");
@@ -63,6 +67,7 @@ const UploadAvatar = ({ studentId, setSuccess, setError, studentBasicData, setSt
 
   return (
     <div>
+     
       <Button
         variant="outlined"
         sx={{ color: '#fff', marginTop: "10px" }}
@@ -71,6 +76,17 @@ const UploadAvatar = ({ studentId, setSuccess, setError, studentBasicData, setSt
         <AddPhotoAlternate sx={{ fontSize: "1.3rem" }} />
       </Button>
       <Dialog open={open} onClose={handleClose} PaperProps={{sx: {borderRadius: '20px', width: '300px'}}}>
+      {success && (
+        <Alert onClose={() => setSuccess("")} severity="success" sx={{ position: 'fixed', top: '50px', left: '0', right: '0', zIndex: '10000', width: 'max-content', margin: 'auto' }}>
+          {success}
+        </Alert>
+      )}
+
+      {error && (
+        <Alert onClose={() => setError("")} severity="error" sx={{ position: 'fixed', top: '50px', left: '0', right: '0', zIndex: '10000', width: 'max-content', margin: 'auto' }}>
+          {error}
+        </Alert>
+      )}
         <div style={{ padding: "20px" }}>
           <Typography variant="h6">Upload Avatar</Typography>
           <input
@@ -106,8 +122,10 @@ const UploadAvatar = ({ studentId, setSuccess, setError, studentBasicData, setSt
             color="primary"
             sx={{ margin: "10px" }}
             onClick={handleUpload}
+            disabled={loading}
           >
-            Upload
+            {/* Upload */}
+            {loading ? <CircularProgress /> : "Upload"}
           </Button>
           <IconButton
             onClick={handleClose}
