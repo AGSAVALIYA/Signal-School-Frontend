@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {  Search, VisibilityOutlined } from "@mui/icons-material";
 import axios from "axios";
 import AddNewStudent from "../components/Students/AddNewStudent";
+import BulkStudent from "../components/Students/BulkStudent";
 
 const StudentList = () => {
     const [studentData, setStudentData] = useState([]);
@@ -77,13 +78,19 @@ const StudentList = () => {
 
                 {
                     classLoading ? <Skeleton height={"60px"} sx={{ marginTop: "15px" }} />
-                        : <>
+                        : <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             {classData &&
                                 <Typography variant="h3" sx={{ color: "colors.main", marginBottom: "10px", marginTop: "15px" }}>
                                     {classData.name}
                                 </Typography>
                             }
-                        </>
+                            
+                             {/*
+                            //  Testing Pening , need to check for GRNUMBER 
+                             <BulkStudent classId={id} className={classData.name} />  
+                             */}
+                            
+                        </div>
                 }
             </div>
             <TextField

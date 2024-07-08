@@ -48,14 +48,14 @@ const TeacherMain = () => {
           borderRadius: '20px 20px 0 0', boxShadow: '0px 0px 10px 0px #0000001a'
         }}>
           <BottomNavigation showLabels value={value} onChange={handleChange} sx={{ height: "60px", borderRadius: "20px 20px 0 0" }}>
-            <BottomNavigationAction
+            {/* <BottomNavigationAction
               label="Schedule"
               value="schedule"
               icon={<CalendarMonth />}
               //go to schedule page
               to="/schedule"
               component={Link}
-            />
+            /> */}
             <BottomNavigationAction
               label="Syllabus"
               value="Syllabus"

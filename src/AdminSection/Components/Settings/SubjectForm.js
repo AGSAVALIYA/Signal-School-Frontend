@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, Button, TextField, Paper, Typography, Box, Alert } from '@mui/material';
+import { FormControl, InputLabel, Select, MenuItem, Button, TextField, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
 const SubjectForm = () => {
@@ -11,6 +11,7 @@ const SubjectForm = () => {
     const accessToken = localStorage.getItem('accessToken');
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const headers = {
         'Authorization': `Bearer ${accessToken}`
     }
@@ -75,15 +76,18 @@ const SubjectForm = () => {
 
     
     const handleFetchSubjects=(e) => {
+        setLoading(true);
             setSelectedClassForSubject({name: e.target.value, id: e.target.value});
             axios.get(`${process.env.REACT_APP_API_BACKEND}/subject/getAll/${e.target.value}`,{ headers })
                 .then(response => {
                     setSubjects(response.data.subjects);
+                    setLoading(false);
                 }
                 )
                 .catch(error => {
                     console.error('Error fetching subjects:', error);
                     setError("Something went wrong. Please try again.");
+                    setLoading(false);
                     setTimeout(() => {
                         setError("");
                     }
@@ -172,7 +176,10 @@ const SubjectForm = () => {
                 </Select>
             </FormControl>
 
-{subjects && subjects.length > 0 ?
+{
+loading ? <CircularProgress sx={{marginTop: '20px'}} />
+:
+subjects && subjects.length > 0 ?
     subjects.map((classObject) => (
         <Box key={classObject.id} sx={{backgroundColor: 'transparentBG.bgcolor', padding: '10px', borderRadius: '20px', marginTop: '10px', boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.1)'}}>
             <Typography variant="h6" align="center" gutterBottom sx={{color: 'colors.main'}}>

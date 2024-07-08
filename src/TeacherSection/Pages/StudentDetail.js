@@ -21,6 +21,7 @@ const StudentDetail = () => {
   const params = useParams();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [commonSubjects, setCommonSubjects] = useState([]);
 
   const token = localStorage.getItem("accessToken");
   const headers = {
@@ -44,6 +45,13 @@ const StudentDetail = () => {
 
   const handleStudentUpdate = (student) => {
     // Simulated update function
+    if(student.aadharNumber && student.aadharNumber.length !== 12){
+      setError("Aadhar number should be 12 digits");
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+      return;
+    }
     axios.put(`${process.env.REACT_APP_API_BACKEND}/student/update/${params.id}`, student, { headers }).then((res) => {
       setSuccess(res.data.message);
       setTimeout(() => {
@@ -80,10 +88,26 @@ const StudentDetail = () => {
     if (!basicDetailEditMode) {
       //fetch classes
       getClasses();
+      //fetch common subjects
+      getCommonSubjects();
     }
 
     setBasicDetailEditMode(!basicDetailEditMode);
   };
+
+  const getCommonSubjects = () => {
+    axios.get(`${process.env.REACT_APP_API_BACKEND}/commonsubject/getAll`, { headers }).then((res) => {
+      setCommonSubjects(res.data.commonSubjects);
+    }
+    ).catch((err) => {
+      setError(err.response.data.error);
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+    }
+    )
+  };
+
 
   useEffect(() => {
     fetchStudent();
@@ -212,7 +236,7 @@ const StudentDetail = () => {
                 )}
               </div>
             </div>
-            <StudentBasicDetails student={studentBasicData} editMode={basicDetailEditMode} setStudent={setStudentBasicData} loading={loading} classes={classes} />
+            <StudentBasicDetails student={studentBasicData} editMode={basicDetailEditMode} setStudent={setStudentBasicData} loading={loading} classes={classes} commonSubjects={commonSubjects} />
             <AcademicDetails studentBasicData={studentBasicData} studentDataLoading={loading}/>
           </div>
         )}

@@ -88,7 +88,7 @@ const AttendenceClassWise = () => {
                                 </Typography>
                                 
                             }
-                            <BulkAttendence subjects={subjects} classId={id} studentData={studentData} />
+                            <BulkAttendence subjects={subjects} classId={id} studentData={studentData} getStudentData={getStudentData} />
                         </div>
                 }
            </div>

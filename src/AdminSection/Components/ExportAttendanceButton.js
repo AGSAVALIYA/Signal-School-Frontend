@@ -2,15 +2,34 @@ import React from 'react';
 import { Button } from '@mui/material';
 import jsPDF from 'jspdf';
 
-
-
-
 const ExportAttendanceButton = ({ attendanceData }) => {
 
     const handleExportPDF = () => {
         const doc = new jsPDF('p', 'pt'); // Create PDF document in portrait mode
         const margin = 40; // Margin for the content
         const startY = 40; // Initial y position for text
+
+        const pageHeight = doc.internal.pageSize.height; // Height of the PDF page
+        let currentPage = 1; // Current page number
+
+        // Function to add page footer with page number
+        const addPageFooter = () => {
+            const totalPages = doc.internal.getNumberOfPages(); // Total pages in the document
+
+            // Iterate over each page to add footer
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i); // Set current page
+
+                // Footer content
+                const footerText = `Page ${i} of ${totalPages}`;
+                const footerX = margin; // X position (left-aligned)
+                const footerY = pageHeight - 20; // Y position (bottom margin)
+
+                // Set font size and add footer text
+                doc.setFontSize(10);
+                doc.text(footerText, footerX, footerY, { align: 'left' });
+            }
+        };
 
         // Set up styles
         doc.setFontSize(16); // Set the overall font size to 16
@@ -23,6 +42,16 @@ const ExportAttendanceButton = ({ attendanceData }) => {
 
         // Loop through each date in attendanceData
         Object.keys(attendanceData).forEach((date, index) => {
+            // Check if there's enough space on the current page for this date
+            if (y + cellHeight > pageHeight - margin) {
+                // Add new page
+                doc.addPage();
+                currentPage++;
+
+                // Reset y position for the new page
+                y = margin;
+            }
+
             // Draw date header
             doc.setFontSize(12); // Set font size for the date header
             doc.setFillColor(240, 240, 240); // Light gray background
@@ -35,6 +64,16 @@ const ExportAttendanceButton = ({ attendanceData }) => {
 
             // Draw attendance records for this date
             attendanceData[date].forEach((record) => {
+                // Check if there's enough space for the current record
+                if (y + cellHeight > pageHeight - margin) {
+                    // Add new page
+                    doc.addPage();
+                    currentPage++;
+
+                    // Reset y position for the new page
+                    y = margin;
+                }
+
                 // Draw student name cell
                 doc.setFontSize(10); // Set font size for student name
                 doc.setFillColor(255, 255, 255); // White background for name cell
@@ -53,11 +92,15 @@ const ExportAttendanceButton = ({ attendanceData }) => {
             y += cellPadding; // Add padding after each date
         });
 
+        // Add page footer with page numbers
+        addPageFooter();
+
         // Output the PDF
-        doc.save('attendance_report.pdf');
+        doc.save(`attendance_report.pdf`);
     };
+
     return (
-        <Button variant="contained" onClick={handleExportPDF} size='small'>
+        <Button variant="contained" onClick={handleExportPDF} disabled={!attendanceData || Object.keys(attendanceData).length === 0}>
             Export PDF
         </Button>
     );
