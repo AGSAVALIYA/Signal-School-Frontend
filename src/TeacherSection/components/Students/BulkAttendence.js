@@ -25,7 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function BulkAttendence({ subjects, classId, studentData }) {
+export default function BulkAttendence({ subjects, classId, studentData, getStudentData }) {
     const [open, setOpen] = React.useState(false);
     const [progress, setProgress] = React.useState("");
     const [selectedFile, setSelectedFile] = React.useState(null);
@@ -62,14 +62,31 @@ export default function BulkAttendence({ subjects, classId, studentData }) {
     };
 
     const handleSave = () => {
+        if (selectedSubjects.length === 0) {
+            setError('Please select subjects');
+            return;
+        }
+        if (selectedStudents.length === 0) {
+            setError('Please select students');
+            return;
+        }
+
         setLoading(true);
         const formData = new FormData();
-        //parse subjects and students
-        
+        //parse subjects a
+        //add only subject id to selectedSubjects
+        const temp = selectedSubjects.map((subject) => {
+            return subject.id;
+        });
+        setSelectedSubjects(temp);
+        const tempStudents = selectedStudents.map((student) => {
+            return student;
+        });
+        setSelectedStudents(tempStudents);
         formData.append("progress", progress);
         formData.append("attendenceDate", attendenceDate);
-        formData.append("subjects", selectedSubjects);
-        formData.append("studentIds", selectedStudents);
+        formData.append("subjects", JSON.stringify(temp));
+        formData.append("studentIds", JSON.stringify(selectedStudents));
         formData.append("timelineImg", selectedFile);
 
         axios.post(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/bulkCreate/${classId}`, formData, {
@@ -80,23 +97,18 @@ export default function BulkAttendence({ subjects, classId, studentData }) {
                 setLoading(false);
                 setTimeout(() => {
                     setSuccess('');
+                    getStudentData();
                     handleClose();
                 }
-                    , 2000);
+                    , 3000);
 
             })
             .catch((err) => {
-                setError('Failed to save attendence');
+                setError('Failed to save attendence.' + ' ' + err.response.data.error);
+                setLoading(false);
                 console.log(err);
             });
     };
-
-
-
-
-
-
-
 
     const handleStudentSelection = (studentId) => {
         setSelectedStudents((prevSelectedStudents) => {
@@ -107,6 +119,17 @@ export default function BulkAttendence({ subjects, classId, studentData }) {
             }
         });
     };
+
+    const handleSelectAll = () => {
+        setSelectedStudents((prevSelectedStudents) => {
+            if (prevSelectedStudents.length === students.length) {
+                return [];
+            } else {
+                return students.map((student) => student.id);
+            }
+        });
+    }
+
     return (
         <React.Fragment>
             <Button variant='contained' sx={{ borderRadius: '20px' }} onClick={handleClickOpen}>
@@ -249,7 +272,11 @@ export default function BulkAttendence({ subjects, classId, studentData }) {
                             />
                         )}
                     />
-
+                    <Button
+                    variant='contained'
+                    sx={{margin: '10px 0', borderRadius: '20px' }}
+                        onClick={handleSelectAll}
+                    >Select All</Button>
                     <List>
                         {students.map((student) => (
                             <ListItemButton

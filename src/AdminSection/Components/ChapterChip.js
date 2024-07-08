@@ -3,7 +3,7 @@ import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import Dialog from '@mui/material/Dialog';
 import { Button, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
-import { AddCircleOutline, Delete, RemoveCircleOutline } from '@mui/icons-material';
+import { AddCircleOutline, Delete, Edit, RemoveCircleOutline } from '@mui/icons-material';
 import axios from 'axios';
 
 
@@ -64,6 +64,8 @@ const ChapterChip = ({ chapter , handleDelete}) => {
                     sx={{ margin: '3px', cursor: 'pointer' }}
                     label={chapterName}
                     onClick={handleChipClick}
+                    icon={<Edit sx={{ fontSize: '1rem' }} />}
+                    //icon position="end"  
                 />
             </Tooltip>
 

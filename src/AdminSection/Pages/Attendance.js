@@ -1,61 +1,97 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Chip } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Chip, Alert, TextField } from '@mui/material';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import ExportAttendanceButton from '../Components/ExportAttendanceButton';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const Attendance = () => {
     const [startDate, setStartDate] = useState(dayjs().subtract(7, 'day')); // Default start date (last 7 days)
     const [endDate, setEndDate] = useState(dayjs());
     const [attendanceData, setAttendanceData] = useState({});
     const [loading, setLoading] = useState(false);
+    const [classes, setClasses] = useState([]);
+    const [selectedClass, setSelectedClass] = useState(null);
+    const [success, setSuccess] = useState("");
+    const [error, setError] = useState("");
+
+
+
+
     const accessToken = localStorage.getItem('accessToken');
     const headers = {
         'Authorization': `Bearer ${accessToken}`
     };
 
     const fetchAttendanceData = () => {
+        if (selectedClass === null) {
+            setError("Please select a class.");
+            setTimeout(() => {
+                setError("");
+            }, 2000);
+            return;
+        }
+
+        if(startDate.isAfter(endDate)){
+            setError("Start date cannot be after end date.");
+            setTimeout(() => {
+                setError("");
+            }, 2000);
+            return;
+        }
+
+
         setLoading(true);
-        axios.get(`${process.env.REACT_APP_API_BACKEND}/attendance/16`, {
+        axios.get(`${process.env.REACT_APP_API_BACKEND}/attendance/${selectedClass ? selectedClass : 'all'}`, {
             headers,
             params: {
                 startDate: startDate.format('YYYY-MM-DD'),
                 endDate: endDate.format('YYYY-MM-DD'),
             }
         })
-        .then((res) => {
-            setAttendanceData(res.data.data);
-            setLoading(false);
-        })
-        .catch((err) => {
-            console.error('Error fetching attendance data:', err);
-            setLoading(false);
-        });
+            .then((res) => {
+                setAttendanceData(res.data.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error('Error fetching attendance data:', err);
+                setLoading(false);
+            });
     };
 
-    const handleDateRangeChange = (option) => {
-        const today = dayjs();
-        switch (option) {
-            case 'last7days':
-                setStartDate(today.subtract(7, 'day'));
-                setEndDate(today);
-                break;
-            case 'monthwise':
-                setStartDate(today.subtract(1, 'month'));
-                setEndDate(today);
-                break;
-            // Add more cases for custom range, all dates, etc.
-            default:
-                break;
+
+    const getClasses = () => {
+        axios.get(`${process.env.REACT_APP_API_BACKEND}/class/getAll`, { headers }).then((res) => {
+            setClasses(res.data.classes);
         }
+        ).catch((err) => {
+            setError(err.response.data.error);
+            setTimeout(() => {
+                setError("");
+            }, 2000);
+        }
+        )
     };
+
+
 
     useEffect(() => {
-        fetchAttendanceData();
-    }, [startDate, endDate]); // Fetch data when date range changes
-
+        getClasses();
+    }, []);
     return (
         <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {success && (
+                <Alert onClose={() => setSuccess("")} severity="success" sx={{ position: 'fixed', top: '50px', left: '0', right: '0', zIndex: '10000', width: 'max-content', margin: 'auto' }}>
+                    {success}
+                </Alert>
+            )}
+
+            {error && (
+                <Alert onClose={() => setError("")} severity="error" sx={{ position: 'fixed', top: '50px', left: '0', right: '0', zIndex: '10000', width: 'max-content', margin: 'auto' }}>
+                    {error}
+                </Alert>
+            )}
             <Box
                 sx={{
                     backgroundColor: 'white',
@@ -74,20 +110,53 @@ const Attendance = () => {
                 }}
             >
                 <FormControl>
-                    <InputLabel>Date Range</InputLabel>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+                        <DatePicker 
+                            value={startDate}
+                            onChange={(newValue) => setStartDate(newValue)}
+                            renderInput={(params) => <TextField {...params} />}
+                            label="Start Date"
+                            //format = "yyyy-MM-dd"
+                            format='DD/MM/YYYY'
+                            
+                        />
+                    </LocalizationProvider>
+
+                </FormControl>
+                <FormControl>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            value={endDate}
+                            onChange={(newValue) => setEndDate(newValue)}
+                            renderInput={(params) => <TextField {...params} />}
+                            label="End Date"
+                            format='DD/MM/YYYY'
+                        />
+                    </LocalizationProvider>
+                </FormControl>
+
+
+
+                <FormControl>
+                    <InputLabel id="class-label">Select Class</InputLabel>
                     <Select
-                        onChange={(e) => handleDateRangeChange(e.target.value)}
+                        onChange={(e) => setSelectedClass(e.target.value)}
                         style={{ minWidth: 200 }}
-                        size='small'
-                        defaultValue="last7days"
+                        defaultValue=""
+                        labelId="class-label"
+                        label="Select Class"
                     >
-                        <MenuItem value="last7days">Last 7 Days</MenuItem>
-                        <MenuItem value="monthwise">Month-wise</MenuItem>
-                        {/* Add more date range options (custom range, all dates, etc.) */}
+                        {
+                            classes && classes.map((classItem) => (
+                                <MenuItem key={classItem.id} value={classItem.id}>{classItem.name}</MenuItem>
+                            ))
+                        }
                     </Select>
                 </FormControl>
 
-                <Button variant="contained" onClick={fetchAttendanceData} size='small'>
+
+                <Button variant="contained" onClick={fetchAttendanceData}>
                     Get Attendance
                 </Button>
 
@@ -104,7 +173,7 @@ const Attendance = () => {
                         <h3>No attendance data available for the selected date range.</h3>
                     </Box>
                 ) : (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', flexWrap: 'wrap' }}>
                         {Object.keys(attendanceData).map((date) => (
                             <Box key={date} sx={{ width: '80%', marginBottom: '20px' }}>
                                 <h3>{date}</h3>

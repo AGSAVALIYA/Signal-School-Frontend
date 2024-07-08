@@ -42,11 +42,15 @@ const StudentInfoPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [editedInfo, setEditedInfo] = useState({});
   const [classes, setClasses] = useState([]);
-  const [subjects, setSubjects] = useState([]); 
+  const [subjects, setSubjects] = useState([]);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedClass, setSelectedClass] = useState({});
+  const [commonSubjects, setCommonSubjects] = useState([]);
+
+
+
   const params = useParams();
 
 
@@ -61,16 +65,26 @@ const StudentInfoPage = () => {
   };
 
   const handleEditButtonClick = () => {
-    if(!editMode) {
+    if (!editMode) {
       //fetch classes
-      axios
-        .get(`${process.env.REACT_APP_API_BACKEND}/class/getAll`, { headers })
+      axios.get(`${process.env.REACT_APP_API_BACKEND}/class/getAll`, { headers })
         .then((res) => {
           setClasses(res.data.classes);
         })
         .catch((err) => {
           console.log(err);
         });
+      //fetch common subjects
+      axios.get(`${process.env.REACT_APP_API_BACKEND}/commonsubject/getAll`, { headers }).then((res) => {
+        setCommonSubjects(res.data.commonSubjects);
+      }
+      ).catch((err) => {
+        setError(err.response.data.error);
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      }
+      )
     }
     setEditMode(!editMode);
   };
@@ -83,7 +97,13 @@ const StudentInfoPage = () => {
   };
 
   const saveEditedInfo = () => {
-    console.log(editedInfo);
+    if(editedInfo.aadharNumber && editedInfo.aadharNumber.length !== 12){
+      setError("Aadhar number should be 12 digits");
+      setTimeout(() => {
+        setError("");
+      }, 2000);
+      return;
+    }
     axios.put(`${process.env.REACT_APP_API_BACKEND}/student/update/${params.id}`, editedInfo, { headers })
       .then((res) => {
         setSuccess(res.data.message);
@@ -126,7 +146,7 @@ const StudentInfoPage = () => {
     , []);
   return (
     <Container>
-       {success && (
+      {success && (
         <Alert onClose={() => setSuccess("")} severity="success" sx={{ position: 'fixed', top: '50px', left: '0', right: '0', zIndex: '10000', width: 'max-content', margin: 'auto' }}>
           {success}
         </Alert>
@@ -137,13 +157,13 @@ const StudentInfoPage = () => {
           {error}
         </Alert>
       )}
-      <Paper elevation={0} sx={{ padding: 3, marginTop: 3, backgroundColor: "transparentBG.bgcolor", borderRadius: "20px"}}>
-        <Typography variant="h4" sx={{ marginBottom: 2, color: "colors.main"}}>
+      <Paper elevation={0} sx={{ padding: 3, marginTop: 3, backgroundColor: "transparentBG.bgcolor", borderRadius: "20px" }}>
+        <Typography variant="h4" sx={{ marginBottom: 2, color: "colors.main" }}>
           Student Dashboard
         </Typography>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="secondary"  centered>
+        <Tabs value={activeTab} onChange={handleTabChange} indicatorColor="secondary" centered>
           <Tab label="Info" />
           <Tab label="Timeline" />
           <Tab label="Academics" />
@@ -151,7 +171,7 @@ const StudentInfoPage = () => {
 
         {/* Tab Content */}
         {activeTab === 0 && (
-         <StudentDetails
+          <StudentDetails
             studentInfo={editedInfo}
             editMode={editMode}
             onEditButtonClick={handleEditButtonClick}
@@ -163,7 +183,9 @@ const StudentInfoPage = () => {
             setError={setError}
             selectedClass={selectedClass}
             setSelectedClass={setSelectedClass}
-            />
+            commonSubjects={commonSubjects}
+            
+          />
 
         )}
 
@@ -200,7 +222,7 @@ const StudentInfoPage = () => {
           </div>
         )}
 
-       
+
       </Paper>
     </Container>
   );

@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, MenuItem, Button, TextField, Paper, Typography, Box, Alert, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
-const ClassForm = () => {
+const CommonSubjectForm = () => {
     const [academicYears, setAcademicYears] = useState([]);
     const [selectedAcademicYear, setSelectedAcademicYear] = useState('');
-    const [selectedAYforClass, setSelectedAYforClass] = useState({name: '', id: ''});
-    const [classes, setClasses] = useState([]);
-    const [className, setClassName] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [selectedAYforCommonSubject, setSelectedAYforCommonSubject] = useState({name: '', id: ''});
+    const [commonSubjects, setCommonSubjectes] = useState([]);
+    const [commonSubjectName, setCommonSubjectName] = useState('');
     const accessToken = localStorage.getItem('accessToken');
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const headers = {
         'Authorization': `Bearer ${accessToken}`
     }
@@ -28,22 +28,22 @@ const ClassForm = () => {
         setSelectedAcademicYear(event.target.value);
     };
 
-    const handleClassNameChange = (event) => {
-        setClassName(event.target.value);
+    const handleCommonSubjectNameChange = (event) => {
+        setCommonSubjectName(event.target.value);
     };
 
-    const handleAddClass = () => {
-        // Create the class requirement object
-        const classRequirement = {
-            name: className,
+    const handleAddCommonSubject = () => {
+        // Create the commonSubject requirement object
+        const commonSubjectRequirement = {
+            name: commonSubjectName,
             AcademicYearId: selectedAcademicYear,
         };
-        axios.post(`${process.env.REACT_APP_API_BACKEND}/class/create`, classRequirement, { headers })
+        axios.post(`${process.env.REACT_APP_API_BACKEND}/commonsubject/create`, commonSubjectRequirement, { headers })
             .then(response => {
                 setSuccess(response.data.message);
                 setTimeout(() => {
                     setSuccess("");
-                setClassName('');
+                setCommonSubjectName('');
                 }, 2000);
             })
             .catch(error => {
@@ -55,17 +55,17 @@ const ClassForm = () => {
             );
     };
 
-    const handleFetchClasses=(e) => {
+    const handleFetchCommonSubjectes=(e) => {
         setLoading(true);
-            setSelectedAYforClass({name: e.target.value, id: e.target.value});
-            axios.get(`${process.env.REACT_APP_API_BACKEND}/class/getAll/${e.target.value}`,{ headers })
+            setSelectedAYforCommonSubject({name: e.target.value, id: e.target.value});
+            axios.get(`${process.env.REACT_APP_API_BACKEND}/commonsubject/getAll/${e.target.value}`,{ headers })
                 .then(response => {
-                    setClasses(response.data.classes);
+                    setCommonSubjectes(response.data.commonSubjects);
                     setLoading(false);
                 }
                 )
                 .catch(error => {
-                    console.error('Error fetching classes:', error);
+                    console.error('Error fetching commonSubjects:', error);
                     setError("Something went wrong. Please try again.");
                     setLoading(false);
                     setTimeout(() => {
@@ -94,7 +94,7 @@ const ClassForm = () => {
       )}
 
             <Typography variant='h4' gutterBottom sx={{color: 'colors.main'}}>
-                Class Form
+                Common Subject Form
             </Typography>
             <Paper elevation={0} sx={{backgroundColor: 'transparentBG.bgcolor', padding: '20px', marginBottom: '10px', borderRadius: '20px'}}>
             <FormControl fullWidth>
@@ -119,29 +119,29 @@ const ClassForm = () => {
 
             <TextField
                 fullWidth
-                id="class-name"
-                label="Class Name"
-                value={className}
-                onChange={handleClassNameChange}
+                id="commonSubject-name"
+                label="Common Subject Name"
+                value={commonSubjectName}
+                onChange={handleCommonSubjectNameChange}
                 margin="normal"
                 size='small'
             />
 
-            <Button variant="contained"  onClick={handleAddClass} sx={{ backgroundColor: 'colors.main', color: 'colors.white'}}>
-                Add Class
+            <Button variant="contained"  onClick={handleAddCommonSubject} sx={{ backgroundColor: 'colors.main', color: 'colors.white'}}>
+                Add Common Subject
             </Button>
             </Paper>
             <Paper elevation={0} sx={{backgroundColor: 'transparentBG.bgcolor', padding: '20px', borderRadius: '20px'}}>
             <Typography variant="h5" align="center" gutterBottom sx={{color: 'colors.main'}}>
-                Classes
+                Common Subjectes
             </Typography>
             <FormControl fullWidth>
                 <InputLabel id="academic-year-label">Select Academic Year</InputLabel>
                 <Select
                     labelId="academic-year-label"
                     id="academic-year"
-                    value={selectedAYforClass.id}
-                    onChange={(e) => handleFetchClasses(e) }
+                    value={selectedAYforCommonSubject.id}
+                    onChange={(e) => handleFetchCommonSubjectes(e) }
                     label="Select Academic Year"
                     size='small'
                 >
@@ -155,22 +155,20 @@ const ClassForm = () => {
                 </Select>
             </FormControl>
 
-
-{
-    loading ? <CircularProgress size={24} />
-    : classes.length > 0 ?
-    classes.map((classObject) => (
-        <Box key={classObject.id} sx={{backgroundColor: 'transparentBG.bgcolor', padding: '10px', borderRadius: '20px', marginTop: '10px', boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.2)'}}>
-            <Typography variant="h6" align="center" gutterBottom sx={{color: 'colors.main'}}>
-                {classObject.name}
-            </Typography>
-        </Box>
-    )
-    )
-    : (
-        <Typography variant="h6" align="center" gutterBottom sx={{color: 'colors.main'}}>No classes found.</Typography>
-    )
-}
+    {
+        loading ? <CircularProgress size={24} sx={{ margin: 'auto' }} />
+        : commonSubjects.length > 0 ?
+        commonSubjects.map((commonSubjectObject) => (
+            <Box key={commonSubjectObject.id} sx={{backgroundColor: 'transparentBG.bgcolor', padding: '10px', borderRadius: '20px', marginTop: '10px', boxShadow: '0px 0px 10px 0px rgba(0,0,0,0.2)'}}>
+                <Typography variant="h6" align="center" gutterBottom sx={{color: 'colors.main'}}>
+                    {commonSubjectObject.name}
+                </Typography>
+            </Box>
+        ))
+        : (
+            <Typography variant="h6" align="center" gutterBottom sx={{color: 'colors.main'}}>No Common Subjectes found.</Typography>
+        )
+    }
 
 
             </Paper>
@@ -178,4 +176,4 @@ const ClassForm = () => {
     );
 };
 
-export default ClassForm;
+export default CommonSubjectForm;

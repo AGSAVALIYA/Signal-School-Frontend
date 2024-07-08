@@ -3,6 +3,7 @@ import ClassForm from "../Components/Settings/ClassForm";
 import { Typography, Tabs, Tab, Grid } from "@mui/material";
 import SubjectForm from "../Components/Settings/SubjectForm";
 import SyllabusForm from "./SyllabusForm";
+import CommonSubjectForm from "../Components/Settings/CommonSubjectForm";
 
 const Settings = () => {
     const [activeTab, setActiveTab] = useState(0);
@@ -39,6 +40,10 @@ const Settings = () => {
                             label="Subject Form"
                             sx={{ fontSize: '1rem', fontWeight: 'bold', color: 'colors.main', '&.Mui-selected': { backgroundColor: 'colors.main', color: '#fff',borderRadius: '20px' } }}
                         />
+                        <Tab
+                            label="Common Subject Form"
+                            sx={{ fontSize: '1rem', fontWeight: 'bold', color: 'colors.main', '&.Mui-selected': { backgroundColor: 'colors.main', color: '#fff',borderRadius: '20px' } }}
+                        />
                     </Tabs>
                 </Grid>
 
@@ -46,6 +51,7 @@ const Settings = () => {
                     <div>
                         {activeTab === 0 && <ClassForm />}
                         {activeTab === 1 && <SubjectForm   />}
+                        {activeTab === 2 && <CommonSubjectForm />}
                     </div>
                 </Grid>
             </Grid>
