@@ -85,10 +85,9 @@ const StudentList = () => {
                                 </Typography>
                             }
                             
-                             {/*
-                            //  Testing Pening , need to check for GRNUMBER 
+                             
                              <BulkStudent classId={id} className={classData.name} />  
-                             */}
+                            
                             
                         </div>
                 }
