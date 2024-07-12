@@ -65,53 +65,53 @@ const StudentsTable = (props) => {
             <>
             <TableRow>
               <TableCell align="center" >
-                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="circular" width={40} height={40} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell component="th" scope="row">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell align="center" >
-                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="circular" width={40} height={40} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell component="th" scope="row">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
             </TableRow>
             <TableRow>
               <TableCell align="center" >
-                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="circular" width={40} height={40} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell component="th" scope="row">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
               <TableCell align="center">
-                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} sx={{margin: "auto"}} />
               </TableCell>
             </TableRow>
 
