@@ -18,6 +18,14 @@ const StudentsTable = (props) => {
     navigate(`/students/${id}`);
   };
 
+
+  const getThumbLink = (link) => {
+    if(link && link.includes("ss-mumbai-avatar")) {
+      return link.replace("ss-mumbai-avatar", "ss-mumbai-avatar-thumbnails");
+    }
+    return link;
+  }
+
   return (
     <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', borderRadius: '20px',  marginTop: "5px", height: "100%" }} elevation={0}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -41,7 +49,8 @@ const StudentsTable = (props) => {
                   alt={`${student.name}'s Avatar`}
                   style={{ width: '40px', height: '40px', borderRadius: '50%' }}
                 /> */}
-                <Avatar src={student.imageLink} sx={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                {/* <Avatar src={student.imageLink} sx={{ width: '40px', height: '40px', borderRadius: '50%' }} /> */}
+                <Avatar src={getThumbLink(student.imageLink)} sx={{ width: '40px', height: '40px', borderRadius: '50%' }} />
               </TableCell>
               <TableCell component="th" scope="row" sx={{fontSize: "1rem", cursor: "pointer"}} onClick={() => navigateToStudent(student.id)}>
                 {student.name}
