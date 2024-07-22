@@ -6,9 +6,17 @@ import { useNavigate } from 'react-router-dom';
 const TeacherTable = (props) => {
   const { teachers, loading } = props;
   const navigate = useNavigate();
-  const navigateToStudent = (id) => {
+  const navigateToTeacher = (id) => {
     navigate(`/teachers/${id}`);
   };
+
+  
+  const getThumbLink = (link) => {
+    if(link && link.includes("ss-mumbai-faculty")) {
+      return link.replace("ss-mumbai-faculty", "ss-mumbai-faculty-thumbnails");
+    }
+    return link;
+  }
 
   return (
     <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', borderRadius: '20px', marginTop: "5px", height: "100%" }} elevation={0}>
@@ -20,6 +28,7 @@ const TeacherTable = (props) => {
             </TableCell>
             <TableCell>Name</TableCell>
             <TableCell align="center">Email</TableCell>
+            <TableCell align="center">Contact</TableCell>
             <TableCell align="center">Edit</TableCell>
           </TableRow>
         </TableHead>
@@ -27,15 +36,18 @@ const TeacherTable = (props) => {
           {!loading && teachers.map((teacher) => (
             <TableRow key={teacher.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell align="center" >
-                <Avatar src={teacher.name} sx={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                <Avatar src={getThumbLink(teacher.imageLink)} sx={{ width: '40px', height: '40px', borderRadius: '50%' }} />
               </TableCell>
-              <TableCell component="th" scope="row" sx={{ fontSize: "1rem" }}>
+              <TableCell component="th" scope="row" sx={{ fontSize: "1rem", cursor:"pointer" }} onClick={() => navigateToTeacher(teacher.id)}>
                 {teacher.name}
               </TableCell>
-              <TableCell component="th" scope="row" sx={{ fontSize: "1rem" }}>
-                {teacher.email}
+              <TableCell component="th" scope="row" sx={{ fontSize: "1rem" }} align='center' >
+                {teacher.email ? <Chip label={teacher.email} /> : "N/A"}
               </TableCell>
-              <TableCell align="center" sx={{ fontSize: "1rem" }}>
+              <TableCell component="th" scope="row" sx={{ fontSize: "1rem" }} align='center' >
+                {teacher.contactNumber ? <Chip label={teacher.contactNumber} /> : "N/A"}
+              </TableCell>
+              <TableCell align="center" sx={{ fontSize: "1rem",  cursor:"pointer" }} onClick={() => navigateToTeacher(teacher.id)}>
                 <DriveFileRenameOutline />
               </TableCell>
             </TableRow>
@@ -56,6 +68,9 @@ const TeacherTable = (props) => {
                 <TableCell align="center">
                   <Skeleton variant="text" width={100} />
                 </TableCell>
+                <TableCell align="center">
+                  <Skeleton variant="text" width={100} />
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="center" >
@@ -70,12 +85,18 @@ const TeacherTable = (props) => {
                 <TableCell align="center">
                   <Skeleton variant="text" width={100} />
                 </TableCell>
+                <TableCell align="center">
+                  <Skeleton variant="text" width={100} />
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell align="center" >
                   <Skeleton variant="circular" width={40} height={40} />
                 </TableCell>
                 <TableCell component="th" scope="row">
+                  <Skeleton variant="text" width={100} />
+                </TableCell>
+                <TableCell align="center">
                   <Skeleton variant="text" width={100} />
                 </TableCell>
                 <TableCell align="center">

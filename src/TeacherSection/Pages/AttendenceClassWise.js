@@ -74,7 +74,12 @@ const AttendenceClassWise = () => {
 
     const fakeInputStyle = { opacity: 0, float: 'left', border: 'none', height: '0', width: '0' }
 
-
+    const getThumbLink = (link) => {
+        if(link && link.includes("ss-mumbai-avatar")) {
+          return link.replace("ss-mumbai-avatar", "ss-mumbai-avatar-thumbnails");
+        }
+        return link;
+    }
     return (
         <div>
             <div>
@@ -119,7 +124,7 @@ const AttendenceClassWise = () => {
                                 <StudentChip key={i} 
                                 name={item.name} 
                                 id={item.id} 
-                                image={item.imageLink} 
+                                image={getThumbLink(item.imageLink)}
                                 todayStatus={item.todayStatus}
                                 timeline={item.StudentTimelines}
                                 subjects={subjects}

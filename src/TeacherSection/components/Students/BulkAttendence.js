@@ -94,10 +94,12 @@ export default function BulkAttendence({ subjects, classId, studentData, getStud
         })
             .then((res) => {
                 setSuccess('Attendence saved successfully');
-                setLoading(false);
+               
                 setTimeout(() => {
+                    setLoading(false);
                     setSuccess('');
                     getStudentData();
+                    window.location.reload();
                     handleClose();
                 }
                     , 3000);
@@ -151,6 +153,7 @@ export default function BulkAttendence({ subjects, classId, studentData, getStud
                     open={success}
                     autoHideDuration={3000}
                     onClose={() => setSuccess('')}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
                     <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
                         {success}
@@ -160,6 +163,7 @@ export default function BulkAttendence({ subjects, classId, studentData, getStud
                 <Snackbar
                     open={error}
                     autoHideDuration={3000}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                     onClose={() => setError('')}
                 >
                     <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, TextField, Typography, Container, Paper, Snackbar, Alert, Tabs, Tab } from '@mui/material';
+import { Button, TextField, Typography, Container, Paper, Snackbar, Alert, Tabs, Tab, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AdminPanelSettingsOutlined, Person2Outlined } from '@mui/icons-material';
@@ -35,6 +35,7 @@ function Login() {
   const [error, setError] = useState("");
   const [selectedTab, setSelectedTab] = useState(1); // 0 for teacher, 1 for admin
   const [adminMode, setAdminMode] = useState('login'); // 'login' or 'register'
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleAdminAction = () => {
@@ -47,7 +48,7 @@ function Login() {
 
   const handleLogin = () => {
     const userType = selectedTab === 0 ? 'teacher' : 'admin';
-
+    setLoading(true);
     const data = {
       email: username,
       password: password,
@@ -62,11 +63,12 @@ function Login() {
 
         setTimeout(() => {
           setSuccess("");
-          window.location.reload();
+          window.location.href = "/";
         }, 2000);
       })
       .catch((err) => {
         // setError(err.response.data.error);
+        setLoading(false);
         if(err.response && err.response.data && err.response.data.error) {
           setError(err.response.data.error);
         }
@@ -81,7 +83,7 @@ function Login() {
 
   const handleRegister = () => {
     const userType = 'admin';
-
+    setLoading(true);
     const data = {
       email: username,
       password: password,
@@ -100,6 +102,7 @@ function Login() {
         }, 2000);
       })
       .catch((err) => {
+        setLoading(false);
         setError(err.response.data.error);
         setTimeout(() => {
           setError("");
@@ -194,8 +197,9 @@ function Login() {
         />
 
         {/* Login or Register button */}
-        <Button variant="contained" color="colors" sx={{ color: "#fff" }} onClick={handleAdminAction}>
-          {adminMode === 'login' ? 'Login' : 'Register'}
+        <Button variant="contained" color="colors" sx={{ color: "#fff" }} onClick={handleAdminAction} disabled={loading}>
+          {/* {adminMode === 'login' ? 'Login' : 'Register'} */}
+          {loading ? <CircularProgress size={24} /> : (adminMode === 'login' ? 'Login' : 'Register')}
         </Button>
 
         {/* Switch between login and register mode for admin */}

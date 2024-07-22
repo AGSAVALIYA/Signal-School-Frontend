@@ -30,6 +30,7 @@ import SchoolForm from './Pages/SchoolForm';
 import Settings from './Pages/Settings';
 import Attendance from './Pages/Attendance';
 import SyllabusForm from './Pages/SyllabusForm';
+import TeacherDetailPage from './Components/Teacher/TeacherDetails';
 
 const drawerWidth = 200;
 
@@ -429,6 +430,7 @@ export default function AdminMain() {
             <Route path="/students" element={<StudentsList/>} />
             <Route path="/students/:id" element={<StudentInfo/>} />
             <Route path="/teachers" element={<TeachersList/>} />
+            <Route path="/teachers/:id" element={<TeacherDetailPage/>} />
             <Route path='/create-organization' element={<OrganizationForm/>} />
             <Route path="/create-school" element={<SchoolForm/>} />
             <Route path='/settings' element={<Settings />} />
