@@ -18,9 +18,12 @@ import {
   InputLabel,
   Chip,
   Autocomplete,
+  Dialog,
+  CircularProgress,
 } from "@mui/material";
-import { Cancel, Edit } from "@mui/icons-material";
+import { Cancel, Delete, Edit } from "@mui/icons-material";
 import UplaodAvatar from "./UploadAvatar";
+import axios from "axios";
 
 const StudentDetails = ({
   studentInfo,
@@ -44,6 +47,38 @@ const StudentDetails = ({
     onEditFieldChange("Class", classData);
     onEditFieldChange("ClassId", classId);
   };
+
+  const [deleteConfirmation, setDeleteConfirmation] = React.useState(false);
+  const [deleteLoading, setDeleteLoading] = React.useState(false);
+  const handleDeleteConfirmation = () => {
+    setDeleteConfirmation(true);
+  }
+  const accessToken = localStorage.getItem('accessToken');
+  const headers = {
+    Authorization: `Bearer ${accessToken}`,
+  };
+  const handleDelete = () => {
+    setDeleteLoading(true);
+    axios.delete(`${process.env.REACT_APP_API_BACKEND}/student/delete/${studentInfo.id}`, { headers })
+      .then((res) => {
+        setSuccess(res.data.message);
+        setTimeout(() => {
+          setSuccess("");
+          window.location.href = "/students";
+        }, 2000);
+      }
+      )
+      .catch((err) => {
+        setError(err.response.data.error);
+        setDeleteLoading(false);
+        setTimeout(() => {
+          setError("");
+        }, 2000);
+      }
+      )
+  }
+
+
 
   return (
     <div>
@@ -78,6 +113,11 @@ const StudentDetails = ({
               Save
             </Button>
           )}
+          <div>
+            <Button variant="contained" sx={{ marginTop: "5px", backgroundColor: "red", color: "white" }} onClick={handleDeleteConfirmation}>
+              Delete <Delete sx={{ fontSize: '1.2rem', marginLeft: '5px' }} />
+            </Button>
+          </div>
         </Grid>
         <Grid item xs={12} md={10}>
           <TableContainer
@@ -430,6 +470,24 @@ const StudentDetails = ({
           </TableContainer>
         </Grid>
       </Grid>
+                  <Dialog
+                    open={deleteConfirmation}
+                    onClose={() => setDeleteConfirmation(false)}
+                  
+                  >
+                    <Box sx={{ padding: '20px' , textAlign: 'center' }}>
+                      <Typography variant="h6" sx={{ marginBottom: '20px' , backgroundColor: "skyblue" , padding: '10px' , borderRadius: '10px' }}>
+                        Are you sure you want to delete info of {studentInfo.name}?
+                      </Typography>
+                      <Button variant="contained" sx={{ marginRight: '10px' }} onClick={() => setDeleteConfirmation(false)} disabled={deleteLoading}>
+                       {deleteLoading ? <CircularProgress size={24} /> : 'Cancel'}
+                      </Button>
+                      <Button variant="contained" sx={{ backgroundColor: 'red', color: 'white' }} onClick={handleDelete} disabled={deleteLoading}>
+                        {deleteLoading ? <CircularProgress size={24} /> : 'Delete'}
+                      </Button>
+                    </Box>
+                  </Dialog>
+
     </div>
   );
 };
