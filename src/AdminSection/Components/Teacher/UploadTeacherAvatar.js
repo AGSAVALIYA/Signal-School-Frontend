@@ -3,7 +3,7 @@ import { AddPhotoAlternate, Close as CloseIcon } from "@mui/icons-material";
 import { Button, CircularProgress, Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
 import axios from "axios";
 
-const UploadAvatar = ({ studentId, setSuccess, setError, onEditFieldChange }) => {
+const UploadTeacherAvatar = ({ teacherId, setSuccess, setError, handleImageChange }) => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -40,12 +40,13 @@ const UploadAvatar = ({ studentId, setSuccess, setError, onEditFieldChange }) =>
 
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_API_BACKEND}/student/addAvatar/${studentId}`,
+        `${process.env.REACT_APP_API_BACKEND}/teacher/addAvatar/${teacherId}`,
         formData,
         { headers }
-      );
-      
-      onEditFieldChange("imageLink", res.data.imageLink);
+      );  
+
+
+      handleImageChange(res.data.imageLink);
       setSuccess(res.data.message);
       setLoading(false);
       setTimeout(() => {
@@ -108,6 +109,7 @@ const UploadAvatar = ({ studentId, setSuccess, setError, onEditFieldChange }) =>
             onClick={handleUpload}
             disabled={loading}
           >
+            {/* Upload */}
             {loading ? <CircularProgress size={24} /> : "Upload"}
           </Button>
           <IconButton
@@ -127,4 +129,4 @@ const UploadAvatar = ({ studentId, setSuccess, setError, onEditFieldChange }) =>
   );
 };
 
-export default UploadAvatar;
+export default UploadTeacherAvatar;
