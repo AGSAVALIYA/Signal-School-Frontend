@@ -36,30 +36,6 @@ const App = () => {
   }
     , [userInfo, userType])
 
-
-    // const translate = () => {
-    //   const gtranslateSettings = {
-    //     default_language: 'en',
-    //     languages: ['en', 'hi', 'mr', 'gu'],
-    //     wrapper_selector: '.gtranslate_wrapper',
-    //   };
-  
-    //   // Create a script element
-    //   const scriptElement = document.createElement('script');
-    //   scriptElement.defer = true;
-    //   scriptElement.src = 'https://cdn.gtranslate.net/widgets/latest/ln.js';
-  
-    //   // Append the script element to the document body
-    //   document.body.appendChild(scriptElement);
-  
-    //   // Set translation settings after the script has loaded
-    //   scriptElement.onload = () => {
-    //     window.gtranslateSettings = gtranslateSettings;
-    //   };
-
-    // }
-
-
   
   const LoadingScreen = () => {
     return (
