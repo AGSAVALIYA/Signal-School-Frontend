@@ -68,7 +68,7 @@ const App = () => {
         <div className='loading-div'>
           <div>
         {/* <img src="https://i.postimg.cc/YSBS2Nzp/logo.png" alt="logo" className='loading-img' /> */}
-        <img src="https://signalshala.in/images/logo.jpg" alt="logo" className='loading-img' />
+        <img src="/sslogo.png" alt="logo" className='loading-img' />
         </div>
         <CircularProgress size={30} thickness={4} sx={{ color: "#fff" }} />
         </div>

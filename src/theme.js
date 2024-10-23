@@ -48,7 +48,7 @@ const theme = createTheme({
             styleOverrides: {
                 body: {
                     // backgroundImage: "url('https://i.postimg.cc/gcthRfZM/ssbg.png')",
-                    backgroundImage: "url('https://i.postimg.cc/05p8H74g/Untitled-design-4.png')",
+                    backgroundImage: "url('/background/ssbgmobile.png')",
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
@@ -58,7 +58,7 @@ const theme = createTheme({
                 '@media (min-width: 600px)': {
                     body: {
                         // backgroundImage: "url('https://i.postimg.cc/VkFTstLb/43-6.jpg')",
-                        backgroundImage: "url('https://i.postimg.cc/h41d2Nsd/Untitled-design-5.png')",
+                        backgroundImage: "url('/background/ssbgdesktop.png')",
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
