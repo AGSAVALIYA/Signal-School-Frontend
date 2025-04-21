@@ -3,8 +3,35 @@ import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, IconButt
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineOppositeContent, TimelineDot } from '@mui/lab';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // Icon for Present
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'; // Icon for Absent
+import EventBusyIcon from '@mui/icons-material/EventBusy'; // Icon for Leave
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'; // Icon for Unknown/Default
+
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+
+// Helper function to get chip color and icon based on attendance status
+const getAttendanceProps = (status) => {
+  const lowerStatus = status?.toLowerCase();
+  switch (lowerStatus) {
+    case 'present':
+      return { color: 'success', icon: <CheckCircleOutlineIcon fontSize="small" />, label: 'Present' };
+    case 'absent':
+      return { color: 'error', icon: <HighlightOffIcon fontSize="small" />, label: 'Absent' };
+    case 'leave':
+      return { color: 'warning', icon: <EventBusyIcon fontSize="small" />, label: 'Leave' };
+    default:
+      return { color: 'default', icon: <HelpOutlineIcon fontSize="small" />, label: status || 'Unknown' };
+  }
+};
+
+// Helper function to capitalize first letter
+const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
 
 function StudentTimeline() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -22,109 +49,159 @@ function StudentTimeline() {
 
   const token = localStorage.getItem('accessToken');
   const headers = {
-    'Authorization': `Bearer ${token}`
+    'Authorization': `Bearer ${token}` // Corrected template literal syntax
   };
 
   const fetchTimeline = () => {
     setLoading(true);
     axios.get(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/getAll/${params.id}`, { headers })
       .then((res) => {
-        setTimeline(res.data.studentTimelines || []);
+        // Sort timeline data by date in descending order (most recent first)
+        const sortedTimeline = (res.data.studentTimelines || []).sort((a, b) => new Date(b.date) - new Date(a.date));
+        setTimeline(sortedTimeline);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error fetching timeline:", err); // Log error details
+        setTimeline([]); // Set to empty array on error
         setLoading(false);
       });
   };
 
   useEffect(() => {
     fetchTimeline();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]); // Add params.id as dependency if it can change
 
-  const calculateConnectorHeight = (currentItem, nextItem) => {
-    // Assuming progress is a string, we can calculate height based on its length
-    const lineHeight = 20; // Adjust as needed
-    const maxLines = 3; // Maximum number of lines to show
-    const lines = Math.min(currentItem.progress.split('\n').length, maxLines); // Splitting progress into lines and taking minimum of maxLines
-    return lineHeight * lines;
-  };
 
   return (
-    <Box sx={{ backgroundColor: '#f0f2f5', borderRadius: '20px', padding: '0.5rem' }}>
-      <Typography variant="h4" gutterBottom sx={{ color: '#333', fontWeight: 'bold', marginBottom: '1rem' }}>
+    <Box sx={{ backgroundColor: '#f0f2f5', borderRadius: '20px', padding: '1rem' }}> {/* Increased padding slightly */}
+      <Typography variant="h4" gutterBottom sx={{ color: '#333', fontWeight: 'bold', marginBottom: '1.5rem' }}> {/* Increased margin */}
         Student Learning Path
       </Typography>
       {loading ? (
-        <Skeleton variant="rectangular" height={400} animation="wave" />
+        // Improved Skeleton layout
+        <Grid container spacing={2}>
+            {[1, 2, 3].map((key) => (
+                <Grid item xs={12} key={key} sx={{ display: 'flex' }}>
+                    <Skeleton variant="circular" width={40} height={40} sx={{ mr: 2 }}/>
+                    <Skeleton variant="rectangular" width="100%" height={100} animation="wave" />
+                </Grid>
+            ))}
+        </Grid>
       ) : (
         timeline.length === 0 ? (
-          <Typography variant="body1" sx={{ textAlign: 'center', marginTop: 2 }}>
-            No timeline data available for this student.
-          </Typography>
+          <Paper elevation={1} sx={{ padding: 3, textAlign: 'center', borderRadius: '15px' }}>
+            <Typography variant="h6" color="text.secondary">
+              No timeline data available for this student yet.
+            </Typography>
+          </Paper>
         ) : (
-          <Timeline>
-            {timeline.map((dayData, index) => (
-              <TimelineItem key={index}>
-                <TimelineOppositeContent>
-                  <Typography variant="body2" sx={{ color: '#888' }}>
-                    {new Date(dayData.date).toDateString()}
+          // Using position="right" might give more space for content if opposite content is just date
+          <Timeline position="right">
+            {timeline.map((dayData, index) => {
+              const attendanceProps = getAttendanceProps(dayData.attendanceStatus);
+              return (
+              <TimelineItem key={dayData.id || index}> {/* Use unique ID from data if available */}
+                <TimelineOppositeContent sx={{ flex: 0.2 }}> {/* Allocate less space for the date */}
+                  <Typography variant="body2" sx={{ color: '#555' }}>
+                    {/* Using locale date string for better readability */}
+                    {new Date(dayData.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                   </Typography>
                 </TimelineOppositeContent>
                 <TimelineSeparator>
-                  <TimelineDot color="primary" />
+                    {/* Use attendance color for the dot for extra visual cue */}
+                  <TimelineDot color={attendanceProps.color} variant="filled" />
                   {index < timeline.length - 1 && (
-                    <TimelineConnector sx={{ backgroundColor: '#ccc', height: calculateConnectorHeight(dayData) }} />
+                    <TimelineConnector sx={{ bgcolor: 'grey.400' }} /> /* Use theme grey */
                   )}
                 </TimelineSeparator>
-                <TimelineContent>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    backgroundColor: '#ffffffc1',
-                    padding: '10px',
+                <TimelineContent sx={{ paddingRight: 0 }}> {/* Remove default paddingRight */}
+                  <Paper elevation={1} sx={{ // Wrap content in Paper for better visual grouping
+                    padding: '15px',
                     borderRadius: '10px',
-                    boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-                    width: '50vw'
+                    marginBottom: '10px', // Space between timeline items
+                    // Removed fixed width to allow responsiveness
                   }}>
-                    <Grid container alignItems="center" spacing={2} >
-                      <Grid item xs={12} sm={9}>
-                        <Typography variant="body1" sx={{ fontSize: '1rem', margin: 0, color: '#333' }}>
-                          {dayData.progress}
+                    <Grid container spacing={1.5} alignItems="flex-start">
+                      {/* Attendance Status - Placed prominently */}
+                      <Grid item xs={12}>
+                        <Chip
+                          icon={attendanceProps.icon}
+                          label={attendanceProps.label}
+                          color={attendanceProps.color}
+                          size="small"
+                          sx={{ fontWeight: 'medium' }} // Use medium weight
+                        />
+                      </Grid>
+
+                       {/* Progress Notes */}
+                      <Grid item xs={dayData.image ? 9 : 12}> {/* Adjust width based on image presence */}
+                        <Typography variant="body1" sx={{ fontSize: '0.95rem', color: '#333', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                            {/* Handle empty progress gracefully */}
+                          {dayData.progress ? dayData.progress : <Typography variant="body2" component="em" color="text.secondary">No progress notes for this day.</Typography>}
                         </Typography>
                       </Grid>
-                      <Grid item xs={12} sm={3}>
-                        {dayData.image && (
-                          <Button color="primary" onClick={() => openImageView(dayData.image)} size="small" sx={{ fontSize: "10px" ,backgroundColor: '#3d8300ff', color: '#fff', '&:hover': { backgroundColor: '#1565c0' } }}>
-                            <VisibilityIcon sx={{ marginRight: '5px', fontSize: '1rem' }} />
+
+                      {/* Image Button */}
+                      {dayData.image && (
+                        <Grid item xs={3} container justifyContent="flex-end" alignItems="center">
+                          <Button
+                            variant="outlined" // Changed variant for less emphasis
+                            color="primary"
+                            onClick={() => openImageView(dayData.image)}
+                            size="small"
+                            startIcon={<VisibilityIcon />} // Use startIcon
+                            sx={{ fontSize: "0.75rem", textTransform: 'none' }} // Prevent uppercase text
+                            >
                             View
                           </Button>
-                        )}
-                      </Grid>
-                      <Grid item xs={12} sm={12}>
-                        {
-                          dayData.Subjects && dayData.Subjects.map((subject, index) => (
-                            <Chip key={index} label={subject.name} sx={{ margin: '5px 5px 5px 0' }} />
-                          ))
-                        }
                         </Grid>
+                      )}
+
+                      {/* Subjects */}
+                      {dayData.Subjects && dayData.Subjects.length > 0 && (
+                        <Grid item xs={12} sx={{ paddingTop: '10px !important' }}> {/* Ensure spacing */}
+                          <Typography variant="caption" display="block" sx={{ mb: 0.5, color: 'text.secondary', fontWeight:'bold' }}>Subjects Covered:</Typography>
+                          {dayData.Subjects.map((subject) => ( // Removed index from map params as key uses id/name
+                            <Chip
+                              key={subject.id || subject.name} // Prefer id if available
+                              label={capitalizeFirstLetter(subject.name)} // Capitalize subject name
+                              size="small"
+                              variant="outlined" // Style subjects differently
+                              sx={{ margin: '2px' }}
+                            />
+                          ))}
+                        </Grid>
+                      )}
                     </Grid>
-                  </div>
+                  </Paper>
                 </TimelineContent>
               </TimelineItem>
-            ))}
+             );
+            })}
           </Timeline>
         )
       )}
-      <Dialog open={selectedImage !== null} onClose={closeImageView} maxWidth="md" sx={{ '& .MuiDialog-paper': { borderRadius: '20px' } }}>
-        <DialogTitle>
+      {/* Image Viewer Dialog */}
+      <Dialog open={selectedImage !== null} onClose={closeImageView} maxWidth="md" sx={{ '& .MuiDialog-paper': { borderRadius: '15px' } }}> {/* Slightly rounded corners */}
+        <DialogTitle sx={{ m: 0, p: 2, fontWeight: 'bold' }}>
           Image Preview
-          <IconButton edge="end" color="inherit" onClick={closeImageView} aria-label="close" sx={{ position: 'absolute', right: 8, top: 8 }}>
+          <IconButton
+            aria-label="close"
+            onClick={closeImageView}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <img src={selectedImage} alt="View" style={{ width: '100%', borderRadius: '10px' }} />
+        <DialogContent dividers> {/* Add dividers for better separation */}
+          <img src={selectedImage} alt="Student work preview" style={{ width: '100%', display: 'block', borderRadius: '8px' }} /> {/* Ensure image is block and rounded */}
         </DialogContent>
       </Dialog>
     </Box>
