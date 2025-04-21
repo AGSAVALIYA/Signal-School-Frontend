@@ -1,17 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, IconButton, Box, Skeleton, Grid, Chip } from '@mui/material';
+import { Paper, Typography, Button, Dialog, DialogTitle, DialogContent, IconButton, Box, Skeleton, Grid, Chip, Tooltip } from '@mui/material'; // Added Tooltip
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'; // Icon for Delete
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'; // Icon for Present
+import HighlightOffIcon from '@mui/icons-material/HighlightOff'; // Icon for Absent
+import EventBusyIcon from '@mui/icons-material/EventBusy'; // Icon for Leave
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'; // Icon for Unknown/Default
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineOppositeContent, TimelineDot } from '@mui/lab';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify'; // Assuming you use react-toastify for notifications
 
-// Existing imports...
+// Helper function to get chip color and icon based on attendance status
+const getAttendanceProps = (status) => {
+  const lowerStatus = status?.toLowerCase();
+  switch (lowerStatus) {
+    case 'present':
+      return { color: 'success', icon: <CheckCircleOutlineIcon fontSize="small" />, label: 'Present' };
+    case 'absent':
+      return { color: 'error', icon: <HighlightOffIcon fontSize="small" />, label: 'Absent' };
+    case 'leave':
+      return { color: 'warning', icon: <EventBusyIcon fontSize="small" />, label: 'Leave' };
+    default:
+      // Return null or a default object if you don't want to display anything for unknown/missing status
+      // return null;
+      return { color: 'default', icon: <HelpOutlineIcon fontSize="small" />, label: status || 'Unknown' };
+  }
+};
+
+// Helper function to capitalize first letter
+const capitalizeFirstLetter = (string) => {
+    if (!string) return '';
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
 
 function StudentTimeline() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timeline, setTimeline] = useState([]);
+  const [deletingId, setDeletingId] = useState(null); // Track which item is being deleted
   const params = useParams();
 
   const openImageView = (imageURL) => {
@@ -31,113 +59,211 @@ function StudentTimeline() {
     setLoading(true);
     axios.get(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/getAll/${params.id}`, { headers })
       .then((res) => {
-        setTimeline(res.data.studentTimelines || []);
+        // Sort timeline data by date in descending order (most recent first)
+        const sortedTimeline = (res.data.studentTimelines || []).sort((a, b) => new Date(b.date) - new Date(a.date));
+        setTimeline(sortedTimeline);
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error fetching timeline:", err);
+        toast.error("Failed to load timeline data.");
+        setTimeline([]);
         setLoading(false);
       });
   };
 
   useEffect(() => {
-    fetchTimeline();
-  }, []);
+    if(params.id) { // Only fetch if ID is present
+        fetchTimeline();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]); // Re-fetch if the student ID changes
 
-  const deleteTimelineItem = (index) => {
-    axios.delete(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/delete/${timeline[index].id}`, { headers })
+
+  const deleteTimelineItem = (itemId) => {
+    if (!itemId) {
+        console.error("Delete failed: Item ID is missing.");
+        toast.error("Cannot delete item: ID missing.");
+        return;
+    }
+    setDeletingId(itemId); // Indicate deletion is in progress for this item
+    axios.delete(`${process.env.REACT_APP_API_BACKEND}/studentTimeline/delete/${itemId}`, { headers })
       .then(() => {
-    const updatedTimeline = [...timeline];
-    updatedTimeline.splice(index, 1); // Remove the item at 'index'
-    setTimeline(updatedTimeline);
-  }
-  )
+        // Update state *after* successful deletion
+        setTimeline(prevTimeline => prevTimeline.filter(item => item.id !== itemId));
+        toast.success("Timeline entry deleted successfully.");
+        setDeletingId(null); // Reset deleting indicator
+      })
       .catch((err) => {
-        console.log(err);
+        console.error("Error deleting timeline item:", err);
+        toast.error(`Failed to delete timeline entry: ${err.response?.data?.message || err.message}`);
+        setDeletingId(null); // Reset deleting indicator even on error
       });
   };
-  const calculateConnectorHeight = (currentItem, nextItem) => {
-    // Assuming progress is a string, we can calculate height based on its length
-    const lineHeight = 20; // Adjust as needed
-    const maxLines = 3; // Maximum number of lines to show
-    const lines = Math.min(currentItem.progress.split('\n').length, maxLines); // Splitting progress into lines and taking minimum of maxLines
-    return lineHeight * lines;
-  };
+
+  // Removed calculateConnectorHeight as it's not used with the current layout
+
   return (
-    <Box sx={{ backgroundColor: '#ffffff', borderRadius: '20px', padding: '0.5rem', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-      <Typography variant="h4" gutterBottom sx={{ color: '#333', fontWeight: 'bold', marginBottom: '1rem' }}>
+    // Adjusted main box styling slightly
+    <Box sx={{ backgroundColor: '#f9f9f9', borderRadius: '15px', padding: '1rem', boxShadow: '0 2px 5px rgba(0, 0, 0, 0.05)' }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ color: '#2c3e50', fontWeight: '600', marginBottom: '1.5rem' }}>
         Student Learning Path
       </Typography>
       {loading ? (
-        <Skeleton variant="rectangular" height={400} animation="wave" />
+        // Use the improved Skeleton layout
+        <Grid container spacing={2}>
+            {[1, 2, 3].map((key) => (
+                <Grid item xs={12} key={key} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Skeleton variant="text" width={80} sx={{ mr: 2 }} /> {/* Date Skeleton */}
+                    <Skeleton variant="circular" width={24} height={24} sx={{ mr: 2 }}/> {/* Dot Skeleton */}
+                    <Skeleton variant="rectangular" width="calc(100% - 120px)" height={100} animation="wave" sx={{ borderRadius: '10px' }} /> {/* Content Skeleton */}
+                </Grid>
+            ))}
+        </Grid>
       ) : (
         timeline.length === 0 ? (
-          <Typography variant="body1" sx={{ textAlign: 'center', marginTop: 2 }}>
-            No timeline data available for this student.
-          </Typography>
+          <Paper elevation={0} sx={{ padding: 3, textAlign: 'center', borderRadius: '15px', background: 'transparent' }}>
+            <Typography variant="body1" color="text.secondary">
+              No timeline data available for this student yet.
+            </Typography>
+          </Paper>
         ) : (
-          <Timeline>
-            {timeline.map((dayData, index) => (
-              <TimelineItem key={index}>
-                <TimelineOppositeContent>
-                  <Typography variant="body2" sx={{ color: '#888' }}>
-                    {new Date(dayData.date).toDateString()}
+          // Using position="right" for better content alignment
+          <Timeline position="right" sx={{ paddingLeft: 0, paddingRight: 0 }}>
+            {timeline.map((dayData) => { // Removed index from map params, use dayData.id
+              const attendanceProps = getAttendanceProps(dayData.attendanceStatus);
+              const isDeleting = deletingId === dayData.id; // Check if this item is being deleted
+
+              return (
+              <TimelineItem key={dayData.id}> {/* Use unique ID from data */}
+                <TimelineOppositeContent sx={{ flex: 0.15, pt: '12px' }}> {/* Adjusted flex and padding */}
+                  <Typography variant="caption" sx={{ color: 'text.secondary' }}> {/* Using caption for date */}
+                    {new Date(dayData.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                    <br />
+                    {new Date(dayData.date).toLocaleDateString(undefined, { year: 'numeric' })}
                   </Typography>
                 </TimelineOppositeContent>
                 <TimelineSeparator>
-                  <TimelineDot color="primary" />
-                  {index < timeline.length - 1 && (
-                    <TimelineConnector sx={{ backgroundColor: '#ccc', height: calculateConnectorHeight(dayData) }} />
-                  )}
+                  <TimelineDot
+                    color={attendanceProps?.color || 'primary'} // Use attendance color or default
+                    variant="filled"
+                    sx={{ boxShadow: 'none' }} // Remove default shadow if needed
+                  />
+                   {/* Only show connector if it's NOT the last item */}
+                   {timeline.indexOf(dayData) < timeline.length - 1 && (
+                     <TimelineConnector sx={{ bgcolor: 'grey.300' }} />
+                    )}
                 </TimelineSeparator>
-                <TimelineContent>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', backgroundColor: '#ffffffc1', padding: '10px', borderRadius: '10px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)', width: '50vw' }}>
-                    <Grid container alignItems="center" spacing={2} >
-                      <Grid item xs={12} sm={9}>
-                        <Typography variant="body1" sx={{ fontSize: '1rem', margin: 0, color: '#333' }}>
-                          {dayData.progress}
+                <TimelineContent sx={{ paddingRight: 0, paddingLeft: 2, pt: 0, pb: 3 }}>
+                  <Paper elevation={1} sx={{
+                    padding: '15px',
+                    borderRadius: '10px',
+                    position: 'relative', // Needed for absolute positioning of delete button if desired
+                    opacity: isDeleting ? 0.6 : 1, // Dim item during deletion
+                    transition: 'opacity 0.3s ease',
+                    background: '#fff', // Ensure white background
+                  }}>
+                    <Grid container spacing={1.5} alignItems="flex-start">
+
+                      {/* Attendance Status */}
+                      {attendanceProps && ( // Only render chip if attendanceProps is not null
+                          <Grid item xs={12} sm="auto"> {/* Auto width for chip */}
+                            <Chip
+                              icon={attendanceProps.icon}
+                              label={attendanceProps.label}
+                              color={attendanceProps.color}
+                              size="small"
+                              sx={{ fontWeight: 'medium', mr: 1, mb: 1 }}
+                            />
+                          </Grid>
+                      )}
+
+                      {/* Progress Notes take remaining space initially */}
+                      <Grid item xs>
+                        <Typography variant="body2" sx={{ color: '#333', whiteSpace: 'pre-wrap', wordBreak: 'break-word', mb: 1 }}>
+                          {dayData.progress ? dayData.progress : <Typography variant="body2" component="em" color="text.secondary">No progress notes.</Typography>}
                         </Typography>
                       </Grid>
-                      <Grid item xs={12} sm={3}>
-                        {dayData.image && (
-                          <Button color="primary" onClick={() => openImageView(dayData.image)} size="small" sx={{ fontSize: "10px", backgroundColor: '#3d8300ff', color: '#fff', '&:hover': { backgroundColor: '#1565c0' } }}>
-                            <VisibilityIcon sx={{ marginRight: '5px', fontSize: '1rem' }} />
-                            View
-                          </Button>
-                        )}
+
+                      {/* Action Buttons (View Image, Delete) */}
+                      <Grid item xs={12} container spacing={1} justifyContent="flex-end" alignItems="center">
+                         {/* Image Button */}
+                         {dayData.image && (
+                            <Grid item>
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    onClick={() => openImageView(dayData.image)}
+                                    size="small"
+                                    startIcon={<VisibilityIcon />}
+                                    sx={{ fontSize: "0.75rem", textTransform: 'none', lineHeight: 1.5 }}
+                                >
+                                    View Work
+                                </Button>
+                            </Grid>
+                         )}
+                         {/* Delete Button */}
+                         <Grid item>
+                            <Tooltip title="Delete this entry">
+                                <span> {/* Tooltip needs a span wrapper when button is disabled */}
+                                    <IconButton
+                                        size="small"
+                                        color="error"
+                                        onClick={() => deleteTimelineItem(dayData.id)}
+                                        disabled={isDeleting} // Disable button during deletion
+                                        sx={{
+                                            '&:hover': { backgroundColor: 'rgba(211, 47, 47, 0.08)' } // Subtle hover effect
+                                        }}
+                                    >
+                                        <DeleteForeverIcon fontSize="small" />
+                                    </IconButton>
+                                </span>
+                            </Tooltip>
+                         </Grid>
                       </Grid>
-                      <Grid item xs={12} sm={12}>
-                        {dayData.Subjects && dayData.Subjects.map((subject, index) => (
-                          <Chip key={index} label={subject.name} sx={{ margin: '5px 5px 5px 0' }} />
-                        ))}
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          onClick={() => deleteTimelineItem(index)}
-                          sx={{ fontSize: '10px', backgroundColor: '#ff0000', color: '#fff', '&:hover': { backgroundColor: '#c70039' } }}
-                        >
-                          Delete
-                        </Button>
-                      </Grid>
+
+                      {/* Subjects */}
+                      {dayData.Subjects && dayData.Subjects.length > 0 && (
+                        <Grid item xs={12} sx={{ mt: 1, pt: 1, borderTop: '1px solid #eee' }}> {/* Separator line */}
+                          <Typography variant="caption" display="block" sx={{ mb: 0.5, color: 'text.secondary', fontWeight:'500' }}>
+                              Subjects:
+                          </Typography>
+                          <Box>
+                            {dayData.Subjects.map((subject) => (
+                                <Chip
+                                key={subject.id || subject.name}
+                                label={capitalizeFirstLetter(subject.name)}
+                                size="small"
+                                variant="outlined"
+                                sx={{ margin: '2px 3px 2px 0' }} // Consistent small margin
+                                />
+                            ))}
+                          </Box>
+                        </Grid>
+                      )}
                     </Grid>
-                  </div>
+                  </Paper>
                 </TimelineContent>
               </TimelineItem>
-            ))}
+             );
+            })}
           </Timeline>
         )
       )}
-      <Dialog open={selectedImage !== null} onClose={closeImageView} maxWidth="md" sx={{ '& .MuiDialog-paper': { borderRadius: '20px' } }}>
-        <DialogTitle>
+      {/* Image Viewer Dialog (using improved styling) */}
+      <Dialog open={selectedImage !== null} onClose={closeImageView} maxWidth="md" sx={{ '& .MuiDialog-paper': { borderRadius: '15px' } }}>
+        <DialogTitle sx={{ m: 0, p: 2, fontWeight: 'bold' }}>
           Image Preview
-          <IconButton edge="end" color="inherit" onClick={closeImageView} aria-label="close" sx={{ position: 'absolute', right: 8, top: 8 }}>
+          <IconButton
+            aria-label="close"
+            onClick={closeImageView}
+            sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
+          >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <img src={selectedImage} alt="View" style={{ width: '100%', borderRadius: '10px' }} />
+        <DialogContent dividers>
+          <img src={selectedImage} alt="Student work preview" style={{ width: '100%', display: 'block', borderRadius: '8px' }} />
         </DialogContent>
       </Dialog>
     </Box>
