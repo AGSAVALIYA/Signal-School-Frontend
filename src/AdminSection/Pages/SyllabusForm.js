@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormControl, InputLabel, Select, MenuItem, Paper, Button, Typography, TextField, InputAdornment, IconButton, CircularProgress, Tabs, Tab, TableContainer } from '@mui/material'; // Add CircularProgress for loading state
+import { FormControl, InputLabel, Select, MenuItem, Paper, Button, Typography, TextField, InputAdornment, IconButton, CircularProgress, Tabs, Tab, TableContainer } from '@mui/material';
 import { Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
@@ -11,21 +11,44 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import MarkTopicCompleted from '../Components/MarkTopicCompleted';
 
+/**
+ * SyllabusForm Component (Admin Section)
+ * 
+ * This is a comprehensive component for managing syllabus content in the admin interface.
+ * It provides functionality for creating, viewing, and managing the academic syllabus
+ * including classes, subjects, chapters, and topics.
+ * 
+ * Key Features:
+ * - Class and subject selection dropdowns
+ * - Creating new chapters with multiple topics
+ * - Viewing existing syllabus in tabular format
+ * - Marking topics as completed by teachers
+ * - Unmarking completed topics
+ * - Teacher assignment and management
+ * - Real-time updates with success/error messaging
+ * 
+ * The component uses a tabbed interface to separate:
+ * - Tab 0: Syllabus creation and viewing
+ * - Tab 1: Teacher management and topic completion tracking
+ */
 const SyllabusForm = () => {
-    const [classes, setClasses] = useState([]);
-    const [selectedClass, setSelectedClass] = useState('');
-    const [subjects, setSubjects] = useState([]);
-    const [syllabus, setSyllabus] = useState([]);
-    const [selectedSubject, setSelectedSubject] = useState('');
-    const [newChapter, setNewChapter] = useState('');
-    const [newTopics, setNewTopics] = useState(['']);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false); // State for loading indicator
-    const [tabValue, setTabValue] = useState(0);
-    const [teachers, setTeachers] = useState([]);
+    // Form state management
+    const [classes, setClasses] = useState([]); // Available classes list
+    const [selectedClass, setSelectedClass] = useState(''); // Currently selected class
+    const [subjects, setSubjects] = useState([]); // Subjects for selected class
+    const [syllabus, setSyllabus] = useState([]); // Current syllabus data
+    const [selectedSubject, setSelectedSubject] = useState(''); // Currently selected subject
+    const [newChapter, setNewChapter] = useState(''); // New chapter name input
+    const [newTopics, setNewTopics] = useState(['']); // Array of new topic inputs
+    
+    // UI state management
+    const [successMessage, setSuccessMessage] = useState(''); // Success notification
+    const [errorMessage, setErrorMessage] = useState(''); // Error notification
+    const [loading, setLoading] = useState(false); // Loading state for async operations
+    const [tabValue, setTabValue] = useState(0); // Current active tab
+    const [teachers, setTeachers] = useState([]); // Available teachers list
 
-
+    // Authentication headers for API requests
     const accessToken = localStorage.getItem('accessToken');
     const headers = {
         'Authorization': `Bearer ${accessToken}`

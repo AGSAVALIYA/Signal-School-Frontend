@@ -2,8 +2,38 @@ import React from 'react';
 import { Button } from '@mui/material';
 import jsPDF from 'jspdf';
 
+/**
+ * ExportAttendanceButton Component
+ * 
+ * A specialized button component that exports attendance data to PDF format.
+ * This component provides administrators with the ability to generate
+ * professional PDF reports of student attendance records.
+ * 
+ * Features:
+ * - Generates PDF documents using jsPDF library
+ * - Professional formatting with margins and page numbering
+ * - Multi-page support for large attendance datasets
+ * - Proper page breaks and footer management
+ * - Responsive layout that adapts to content size
+ * - Download functionality for generated PDFs
+ * 
+ * The component creates a well-formatted PDF with:
+ * - Header information
+ * - Tabular attendance data
+ * - Page numbers and pagination
+ * - Professional styling and spacing
+ * 
+ * Props:
+ * @param {Array} attendanceData - Array of attendance records to export
+ */
 const ExportAttendanceButton = ({ attendanceData }) => {
 
+    /**
+     * Handles the PDF export functionality
+     * 
+     * Creates a PDF document with attendance data, properly formatted
+     * with pagination, headers, and professional styling.
+     */
     const handleExportPDF = () => {
         const doc = new jsPDF('p', 'pt'); // Create PDF document in portrait mode
         const margin = 40; // Margin for the content
@@ -12,7 +42,12 @@ const ExportAttendanceButton = ({ attendanceData }) => {
         const pageHeight = doc.internal.pageSize.height; // Height of the PDF page
         let currentPage = 1; // Current page number
 
-        // Function to add page footer with page number
+        /**
+         * Adds page footer with page numbering to all pages
+         * 
+         * This function iterates through all pages in the document
+         * and adds consistent footer information including page numbers.
+         */
         const addPageFooter = () => {
             const totalPages = doc.internal.getNumberOfPages(); // Total pages in the document
 
@@ -20,7 +55,7 @@ const ExportAttendanceButton = ({ attendanceData }) => {
             for (let i = 1; i <= totalPages; i++) {
                 doc.setPage(i); // Set current page
 
-                // Footer content
+                // Footer content with page numbering
                 const footerText = `Page ${i} of ${totalPages}`;
                 const footerX = margin; // X position (left-aligned)
                 const footerY = pageHeight - 20; // Y position (bottom margin)

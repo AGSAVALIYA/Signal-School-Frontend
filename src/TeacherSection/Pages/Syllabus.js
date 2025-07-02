@@ -5,17 +5,41 @@ import axios from 'axios';
 import { CheckCircleOutline, RemoveDoneRounded } from '@mui/icons-material';
 import dayjs from 'dayjs';
 
+/**
+ * Syllabus Component (Teacher Section)
+ * 
+ * This component provides teachers with an interface to view and manage their assigned syllabus.
+ * Teachers can see all classes, subjects, chapters, and topics, and can mark topics as completed
+ * or remove completion status for topics they have previously marked.
+ * 
+ * Key Features:
+ * - Displays hierarchical syllabus structure (Classes > Subjects > Chapters > Topics)
+ * - Allows teachers to mark topics as completed with timestamp
+ * - Allows teachers to unmark topics they previously completed
+ * - Shows completion status with visual indicators
+ * - Handles success and error states with alert messages
+ * - Responsive accordion-based layout for easy navigation
+ */
 const Syllabus = () => {
-    const [syllabus, setSyllabus] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [success, setSuccess] = useState('');
-    const [error, setError] = useState('');
+    // Component state management
+    const [syllabus, setSyllabus] = useState([]); // Hierarchical syllabus data structure
+    const [loading, setLoading] = useState(true); // Loading state for initial data fetch
+    const [success, setSuccess] = useState(''); // Success message for user feedback
+    const [error, setError] = useState(''); // Error message for user feedback
 
+    // Authentication and user information
     const accessToken = localStorage.getItem('accessToken');
     const headers = {
         'Authorization': `Bearer ${accessToken}`
     };
     const teacherId = JSON.parse(localStorage.getItem('userInfo')).id;
+    
+    /**
+     * Fetches the complete syllabus structure from the API
+     * 
+     * Retrieves all classes with their subjects, chapters, and topics.
+     * Updates the loading state and handles any errors that occur during the fetch.
+     */
     const fetchSyllabus = async () => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_BACKEND}/syllabus/getFull`, { headers });
@@ -27,27 +51,65 @@ const Syllabus = () => {
         }
     };
 
+    // Effect hook to load syllabus data when component mounts
     useEffect(() => {
         fetchSyllabus();
     }, []);
 
+    /**
+     * Renders the list of topics for a given chapter
+     * 
+     * For each topic, displays:
+     * - Topic content/name
+     * - Completion status (checkmark if completed, "Mark Done" button if not)
+     * - Option to remove completion if the current teacher marked it as done
+     * 
+     * @param {Array} topics - Array of topic objects with completion information
+     * @returns {JSX.Element} Rendered list of topics with interaction controls
+     */
     const renderTopicsList = (topics) => {
         return (
             <div>
                 {topics.map((topic) => (
-                    <div key={topic.id} style={{ backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)', padding: '8px', marginBottom: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div key={topic.id} style={{ 
+                        backgroundColor: '#f9f9f9', 
+                        borderRadius: '8px', 
+                        boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)', 
+                        padding: '8px', 
+                        marginBottom: '4px', 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center' 
+                    }}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
+                            {/* Topic content */}
                             <div>{topic.content} </div>
                             <div style={{ marginLeft: '2px' }}>
                                 {topic.completedBy ? (
+                                    // Show checkmark if topic is completed
                                     <CheckCircleOutline color='success' />
                                 ) : (
+                                    // Show "Mark Done" button if topic is not completed
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         sx={{ padding: '0 4px', fontSize: '12px', textTransform: 'none', marginLeft: '8px' }}
                                         onClick={() => handleMarkAsCompleted(topic.id)}
                                     >Mark Done</Button>
+                                )}
+                            </div>
+                        </div>
+                        <div>
+                            {/* Show remove button only if current teacher marked this topic as completed */}
+                            {topic.completedBy && topic.Teacher && topic.Teacher.id === teacherId &&
+                                <RemoveDoneRounded onClick={() => handleUnMarkAsCompleted(topic.id)} />
+                            }
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
                                 )}
                             </div>
                         </div>
