@@ -17,6 +17,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { AccountTreeOutlined, Dashboard, DashboardOutlined, EmojiPeopleOutlined, FactCheckOutlined, ImportContacts, ImportContactsOutlined, MenuBookOutlined, PeopleOutline, SchoolOutlined, SettingsOutlined } from '@mui/icons-material';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+
+// Page component imports
 import Home from './Pages/Home';
 import StudentsList from './Pages/StudentsList';
 import SchoolList from './Pages/SchoolList';
@@ -32,8 +34,38 @@ import Attendance from './Pages/Attendance';
 import SyllabusForm from './Pages/SyllabusForm';
 import TeacherDetailPage from './Components/Teacher/TeacherDetails';
 
+/**
+ * AdminMain Component
+ * 
+ * This is the main layout component for the administrative interface of Signal School.
+ * It provides a responsive sidebar navigation with drawer functionality and manages
+ * routing for all admin-related pages.
+ * 
+ * Features:
+ * - Collapsible sidebar navigation
+ * - Route protection and redirection based on user setup status
+ * - Responsive design with Material-UI drawer components
+ * - Account menu integration
+ * - Pre-loading functionality
+ * 
+ * The component handles the overall admin interface layout including:
+ * - Organization creation flow
+ * - School management
+ * - Student and teacher management
+ * - Settings and configuration
+ * - Attendance tracking
+ * - Syllabus management
+ */
+
+// Constants for drawer width
 const drawerWidth = 200;
 
+/**
+ * Style mixins for drawer animations
+ * These functions provide smooth transitions when opening/closing the sidebar
+ */
+
+// Styling for opened drawer state
 const openedMixin = (theme) => ({
   width: drawerWidth,
   transition: theme.transitions.create('width', {
@@ -43,6 +75,7 @@ const openedMixin = (theme) => ({
   overflowX: 'hidden',
 });
 
+// Styling for closed drawer state
 const closedMixin = (theme) => ({
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
