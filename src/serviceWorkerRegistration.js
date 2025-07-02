@@ -1,3 +1,22 @@
+/**
+ * Service Worker Registration for Signal School Frontend
+ * 
+ * This file handles the registration and management of service workers for the
+ * Signal School application. Service workers enable offline functionality,
+ * faster loading through caching, and background updates.
+ * 
+ * Key Features:
+ * - Progressive Web App (PWA) capabilities
+ * - Offline support through intelligent caching
+ * - Background updates for deployed content
+ * - Localhost detection for development vs production behavior
+ * 
+ * The service worker is currently unregistered in index.js but can be enabled
+ * by calling register() instead of unregister() to provide offline capabilities.
+ * 
+ * Learn more about PWA features: https://cra.link/PWA
+ */
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -10,6 +29,7 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://cra.link/PWA
 
+// Detect if the application is running on localhost for development
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
     // [::1] is the IPv6 localhost address.
@@ -18,6 +38,11 @@ const isLocalhost = Boolean(
     window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
 );
 
+/**
+ * Registers the service worker for production builds
+ * 
+ * @param {Object} config - Configuration object for service worker callbacks
+ */
 export function register(config) {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
