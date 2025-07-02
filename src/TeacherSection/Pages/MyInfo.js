@@ -2,39 +2,74 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Chip, Typography, Box, Paper, Zoom, Button } from "@mui/material";
 
-
+/**
+ * MyInfo Component (Teacher Section)
+ * 
+ * This component displays the teacher's personal information and profile details.
+ * It serves as the teacher's personal dashboard where they can view their
+ * information and manage their account settings.
+ * 
+ * Key Features:
+ * - Displays teacher profile information (name, avatar, details)
+ * - Shows current language settings with Google Translate integration
+ * - Provides logout functionality with complete session cleanup
+ * - Route protection - redirects unauthenticated users to login
+ * - Responsive design with Material-UI components
+ * - Cookie and localStorage cleanup on logout
+ * 
+ * The component includes language detection and management for the
+ * multi-language support provided by Google Translate.
+ */
 const MyInfo = () => {
     const navigate = useNavigate();
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const [currLanguage, setCurrLanguage] = useState(null);
 
+    /**
+     * Effect hook for component initialization and authentication check
+     * 
+     * Performs the following on component mount:
+     * 1. Checks if user is authenticated, redirects to login if not
+     * 2. Initializes language settings using Google Translate API
+     * 3. Sets up the component state based on user information
+     */
     useEffect(() => {
+        // Redirect to login if user is not authenticated
         if (!userInfo) {
             navigate('/login');
         }
-        // is current language is not set, set it to english
+        
+        // Initialize current language if not already set
         if (!currLanguage) {
             setCurrLanguage(get_current_lang());
         }
-        
-
     }, [userInfo]);
 
+    // Early return if user info is not available
     if (!userInfo) {
         return null;
     }
 
+    /**
+     * Handles user logout with complete session cleanup
+     * 
+     * Performs comprehensive cleanup:
+     * 1. Clears all localStorage data
+     * 2. Removes all cookies to ensure complete logout
+     * 3. Reloads the page to reset application state
+     */
     const handleLogout = () => {
-        //remove every item from local storage
+        // Clear all localStorage data
         localStorage.clear();
-        //clear every cookie
+        
+        // Clear all cookies for complete session cleanup
         document.cookie.split(";").forEach((c) => {
             document.cookie = c
                 .replace(/^ +/, "")
                 .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
         });
 
-        
+        // Reload page to reset application state
         window.location.reload();
     }
 
