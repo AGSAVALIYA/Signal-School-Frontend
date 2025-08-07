@@ -158,6 +158,5 @@ const MarkTopicCompleted = ({ topic, teachers, setSuccess, setError, subjectId, 
         </div>
     );
 };
-};
 
 export default MarkTopicCompleted;

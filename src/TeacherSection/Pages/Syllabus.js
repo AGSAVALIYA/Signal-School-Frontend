@@ -110,19 +110,6 @@ const Syllabus = () => {
             </div>
         );
     };
-                                )}
-                            </div>
-                        </div>
-                        <div>
-                            {topic.completedBy && topic.Teacher && topic.Teacher.id === teacherId &&
-                                <RemoveDoneRounded onClick={() => handleUnMarkAsCompleted(topic.id)} />
-                            }
-                        </div>
-                    </div>
-                ))}
-            </div>
-        );
-    };
 
     const handleMarkAsCompleted = async (topicId) => {
         try {
