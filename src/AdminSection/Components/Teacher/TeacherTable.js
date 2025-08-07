@@ -33,6 +33,7 @@ const TeacherTable = (props) => {
         if (response.ok) {
           // You might want to refresh the teachers list here
           // or call a callback function passed from parent component
+          window.location.reload();
           console.log('Teacher made inactive successfully');
         } else {
           console.error('Failed to make teacher inactive');
