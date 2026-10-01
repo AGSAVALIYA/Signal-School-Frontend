@@ -1,5 +1,7 @@
 # System Review & Improvement Plan (round 1)
 
+> **Status:** implemented in v2 (this branch). All issues listed below are resolved by the rewrite; see `README.md` for the new structure.
+
 The full review covers the **frontend and the backend together**. It lives in the backend repository so there is a single source of truth:
 
 **`Signal-School-Backend/docs/system-review/`** (branch `ccr-61b11ce9-g6fan3`)
