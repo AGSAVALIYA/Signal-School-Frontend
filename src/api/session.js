@@ -12,6 +12,17 @@ const read = () => {
 
 let state = read();
 
+const emit = () => listeners.forEach((l) => l(state));
+
+// Another tab logged in, refreshed tokens or logged out: follow it, so tabs never fight over refresh tokens.
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEY) return;
+    state = read();
+    emit();
+  });
+}
+
 export const session = {
   get: () => state,
   set(patch) {
@@ -21,7 +32,7 @@ export const session = {
     } catch {
       /* storage unavailable: keep in memory */
     }
-    listeners.forEach((l) => l(state));
+    emit();
   },
   clear(reason) {
     const { language } = state;
@@ -31,7 +42,7 @@ export const session = {
     } catch {
       /* ignore */
     }
-    listeners.forEach((l) => l(state));
+    emit();
   },
   subscribe(fn) {
     listeners.add(fn);

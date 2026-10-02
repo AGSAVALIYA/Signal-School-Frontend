@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
 import { useYear } from '../../app/YearContext';
+import { useAuth } from '../../app/AuthContext';
 import { EmptyState, PageHeader, Query } from '../../shared/components/ui';
 import SectionSelect, { useSections } from '../../shared/components/SectionSelect';
 import { useAction } from '../../shared/hooks/useNotify';
@@ -16,6 +17,8 @@ function Grid({ data, onSave, saving, readOnly }) {
   const [rows, setRows] = useDraft(data, (d) => d.rows);
   const set = (i, k, v) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
   const num = (v) => (v === '' || v === null ? null : Number(v));
+  const tooHigh = (r) => num(r.marks) !== null && num(r.maxMarks) !== null && num(r.marks) > num(r.maxMarks);
+  const invalid = rows.some(tooHigh);
   return (
     <Card>
       <Box sx={{ overflowX: 'auto' }}>
@@ -49,6 +52,8 @@ function Grid({ data, onSave, saving, readOnly }) {
                     size="small"
                     type="number"
                     value={r.marks ?? ''}
+                    error={tooHigh(r)}
+                    helperText={tooHigh(r) ? t('fieldErrors.MORE_THAN_MAX') : undefined}
                     onChange={(e) => set(i, 'marks', e.target.value)}
                     disabled={readOnly}
                     slotProps={{ htmlInput: { 'aria-label': t('marks.marks') } }}
@@ -83,7 +88,7 @@ function Grid({ data, onSave, saving, readOnly }) {
           <Button
             variant="contained"
             size="large"
-            disabled={saving}
+            disabled={saving || invalid}
             onClick={() =>
               onSave(
                 rows.map((r) => ({
@@ -106,8 +111,15 @@ function Grid({ data, onSave, saving, readOnly }) {
 
 export default function MarksPage() {
   const { t } = useTranslation();
-  const { sections } = useSections();
+  const { sections: all } = useSections();
   const { readOnly } = useYear();
+  const { role } = useAuth();
+  // Teachers only see the subjects they teach (the server refuses the rest anyway).
+  const mine = useGet(role === 'teacher' ? '/today' : null);
+  const mySubjects = role === 'teacher' ? new Set((mine.data?.data.subjects || []).map((s) => s.id)) : null;
+  const sections = mySubjects
+    ? all.map((s) => ({ ...s, Subjects: (s.Subjects || []).filter((x) => mySubjects.has(x.id)) })).filter((s) => s.Subjects.length)
+    : all;
   const [sectionId, setSectionId] = useState(null);
   const [subjectId, setSubjectId] = useState('');
   const [term, setTerm] = useState('S1');
@@ -121,7 +133,8 @@ export default function MarksPage() {
       <PageHeader title={t('nav.marks')} />
       <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, mb: 2 }}>
         <SectionSelect
-          value={section?.id}
+          filter={(s) => sections.some((x) => x.id === s.id)}
+          value={section?.id ?? ''}
           onChange={(v) => {
             setSectionId(v);
             setSubjectId('');

@@ -1,11 +1,13 @@
 import { Link as RouterLink } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Grid, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
-import { CheckCircle as CheckCircleIcon, RadioButtonUnchecked as RadioButtonUncheckedIcon } from '@mui/icons-material';
+import { LocalHospital as LocalHospitalIcon, CheckCircle as CheckCircleIcon, RadioButtonUnchecked as RadioButtonUncheckedIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useGet } from '../../api/hooks';
 import { PageHeader, ProgressBar, Query, Stat } from '../../shared/components/ui';
 import { fmtDate } from '../../shared/utils/format';
+import { useAuth } from '../../app/AuthContext';
+import ContactButtons from '../../shared/components/ContactButtons';
 
 const SETUP = [
   ['year', '/years'],
@@ -40,6 +42,7 @@ function Trend({ rows }) {
 export default function DashboardPage() {
   const { t } = useTranslation();
   const q = useGet('/dashboard');
+  const { school } = useAuth();
   return (
     <>
       <PageHeader title={t('nav.dashboard')} />
@@ -71,6 +74,11 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
               )}
+              {data.counts.healthFollowUps > 0 && (
+                <Alert severity="warning" icon={<LocalHospitalIcon />}>
+                  {t('health.followUpsAlert', { count: data.counts.healthFollowUps })}
+                </Alert>
+              )}
               {daysLeft !== null && daysLeft <= 45 && (
                 <Alert
                   severity="info"
@@ -83,7 +91,7 @@ export default function DashboardPage() {
                   {t('dashboard.yearEnds', { name: data.year.name, days: Math.max(daysLeft, 0) })}
                 </Alert>
               )}
-              <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
+              <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
                 <Stat label={t('dashboard.students')} value={data.counts.students} />
                 <Stat label={t('dashboard.teachers')} value={data.counts.teachers} />
                 <Stat label={t('dashboard.sections')} value={data.counts.sections} />
@@ -95,6 +103,7 @@ export default function DashboardPage() {
                   />
                 )}
                 {today && <Stat label={t('dashboard.absentToday')} value={today.absentees.length} tone="error" />}
+                {today && done.length > 0 && <Stat label={t('dashboard.mealsToday')} value={done.reduce((n, s) => n + (s.present || 0), 0)} />}
               </Box>
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 7 }}>
@@ -121,9 +130,9 @@ export default function DashboardPage() {
                       {today?.sections
                         .filter((s) => !s.submittedAt)
                         .map((s) => (
-                          <Typography key={s.id} sx={{ py: 0.5 }}>
+                          <Button key={s.id} component={RouterLink} to={`/attendance/${s.id}`} sx={{ justifyContent: 'flex-start', display: 'flex' }}>
                             {s.name}
-                          </Typography>
+                          </Button>
                         ))}
                       {today && done.length === today.sections.length && <Typography sx={{ color: 'success.main' }}>{t('dashboard.allDone')}</Typography>}
                     </CardContent>
@@ -156,8 +165,27 @@ export default function DashboardPage() {
                       </Typography>
                       <List dense>
                         {data.atRisk.map((s) => (
-                          <ListItem key={s.id} component={RouterLink} to={`/students/${s.id}`} sx={{ color: 'inherit' }}>
-                            <ListItemText primary={`${s.name} · ${s.sectionName}`} secondary={[`${s.percent}%`, s.guardianPhone].filter(Boolean).join(' · ')} />
+                          <ListItem
+                            key={s.id}
+                            disableGutters
+                            secondaryAction={
+                              <ContactButtons
+                                phone={s.guardianPhone}
+                                language={s.guardianLanguage}
+                                message="contact.lowAttendanceMessage"
+                                params={{ name: s.name, school: school?.name, percent: s.percent }}
+                              />
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <RouterLink to={`/students/${s.id}`} style={{ color: 'inherit' }}>
+                                  {`${s.name} · ${s.sectionName}`}
+                                </RouterLink>
+                              }
+                              secondary={`${s.percent}%`}
+                              sx={{ pr: 12 }}
+                            />
                           </ListItem>
                         ))}
                         {!data.atRisk.length && <Typography sx={{ color: 'success.main' }}>{t('dashboard.noneAtRisk')}</Typography>}

@@ -7,9 +7,10 @@ export const useSections = () => {
   return { ...q, sections: q.data?.data ?? [] };
 };
 
-export default function SectionSelect({ value, onChange, label, allowAll, ...rest }) {
+export default function SectionSelect({ value, onChange, label, allowAll, filter, ...rest }) {
   const { t } = useTranslation();
-  const { sections } = useSections();
+  const { sections: all } = useSections();
+  const sections = filter ? all.filter(filter) : all;
   return (
     <TextField
       select

@@ -46,10 +46,10 @@ function AddInline({ label, onAdd, children }) {
         e.preventDefault();
         if (v.trim() && (await onAdd(v.trim()))) setV('');
       }}
-      sx={{ gap: 1 }}
+      sx={{ gap: 1, flexWrap: 'wrap', alignItems: 'center' }}
     >
       {children}
-      <TextField size="small" label={label} value={v} onChange={(e) => setV(e.target.value)} />
+      <TextField size="small" label={label} value={v} onChange={(e) => setV(e.target.value)} sx={{ flex: '1 1 160px' }} />
       <Button type="submit" startIcon={<AddIcon />} disabled={!v.trim()}>
         {t('common.add')}
       </Button>
@@ -352,7 +352,14 @@ export default function ClassesPage() {
   return (
     <>
       <PageHeader title={t('nav.classesSubjects')} />
-      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }} variant="scrollable">
+      <Tabs
+        value={tab}
+        onChange={(_, v) => setTab(v)}
+        sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+        variant="scrollable"
+        scrollButtons="auto"
+        allowScrollButtonsMobile
+      >
         <Tab label={t('classes.tabs.sections')} />
         <Tab label={t('classes.tabs.grades')} />
         <Tab label={t('classes.tabs.activities')} />

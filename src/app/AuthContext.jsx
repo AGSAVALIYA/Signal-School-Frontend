@@ -4,6 +4,7 @@ import i18n from '../i18n';
 import { api } from '../api/client';
 import { session } from '../api/session';
 import { useSession } from '../api/hooks';
+import { clearQueue } from '../features/attendance/offlineQueue';
 
 const AuthContext = createContext(null);
 
@@ -51,10 +52,13 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     const { refreshToken } = session.get();
+    api.post('/auth/logout', { refreshToken }).catch(() => {});
     session.clear();
     qc.clear();
     setMe(null);
-    api.post('/auth/logout', { refreshToken }).catch(() => {});
+    // Shared phones: remove children's data kept for offline use.
+    await clearQueue();
+    if (typeof caches !== 'undefined') await caches.delete('api-read').catch(() => {});
   }, [qc]);
 
   const switchSchool = useCallback(

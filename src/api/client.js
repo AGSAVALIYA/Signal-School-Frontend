@@ -29,11 +29,14 @@ http.interceptors.response.use(
     const { response, config } = error;
     if (response?.status === 401 && !config._retried && session.get().refreshToken) {
       config._retried = true;
+      const before = session.get().refreshToken;
       try {
         refreshing = refreshing || refreshTokens().finally(() => (refreshing = null));
         await refreshing;
         return http(config);
       } catch {
+        // Another tab may have refreshed at the same moment: use its new tokens instead of logging out.
+        if (session.get().refreshToken && session.get().refreshToken !== before) return http(config);
         session.clear('SESSION_EXPIRED');
       }
     } else if (response?.status === 401 && session.get().accessToken) {

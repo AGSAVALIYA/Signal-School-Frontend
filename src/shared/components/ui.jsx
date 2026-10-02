@@ -15,8 +15,9 @@ export function PageHeader({ title, subtitle, back, actions, help }) {
           <ArrowBackIcon />
         </IconButton>
       )}
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="h1" component="h1" sx={{ textWrap: 'balance' }}>
+      {/* Title takes the row; actions wrap underneath on narrow phones instead of overlapping it. */}
+      <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+        <Typography variant="h1" component="h1" sx={{ textWrap: 'balance', overflowWrap: 'anywhere' }}>
           {title}
         </Typography>
         {subtitle && (

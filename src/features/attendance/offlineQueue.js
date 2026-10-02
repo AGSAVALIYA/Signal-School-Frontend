@@ -1,19 +1,25 @@
-import { get, set } from 'idb-keyval';
+import { del, get, set } from 'idb-keyval';
 import { useSyncExternalStore } from 'react';
 import { api } from '../../api/client';
 
 // Attendance saved without network waits here (IndexedDB) and uploads when the phone is online again.
+// Items stay queued while the problem is temporary (no network, server down, logged out); only a definite
+// refusal (e.g. the date is locked) moves an item to `failed`, which the app shows to the teacher.
 const KEY = 'attendance-queue';
+const FAILED_KEY = 'attendance-failed';
+const TEMPORARY = new Set(['NETWORK', 'INTERNAL', 'RATE_LIMITED', 'UNAUTHENTICATED', 'SESSION_EXPIRED']);
 const listeners = new Set();
-let count = 0;
-let failed = [];
+let snapshot = { count: 0, failed: [] };
 
 const notify = () => listeners.forEach((l) => l());
-const load = async () => (await get(KEY).catch(() => [])) || [];
+const load = async (key = KEY) => (await get(key).catch(() => [])) || [];
+const publish = async () => {
+  snapshot = { count: (await load()).length, failed: await load(FAILED_KEY) };
+  notify();
+};
 const save = async (items) => {
   await set(KEY, items).catch(() => {});
-  count = items.length;
-  notify();
+  await publish();
 };
 
 const put = (item) =>
@@ -38,8 +44,9 @@ export async function flush() {
       try {
         await put(items[0]);
       } catch (err) {
-        if (err.code === 'NETWORK') break;
-        failed = [...failed, { ...items[0], code: err.code }];
+        if (TEMPORARY.has(err.code) || err.status >= 500) break;
+        const failed = await load(FAILED_KEY);
+        await set(FAILED_KEY, [...failed, { ...items[0], code: err.code }]).catch(() => {});
       }
       items = items.slice(1);
       await save(items);
@@ -50,26 +57,26 @@ export async function flush() {
 }
 
 export function startQueue() {
-  load().then((items) => {
-    count = items.length;
-    notify();
-  });
+  publish();
   window.addEventListener('online', flush);
   setInterval(flush, 60000);
   flush();
 }
 
-export const useQueueCount = () =>
-  useSyncExternalStore(
-    (l) => {
-      listeners.add(l);
-      return () => listeners.delete(l);
-    },
-    () => count,
-  );
-
-export const takeFailures = () => {
-  const f = failed;
-  failed = [];
-  return f;
+const subscribe = (l) => {
+  listeners.add(l);
+  return () => listeners.delete(l);
 };
+export const useQueue = () => useSyncExternalStore(subscribe, () => snapshot);
+export const useQueueCount = () => useQueue().count;
+
+export async function dismissFailures() {
+  await del(FAILED_KEY).catch(() => {});
+  await publish();
+}
+
+// Logout on a shared phone: forget queued and failed items of this user.
+export async function clearQueue() {
+  await Promise.all([del(KEY).catch(() => {}), del(FAILED_KEY).catch(() => {})]);
+  await publish();
+}

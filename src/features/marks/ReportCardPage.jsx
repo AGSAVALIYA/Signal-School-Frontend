@@ -28,7 +28,7 @@ export default function ReportCardPage() {
               }
             />
           </Box>
-          <Card sx={{ maxWidth: 800, mx: 'auto' }} className="print-area">
+          <Card sx={{ maxWidth: 800, mx: 'auto' }} className="print-area print-portrait">
             <CardContent sx={{ p: 4 }}>
               <Stack direction="row" sx={{ gap: 2, alignItems: 'center', mb: 3 }}>
                 {data.school.logoUrl && <Box component="img" src={data.school.logoUrl} alt="" sx={{ height: 64 }} />}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { Alert, Avatar, Box, Button, ButtonBase, InputAdornment, Paper, Stack, TextField, Typography } from '@mui/material';
 import { Save as SaveIcon, Search as SearchIcon } from '@mui/icons-material';
@@ -65,7 +65,17 @@ function Sheet({ sheet, sectionId, date }) {
     return c;
   }, [marks]);
   const rows = sheet.rows.filter((r) => !search || r.name.toLowerCase().includes(search.toLowerCase()));
-  const dirty = sheet.rows.some((r) => r.status !== marks[r.studentId]);
+  const dirty = sheet.editable && sheet.rows.some((r) => r.status !== marks[r.studentId]);
+  useEffect(() => {
+    if (!dirty) return undefined;
+    // Closing or reloading the tab with unsaved marks asks first.
+    const warn = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
   const save = async () => {
     const payload = { rows: sheet.rows.map((r) => ({ studentId: r.studentId, status: marks[r.studentId] })), clientMarkedAt: new Date().toISOString() };
@@ -80,7 +90,7 @@ function Sheet({ sheet, sectionId, date }) {
       navigator.vibrate?.(80);
     } catch (err) {
       if (err.code === 'NETWORK') {
-        await enqueue({ sectionId, date, schoolId: session.get().schoolId, ...payload });
+        await enqueue({ sectionId, sectionName: sheet.section.name, date, schoolId: session.get().schoolId, ...payload });
         setQueued(true);
       } else notify.error(err);
     } finally {
@@ -96,6 +106,7 @@ function Sheet({ sheet, sectionId, date }) {
       {!sheet.editable && <Alert severity="warning">{t(`errors.${sheet.lockReason}`)}</Alert>}
       {queued && <Alert severity="warning">{t('attendance.offlineQueued')}</Alert>}
       {savedAt && !dirty && !queued && <Alert severity="success">{t('attendance.savedAt', { time: fmtTime(savedAt) })}</Alert>}
+      {dirty && savedAt && !queued && <Alert severity="info">{t('attendance.unsaved')}</Alert>}
       {!savedAt && sheet.editable && <Alert severity="info">{t('help.attendance')}</Alert>}
 
       <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>

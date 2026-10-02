@@ -9,10 +9,12 @@ import ChangePasswordForm from '../auth/ChangePasswordForm';
 import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import { PageHeader } from '../../shared/components/ui';
+import { useQueueCount } from '../attendance/offlineQueue';
 
 export default function ProfilePage() {
   const { t } = useTranslation();
   const { me, school, logout, switchSchool, applyMe } = useAuth();
+  const pending = useQueueCount();
   const run = useAction();
   const confirm = useConfirm();
   const upload = (file) => {
@@ -78,7 +80,14 @@ export default function ProfilePage() {
           variant="outlined"
           size="large"
           startIcon={<LogoutIcon />}
-          onClick={async () => (await confirm({ title: t('auth.logoutConfirm'), confirmLabel: t('auth.logout') })) && logout()}
+          onClick={async () =>
+            (await confirm({
+              title: t('auth.logoutConfirm'),
+              text: pending ? t('auth.logoutPending', { count: pending }) : null,
+              danger: Boolean(pending),
+              confirmLabel: t('auth.logout'),
+            })) && logout()
+          }
         >
           {t('auth.logout')}
         </Button>

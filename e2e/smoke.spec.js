@@ -66,3 +66,28 @@ test('switching language changes the whole interface', async ({ page }) => {
   await expect(page.getByRole('heading', { level: 1 })).not.toHaveText(/My profile|Me/);
   await page.getByRole('button', { name: 'English' }).click();
 });
+
+test('office records a health check-up and prints a leaving certificate', async ({ page }) => {
+  const errors = watchErrors(page);
+  await login(page, 'clerk@demo.test');
+  await page.goto('/students');
+  await page.locator('main .MuiListItemButton-root').first().click();
+  await page.getByRole('tab', { name: 'Health' }).click();
+  await page.getByRole('button', { name: 'Add health check-up' }).click();
+  await page.getByLabel('Weight (kg)').fill('21.5');
+  await page.getByLabel('Needs a doctor again').check();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByText('Weight: 21.5 kg')).toBeVisible();
+  await expect(page.getByText(/needs to see a doctor again/)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Mark as left school' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel('Reason').click();
+  await page.getByRole('option', { name: 'Joined another school' }).click();
+  await dialog.getByLabel('Joining school (if known)').fill('ZP School Kalwa');
+  await dialog.getByRole('button', { name: 'Mark as left school' }).click();
+  await page.getByRole('link', { name: 'Leaving certificate' }).click();
+  await expect(page.getByText('ZP School Kalwa')).toBeVisible();
+  await expectNoHorizontalScroll(page);
+  expect(errors).toEqual([]);
+});

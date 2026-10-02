@@ -7,11 +7,11 @@ const REASONS = ['migrated', 'dropped_out', 'transferred', 'tc_issued', 'other']
 
 export default function LeaveDialog({ name, onSubmit, onClose }) {
   const { t } = useTranslation();
-  const [form, setForm] = useState({ date: todayISO(), reason: 'migrated', note: '' });
+  const [form, setForm] = useState({ date: todayISO(), reason: 'migrated', note: '', toSchool: '' });
   const [busy, setBusy] = useState(false);
   const submit = async () => {
     setBusy(true);
-    if (await onSubmit(form)) onClose();
+    if (await onSubmit({ ...form, toSchool: form.toSchool.trim() || null, note: form.note.trim() || null })) onClose();
     setBusy(false);
   };
   return (
@@ -34,6 +34,9 @@ export default function LeaveDialog({ name, onSubmit, onClose }) {
               </MenuItem>
             ))}
           </TextField>
+          {['transferred', 'tc_issued'].includes(form.reason) && (
+            <TextField label={t('certificate.toSchool')} value={form.toSchool} onChange={(e) => setForm({ ...form, toSchool: e.target.value })} />
+          )}
           <TextField label={t('common.notes')} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} multiline minRows={2} />
         </Stack>
       </DialogContent>
