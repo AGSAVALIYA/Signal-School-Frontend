@@ -66,7 +66,9 @@ test('switching language changes the whole interface', async ({ page }) => {
   await page.getByRole('button', { name: 'मराठी' }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'mr');
   await expect(page.getByRole('heading', { level: 1 })).not.toHaveText(/My profile|Me/);
+  const saved = page.waitForResponse((r) => r.url().endsWith('/api/v1/me') && r.request().method() === 'PATCH');
   await page.getByRole('button', { name: 'English' }).click();
+  await saved;
 });
 
 test('office records a health check-up and prints a leaving certificate', async ({ page }) => {

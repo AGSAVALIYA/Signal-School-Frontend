@@ -10,6 +10,7 @@ export default function LanguagePicker({ size = 'medium' }) {
   const change = (code) => {
     i18n.changeLanguage(code);
     if (session.get().accessToken) api.patch('/me', { preferredLanguage: code }).catch(() => {});
+    else session.set({ languagePicked: true }); // chosen on the login screen: wins over the profile at login
   };
   return (
     <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>

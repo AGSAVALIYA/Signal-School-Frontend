@@ -41,10 +41,14 @@ export function AuthProvider({ children }) {
   const login = useCallback(
     async (identifier, password) => {
       const { data } = await api.post('/auth/login', { identifier, password });
-      session.set({ accessToken: data.accessToken, refreshToken: data.refreshToken, logoutReason: null, yearId: null });
-      applyMe(data.user);
-      // First login: remember the language chosen on the login screen.
-      if (!data.user.preferredLanguage) api.patch('/me', { preferredLanguage: i18n.language }).catch(() => {});
+      // A language tapped on the login screen of this device wins over the one saved in the profile, and is saved.
+      const { language, languagePicked } = session.get();
+      const picked = languagePicked ? language : null;
+      session.set({ accessToken: data.accessToken, refreshToken: data.refreshToken, logoutReason: null, yearId: null, languagePicked: false });
+      const user = picked && picked !== data.user.preferredLanguage ? { ...data.user, preferredLanguage: picked } : data.user;
+      applyMe(user);
+      if (user.preferredLanguage !== data.user.preferredLanguage || !data.user.preferredLanguage)
+        api.patch('/me', { preferredLanguage: user.preferredLanguage || i18n.language }).catch(() => {});
       return data.user;
     },
     [applyMe],
