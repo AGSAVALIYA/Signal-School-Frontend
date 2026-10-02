@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, MenuItem, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { Logout as LogoutIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../app/AuthContext';
@@ -10,11 +10,13 @@ import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import { PageHeader } from '../../shared/components/ui';
 import { useQueueCount } from '../attendance/offlineQueue';
+import useTextSize, { setTextSize, TEXT_SIZES } from '../../shared/hooks/useTextSize';
 
 export default function ProfilePage() {
   const { t } = useTranslation();
   const { me, school, logout, switchSchool, applyMe } = useAuth();
   const pending = useQueueCount();
+  const textSize = useTextSize();
   const run = useAction();
   const confirm = useConfirm();
   const upload = (file) => {
@@ -44,6 +46,20 @@ export default function ProfilePage() {
               {t('profile.language')}
             </Typography>
             <LanguagePicker />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <Typography variant="h3" gutterBottom>
+              {t('profile.textSize')}
+            </Typography>
+            <ToggleButtonGroup exclusive value={textSize} onChange={(_, v) => v && setTextSize(v)} aria-label={t('profile.textSize')}>
+              {Object.keys(TEXT_SIZES).map((k) => (
+                <ToggleButton key={k} value={k} sx={{ px: 2, fontSize: `${TEXT_SIZES[k] / 100}rem`, textTransform: 'none' }}>
+                  {t(`profile.textSizes.${k}`)}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
           </CardContent>
         </Card>
         {me.schools.length > 1 && (

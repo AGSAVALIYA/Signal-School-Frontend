@@ -539,7 +539,13 @@
     "language": "Language",
     "school": "School",
     "help": "Need help?",
-    "helpText": "Tap the ? button on any screen for a short explanation. For login problems, ask the school office."
+    "helpText": "Tap the ? button on any screen for a short explanation. For login problems, ask the school office.",
+    "textSize": "Text size",
+    "textSizes": {
+      "normal": "Normal",
+      "large": "Large",
+      "xlarge": "Extra large"
+    }
   },
   "help": {
     "today": "Your classes are listed here. Tap 'Take attendance' every morning. Green means attendance is done.",

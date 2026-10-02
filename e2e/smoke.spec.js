@@ -93,3 +93,21 @@ test('office records a health check-up and prints a leaving certificate', async 
   await expectNoHorizontalScroll(page);
   expect(errors).toEqual([]);
 });
+
+test('extra large text still fits a phone screen', async ({ page }) => {
+  await login(page, 'sunita@demo.test');
+  await page.goto('/me');
+  await page.getByRole('button', { name: 'Extra large' }).click();
+  await expect(page.locator('html')).toHaveAttribute('style', /font-size: 130%/);
+  for (const path of ['/', '/students', '/syllabus', '/me']) {
+    await page.goto(path);
+    await expect(page.locator('main h1, main h2').first()).toBeVisible();
+    await expectNoHorizontalScroll(page);
+  }
+  await page.goto('/');
+  await page.getByRole('link', { name: /Take attendance|Change attendance/ }).first().click();
+  await expect(page.getByRole('button', { name: /: Absent$/ }).first()).toBeVisible();
+  await expectNoHorizontalScroll(page);
+  await page.goto('/me');
+  await page.getByRole('button', { name: 'Normal' }).click();
+});

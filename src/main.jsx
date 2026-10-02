@@ -18,6 +18,7 @@ import { ConfirmProvider } from './shared/hooks/useConfirm';
 import App from './app/App';
 import ErrorBoundary from './app/ErrorBoundary';
 import { startQueue } from './features/attendance/offlineQueue';
+import { applyTextSize } from './shared/hooks/useTextSize';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +27,7 @@ const queryClient = new QueryClient({
 });
 
 startQueue();
+applyTextSize();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
