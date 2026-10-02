@@ -6,6 +6,14 @@ describe('format', () => {
   it('builds initials from the first two words', () => {
     expect(initials('sunita devi patil')).toBe('SD');
     expect(initials('')).toBe('');
+    expect(initials(null)).toBe('');
+  });
+
+  it('keeps Indic letters whole (conjuncts and vowel signs)', () => {
+    expect(initials('क्षितिज पवार')).toBe('क्षिप');
+    expect(initials('श्रेया शिंदे')).toBe('श्रेशिं');
+    expect(initials('ગીતા પટેલ')).toBe('ગીપ');
+    expect(initials('Sunita Devi')).toBe('SD');
   });
 
   it('prefers a translated name and falls back to the base name', () => {
