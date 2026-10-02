@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { Box, Card, CardActionArea, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
@@ -28,7 +28,7 @@ export default function SyllabusPage() {
             g.items.push(r);
           });
           return (
-            <Stack gap={3}>
+            <Stack sx={{ gap: 3 }}>
               {groups.map((g) => (
                 <Box key={g.key}>
                   <Typography variant="h2" gutterBottom>
@@ -36,20 +36,20 @@ export default function SyllabusPage() {
                   </Typography>
                   <Grid container spacing={2}>
                     {g.items.map((r) => (
-                      <Grid item xs={12} sm={6} md={4} key={r.subjectId}>
+                      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={r.subjectId}>
                         <Card>
                           <CardActionArea component={RouterLink} to={`/syllabus/subjects/${r.subjectId}`} sx={{ p: 0 }}>
                             <CardContent>
-                              <Typography fontWeight={700}>
+                              <Typography sx={{ fontWeight: 700 }}>
                                 {r.subjectName}
                                 {g.key === 'mine' ? ` · ${r.sectionName}` : ''}
                               </Typography>
-                              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                              <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                                 {t('syllabus.progressText', { done: r.done, total: r.total, percent: r.percent })}
                               </Typography>
                               <ProgressBar percent={r.percent} />
                               {r.lastCompletedOn && (
-                                <Typography variant="caption" color="text.secondary">
+                                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                                   {t('syllabus.lastUpdated', { date: fmtDate(r.lastCompletedOn) })}
                                 </Typography>
                               )}

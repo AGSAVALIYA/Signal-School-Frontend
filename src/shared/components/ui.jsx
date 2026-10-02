@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Chip, CircularProgress, IconButton, Stack, Tooltip, Typography } from '@mui/material';
-import { ArrowBack as ArrowBackIcon, HelpOutline as HelpOutlineIcon } from '@mui/icons-material';
+import { ArrowBack as ArrowBackIcon, HelpOutlineOutlined as HelpOutlineIcon } from '@mui/icons-material';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useYear } from '../../app/YearContext';
 
@@ -9,25 +9,26 @@ export function PageHeader({ title, subtitle, back, actions, help }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   return (
-    <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap" sx={{ mb: 2 }}>
+    <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 2 }}>
       {back && (
         <IconButton aria-label={t('common.back')} onClick={() => (typeof back === 'string' ? navigate(back) : navigate(-1))} edge="start">
           <ArrowBackIcon />
         </IconButton>
       )}
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="h1" component="h1" sx={{ textWrap: 'balance' }}>
+      {/* Title takes the row; actions wrap underneath on narrow phones instead of overlapping it. */}
+      <Box sx={{ flex: '1 1 220px', minWidth: 0 }}>
+        <Typography variant="h1" component="h1" sx={{ textWrap: 'balance', overflowWrap: 'anywhere' }}>
           {title}
         </Typography>
         {subtitle && (
-          <Typography color="text.secondary" variant="body2">
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {subtitle}
           </Typography>
         )}
       </Box>
       {help && <HelpTip text={help} />}
       {actions && (
-        <Stack direction="row" gap={1} flexWrap="wrap">
+        <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
           {actions}
         </Stack>
       )}
@@ -88,7 +89,7 @@ export function Query({ q, children }) {
 export function EmptyState({ title, text, action }) {
   return (
     <Box sx={{ textAlign: 'center', py: 5, px: 2, color: 'text.secondary' }}>
-      <Typography variant="h3" color="text.primary" gutterBottom>
+      <Typography variant="h3" gutterBottom sx={{ color: 'text.primary' }}>
         {title}
       </Typography>
       {text && <Typography sx={{ mb: 2 }}>{text}</Typography>}
@@ -130,21 +131,23 @@ export function YearBanner() {
 export function Stat({ label, value, tone }) {
   return (
     <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 2, bgcolor: 'background.paper', minWidth: 0 }}>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
         {label}
       </Typography>
-      <Typography variant="h2" component="p" color={tone ? `${tone}.main` : 'text.primary'} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+      <Typography variant="h2" component="p" sx={{ color: tone ? `${tone}.main` : 'text.primary', fontVariantNumeric: 'tabular-nums' }}>
         {value ?? '–'}
       </Typography>
     </Box>
   );
 }
 
-export function ProgressBar({ percent }) {
+export function ProgressBar({ percent, label }) {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{ height: 8, borderRadius: 4, bgcolor: 'action.hover', overflow: 'hidden' }}
       role="progressbar"
+      aria-label={label || t('common.percentDone', { percent })}
       aria-valuenow={percent}
       aria-valuemin={0}
       aria-valuemax={100}

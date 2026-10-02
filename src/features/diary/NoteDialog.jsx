@@ -28,14 +28,13 @@ export default function NoteDialog({ title, subjects = [], onSubmit, onClose }) 
     <Dialog open onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <Stack gap={2} sx={{ pt: 1 }}>
+        <Stack sx={{ gap: 2, pt: 1 }}>
           <TextField
             type="date"
             label={t('common.date')}
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            inputProps={{ max: todayISO() }}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ htmlInput: { max: todayISO() }, inputLabel: { shrink: true } }}
           />
           <TextField label={t('diary.notePlaceholder')} value={note} onChange={(e) => setNote(e.target.value)} multiline minRows={3} autoFocus />
           {subjects.length > 0 && (

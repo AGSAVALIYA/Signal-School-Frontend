@@ -1,8 +1,23 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
+import {
+  Alert,
+  AlertTitle,
+  Button,
+  Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  List,
+  ListItemButton,
+  ListItemText,
+} from '@mui/material';
+import { useNavigate } from 'react-router';
+import { api } from '../../api/client';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { CheckField, Field, applyServerErrors } from '../../shared/components/fields';
@@ -73,7 +88,25 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
   const { control, handleSubmit, setError, formState } = useForm({ resolver: zodResolver(schema), defaultValues: toForm(student, sectionId) });
   const dobUnknown = useWatch({ control, name: 'dobUnknown' });
 
+  const navigate = useNavigate();
+  // Returning children (migrant families) should be re-admitted, not added twice: check before the first save.
+  const [matches, setMatches] = useState(null);
+  const warning = useRef(null);
+  useEffect(() => {
+    if (matches?.length) warning.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [matches]);
+
   const submit = handleSubmit(async ({ dobUnknown: unknown, approxAge, ...values }) => {
+    if (!student && matches === null) {
+      const found = await api
+        .get('/students/possible-duplicates', { name: values.name, guardianPhone: values.guardianPhone || undefined })
+        .then((r) => r.data)
+        .catch(() => []);
+      if (found.length) {
+        setMatches(found);
+        return;
+      }
+    }
     const body = blankToNull({
       ...values,
       dob: unknown ? null : values.dob,
@@ -90,8 +123,8 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
     }
   });
 
-  const g = (name, label, props = {}) => (
-    <Grid item xs={12} sm={props.half === false ? 12 : 6}>
+  const g = (name, label, { half = true, ...props } = {}) => (
+    <Grid size={{ xs: 12, sm: half ? 6 : 12 }}>
       <Field control={control} name={name} label={label} {...props} />
     </Grid>
   );
@@ -100,6 +133,24 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
     <Dialog open onClose={onClose} maxWidth="md">
       <DialogTitle>{student ? t('students.edit') : t('students.add')}</DialogTitle>
       <DialogContent dividers>
+        {matches?.length > 0 && (
+          <Alert severity="warning" sx={{ mb: 2 }} ref={warning}>
+            <AlertTitle>{t('students.duplicates.title')}</AlertTitle>
+            {t('students.duplicates.text')}
+            <List component="div" dense disablePadding>
+              {matches.map((d) => (
+                <ListItemButton key={d.id} onClick={() => navigate(`/students/${d.id}`)} sx={{ borderRadius: 1 }}>
+                  <ListItemText
+                    primary={`${d.name} · GR ${d.grNumber}`}
+                    secondary={[d.lastClass, t(`students.statuses.${d.status}`), d.guardianName, d.samePhone && t('students.duplicates.samePhone')]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  />
+                </ListItemButton>
+              ))}
+            </List>
+          </Alert>
+        )}
         <Grid container spacing={2} component="form" id="student-form" onSubmit={submit}>
           {g('name', t('students.fields.name'), { required: true, autoFocus: true })}
           {g('classSectionId', t('students.fields.class'), {
@@ -110,17 +161,17 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
           })}
           {g('gender', t('students.fields.gender'), { select: true, options: ['F', 'M', 'O'].map((v) => ({ value: v, label: t(`students.gender.${v}`) })) })}
           {dobUnknown ? g('approxAge', t('students.fields.approxAge'), { type: 'number' }) : g('dob', t('students.fields.dob'), { type: 'date' })}
-          <Grid item xs={12} sx={{ mt: -1 }}>
+          <Grid size={{ xs: 12 }} sx={{ mt: -1 }}>
             <CheckField control={control} name="dobUnknown" label={t('students.fields.dobUnknown')} />
           </Grid>
           {g('guardianName', t('students.fields.guardianName'))}
-          {g('guardianPhone', t('students.fields.guardianPhone'), { type: 'tel', inputProps: { inputMode: 'tel' } })}
-          <Grid item xs={12}>
+          {g('guardianPhone', t('students.fields.guardianPhone'), { type: 'tel', slotProps: { htmlInput: { inputMode: 'tel' } } })}
+          <Grid size={{ xs: 12 }}>
             <Button onClick={() => setMore((m) => !m)} endIcon={<ExpandMoreIcon sx={{ transform: more ? 'rotate(180deg)' : 'none' }} />}>
               {t('students.moreDetails')}
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Collapse in={more}>
               <Grid container spacing={2}>
                 {g('guardianRelation', t('students.fields.guardianRelation'))}
@@ -132,8 +183,8 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
                 {g('grNumber', t('students.fields.grNumber'), { helperText: student ? undefined : t('students.grAuto') })}
                 {g('admissionDate', t('students.fields.admissionDate'), { type: 'date' })}
                 {g('bloodGroup', t('students.fields.bloodGroup'))}
-                {g('aadhaarLast4', t('students.fields.aadhaarLast4'), { inputProps: { inputMode: 'numeric', maxLength: 4 } })}
-                <Grid item xs={12} sm={6}>
+                {g('aadhaarLast4', t('students.fields.aadhaarLast4'), { slotProps: { htmlInput: { inputMode: 'numeric', maxLength: 4 } } })}
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CheckField control={control} name="consentPhoto" label={t('students.fields.consentPhoto')} />
                 </Grid>
               </Grid>
@@ -144,7 +195,7 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
       <DialogActions sx={{ p: 2, gap: 1 }}>
         <Button onClick={onClose}>{t('common.cancel')}</Button>
         <Button type="submit" form="student-form" variant="contained" size="large" disabled={formState.isSubmitting}>
-          {formState.isSubmitting ? t('common.saving') : t('students.save')}
+          {formState.isSubmitting ? t('common.saving') : matches?.length ? t('students.duplicates.addAnyway') : t('students.save')}
         </Button>
       </DialogActions>
     </Dialog>

@@ -48,11 +48,11 @@ export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
     });
 
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       {tree.map((c, i) => (
         <Card key={c.id || `new-${i}`}>
           <CardContent>
-            <Stack direction="row" gap={1} alignItems="center">
+            <Stack direction="row" sx={{ gap: 1, alignItems: 'center' }}>
               <TextField label={t('syllabus.chapterName')} value={c.name} onChange={(e) => setChapter(i, { name: e.target.value })} />
               <IconButton aria-label={t('common.moveUp')} onClick={() => setTree((tr) => move(tr, i, -1))}>
                 <ArrowUpwardIcon />
@@ -68,9 +68,9 @@ export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
                 <DeleteIcon />
               </IconButton>
             </Stack>
-            <Stack gap={1} sx={{ mt: 2, pl: { sm: 2 } }}>
+            <Stack sx={{ gap: 1, mt: 2, pl: { sm: 2 } }}>
               {c.topics.map((x, j) => (
-                <Stack key={x.id || `n-${j}`} direction="row" gap={1} alignItems="center">
+                <Stack key={x.id || `n-${j}`} direction="row" sx={{ gap: 1, alignItems: 'center' }}>
                   <TextField
                     size="small"
                     value={x.content}
@@ -109,7 +109,7 @@ export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
       <Button startIcon={<AddIcon />} variant="outlined" onClick={() => setTree((tr) => [...tr, { name: '', topics: [] }])} sx={{ alignSelf: 'flex-start' }}>
         {t('syllabus.addChapter')}
       </Button>
-      <Stack direction="row" gap={1} sx={{ position: 'sticky', bottom: 16 }}>
+      <Stack direction="row" sx={{ gap: 1, position: 'sticky', bottom: 16 }}>
         <Button variant="contained" size="large" onClick={submit} disabled={saving} sx={{ boxShadow: 3 }}>
           {saving ? t('common.saving') : t('common.save')}
         </Button>

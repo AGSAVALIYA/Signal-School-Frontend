@@ -65,29 +65,19 @@ function SchoolForm({ school }) {
   return (
     <Card>
       <CardContent sx={{ display: 'grid', gap: 2 }}>
-        <Stack direction="row" gap={2} alignItems="center">
+        <Stack direction="row" sx={{ gap: 2, alignItems: 'center' }}>
           <Avatar src={school.logoUrl || undefined} variant="rounded" sx={{ width: 72, height: 72 }} />
           <PhotoInput onFile={(file) => run(() => logo.mutateAsync(file), t('common.saved'))}>
             {(open) => <Button onClick={open}>{t('school.uploadLogo')}</Button>}
           </PhotoInput>
         </Stack>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            {f('name', t('school.name'))}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            {f('location', t('school.location'))}
-          </Grid>
-          <Grid item xs={12}>
-            {f('address', t('school.address'))}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            {f('contactNumber', t('school.contactNumber'))}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            {f('udiseCode', t('school.udiseCode'))}
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>{f('name', t('school.name'))}</Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>{f('location', t('school.location'))}</Grid>
+          <Grid size={{ xs: 12 }}>{f('address', t('school.address'))}</Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>{f('contactNumber', t('school.contactNumber'))}</Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>{f('udiseCode', t('school.udiseCode'))}</Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
             {f('defaultLanguage', t('school.defaultLanguage'), {
               select: true,
               children: LANGUAGES.map((l) => (
@@ -97,15 +87,13 @@ function SchoolForm({ school }) {
               )),
             })}
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             {f('grPrefix', t('school.grPrefix'), { helperText: t('school.grPrefixHelp', { example: `${form.grPrefix || ''}${form.nextGrNumber}` }) })}
           </Grid>
-          <Grid item xs={12} sm={6}>
-            {f('attendanceEditDays', t('school.editDays'), { type: 'number', helperText: t('school.editDaysHelp') })}
-          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>{f('attendanceEditDays', t('school.editDays'), { type: 'number', helperText: t('school.editDaysHelp') })}</Grid>
         </Grid>
         <Box>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {t('school.weeklyOffs')}
           </Typography>
           {DAYS.map((d) => (
@@ -139,11 +127,11 @@ function Organization() {
   const [name, setName] = useState('');
   const add = useSend((body) => api.post('/schools', body), { invalidate: ['/schools', '/organization'], onSuccess: () => refreshMe() });
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       <Query q={org}>{({ data }) => <Typography variant="h2">{data.name}</Typography>}</Query>
       <Query q={summary}>
         {({ data }) => (
-          <Card sx={{ overflowX: 'auto' }}>
+          <Card sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={t('school.tabs.organization')}>
             <Table size="small">
               <TableHead>
                 <TableRow>
@@ -183,7 +171,7 @@ function Organization() {
           </Card>
         )}
       </Query>
-      <Stack direction="row" gap={1}>
+      <Stack direction="row" sx={{ gap: 1 }}>
         <TextField size="small" label={t('school.newSchoolName')} value={name} onChange={(e) => setName(e.target.value)} />
         <Button
           variant="contained"

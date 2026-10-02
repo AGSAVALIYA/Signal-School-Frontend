@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { Alert, Avatar, Box, Button, ButtonBase, InputAdornment, Paper, Stack, TextField, Typography } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router';
+import { Alert, Avatar, Box, Button, Chip, InputAdornment, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { Save as SaveIcon, Search as SearchIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
@@ -13,38 +13,63 @@ import { fmtTime, initials, todayISO } from '../../shared/utils/format';
 import { enqueue } from './offlineQueue';
 import useDraft from '../../shared/hooks/useDraft';
 
-const NEXT = { P: 'A', A: 'L', L: 'P', LATE: 'P' };
 const TONE = { P: 'success', A: 'error', L: 'warning', LATE: 'info' };
+const CHOICES = ['P', 'A', 'L'];
 
-function Row({ row, status, onToggle, disabled }) {
+// One row per child: every status is one tap away (no hidden "tap to cycle").
+function Row({ row, status, onChange, disabled }) {
   const { t } = useTranslation();
+  const choices = status === 'LATE' ? [...CHOICES, 'LATE'] : CHOICES;
   return (
-    <ButtonBase
-      onClick={onToggle}
-      disabled={disabled}
-      aria-label={`${row.name}: ${t(`attendance.status.${status}`)}`}
-      sx={{ width: '100%', textAlign: 'left', display: 'flex', gap: 1.5, alignItems: 'center', p: 1.5, borderBottom: 1, borderColor: 'divider', minHeight: 64 }}
+    <Box
+      sx={{
+        display: 'flex',
+        gap: { xs: 1, sm: 1.5 },
+        alignItems: 'center',
+        px: { xs: 1, sm: 1.5 },
+        py: 1,
+        borderBottom: 1,
+        borderColor: 'divider',
+        minHeight: 64,
+      }}
     >
-      <Typography sx={{ width: 28, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{row.rollNumber ?? ''}</Typography>
-      <Avatar src={row.photoUrl || undefined} alt="">
+      <Typography sx={{ width: 24, flexShrink: 0, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{row.rollNumber ?? ''}</Typography>
+      <Avatar src={row.photoUrl || undefined} alt="" sx={{ width: 36, height: 36, fontSize: '0.9rem', display: { xs: 'none', sm: 'flex' } }}>
         {initials(row.name)}
       </Avatar>
-      <Typography sx={{ flex: 1, minWidth: 0, fontSize: '1.05rem' }}>{row.name}</Typography>
-      <Box
-        sx={{
-          minWidth: 92,
-          textAlign: 'center',
-          py: 1,
-          px: 1.5,
-          borderRadius: 2,
-          fontWeight: 700,
-          color: `${TONE[status]}.contrastText`,
-          bgcolor: `${TONE[status]}.main`,
-        }}
+      <Typography id={`name-${row.studentId}`} sx={{ flex: 1, minWidth: 0, fontSize: '1.05rem', overflowWrap: 'anywhere' }}>
+        {row.name}
+      </Typography>
+      <ToggleButtonGroup
+        exclusive
+        value={status}
+        disabled={disabled}
+        onChange={(_, v) => v && onChange(v)}
+        aria-labelledby={`name-${row.studentId}`}
+        sx={{ flexShrink: 0 }}
       >
-        {t(`attendance.short.${status}`)} · {t(`attendance.status.${status}`)}
-      </Box>
-    </ButtonBase>
+        {choices.map((c) => (
+          <ToggleButton
+            key={c}
+            value={c}
+            aria-label={`${row.name}: ${t(`attendance.status.${c}`)}`}
+            sx={{
+              minWidth: { xs: 44, md: 88 },
+              minHeight: 44,
+              px: 1,
+              fontWeight: 700,
+              fontSize: '1rem',
+              '&.Mui-selected, &.Mui-selected:hover': { bgcolor: `${TONE[c]}.main`, color: `${TONE[c]}.contrastText` },
+            }}
+          >
+            {t(`attendance.short.${c}`)}
+            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' }, ml: 0.5, fontWeight: 600 }}>
+              {t(`attendance.status.${c}`)}
+            </Box>
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
+    </Box>
   );
 }
 
@@ -65,7 +90,17 @@ function Sheet({ sheet, sectionId, date }) {
     return c;
   }, [marks]);
   const rows = sheet.rows.filter((r) => !search || r.name.toLowerCase().includes(search.toLowerCase()));
-  const dirty = sheet.rows.some((r) => r.status !== marks[r.studentId]);
+  const dirty = sheet.editable && sheet.rows.some((r) => r.status !== marks[r.studentId]);
+  useEffect(() => {
+    if (!dirty) return undefined;
+    // Closing or reloading the tab with unsaved marks asks first.
+    const warn = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
   const save = async () => {
     const payload = { rows: sheet.rows.map((r) => ({ studentId: r.studentId, status: marks[r.studentId] })), clientMarkedAt: new Date().toISOString() };
@@ -80,7 +115,7 @@ function Sheet({ sheet, sectionId, date }) {
       navigator.vibrate?.(80);
     } catch (err) {
       if (err.code === 'NETWORK') {
-        await enqueue({ sectionId, date, schoolId: session.get().schoolId, ...payload });
+        await enqueue({ sectionId, sectionName: sheet.section.name, date, schoolId: session.get().schoolId, ...payload });
         setQueued(true);
       } else notify.error(err);
     } finally {
@@ -89,21 +124,32 @@ function Sheet({ sheet, sectionId, date }) {
   };
 
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       {sheet.holiday && (
         <Alert severity="info">{sheet.holiday.type === 'weekly_off' ? t('today.weeklyOff') : t('today.holiday', { name: sheet.holiday.name })}</Alert>
       )}
       {!sheet.editable && <Alert severity="warning">{t(`errors.${sheet.lockReason}`)}</Alert>}
       {queued && <Alert severity="warning">{t('attendance.offlineQueued')}</Alert>}
       {savedAt && !dirty && !queued && <Alert severity="success">{t('attendance.savedAt', { time: fmtTime(savedAt) })}</Alert>}
+      {dirty && savedAt && !queued && <Alert severity="info">{t('attendance.unsaved')}</Alert>}
       {!savedAt && sheet.editable && <Alert severity="info">{t('help.attendance')}</Alert>}
 
-      <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center">
-        <Typography fontWeight={700} sx={{ flex: 1, fontSize: '1.1rem' }}>
-          {t('attendance.summary', { present: counts.P, absent: counts.A, leave: counts.L })}
-        </Typography>
+      <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }} aria-live="polite">
+        {['P', 'A', 'L'].map((c) => (
+          <Chip
+            key={c}
+            color={TONE[c]}
+            variant={counts[c] ? 'filled' : 'outlined'}
+            label={`${t(`attendance.status.${c}`)}: ${counts[c] + (c === 'P' ? counts.LATE : 0)}`}
+          />
+        ))}
+        <Box sx={{ flex: 1 }} />
         {sheet.editable && (
-          <Button variant="outlined" onClick={() => setMarks(Object.fromEntries(sheet.rows.map((r) => [r.studentId, 'P'])))}>
+          <Button
+            variant="outlined"
+            sx={{ width: { xs: '100%', sm: 'auto' } }}
+            onClick={() => setMarks(Object.fromEntries(sheet.rows.map((r) => [r.studentId, 'P'])))}
+          >
             {t('attendance.allPresent')}
           </Button>
         )}
@@ -113,12 +159,14 @@ function Sheet({ sheet, sectionId, date }) {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         size="small"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          },
         }}
       />
       <Paper variant="outlined">
@@ -129,13 +177,11 @@ function Sheet({ sheet, sectionId, date }) {
               row={r}
               status={marks[r.studentId] || 'P'}
               disabled={!sheet.editable}
-              onToggle={() => setMarks((m) => ({ ...m, [r.studentId]: NEXT[m[r.studentId] || 'P'] }))}
+              onChange={(v) => setMarks((m) => ({ ...m, [r.studentId]: v }))}
             />
           ))
         ) : (
-          <Typography sx={{ p: 3 }} color="text.secondary">
-            {t('attendance.noStudents')}
-          </Typography>
+          <Typography sx={{ color: 'text.secondary', p: 3 }}>{t('attendance.noStudents')}</Typography>
         )}
       </Paper>
       {sheet.editable && sheet.rows.length > 0 && (
@@ -170,10 +216,9 @@ export default function TakeAttendancePage() {
         type="date"
         label={t('common.date')}
         value={date}
-        inputProps={{ max: todayISO() }}
         onChange={(e) => e.target.value && setParams({ date: e.target.value })}
         sx={{ mb: 2, maxWidth: 220 }}
-        InputLabelProps={{ shrink: true }}
+        slotProps={{ htmlInput: { max: todayISO() }, inputLabel: { shrink: true } }}
       />
       <Query q={q}>{({ data }) => <Sheet sheet={data} sectionId={sectionId} date={date} />}</Query>
     </Box>

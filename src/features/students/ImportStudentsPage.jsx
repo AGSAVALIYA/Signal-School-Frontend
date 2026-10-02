@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { Download as DownloadIcon, UploadFile as UploadFileIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -42,15 +42,13 @@ export default function ImportStudentsPage() {
   return (
     <>
       <PageHeader title={t('import.title')} back="/students" help={t('help.import')} />
-      <Stack gap={2}>
+      <Stack sx={{ gap: 2 }}>
         <Card>
           <CardContent>
             <Typography variant="h3" gutterBottom>
               {t('import.step1')}
             </Typography>
-            <Typography color="text.secondary" sx={{ mb: 2 }}>
-              {t('import.step1Text')}
-            </Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 2 }}>{t('import.step1Text')}</Typography>
             <Button
               startIcon={<DownloadIcon />}
               variant="outlined"
@@ -77,7 +75,7 @@ export default function ImportStudentsPage() {
               <Alert severity={preview.valid === preview.total ? 'success' : 'warning'} sx={{ mb: 2 }}>
                 {t('import.summary', { valid: preview.valid, total: preview.total })}
               </Alert>
-              <Box sx={{ overflowX: 'auto' }}>
+              <Box sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={t('import.title')}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -95,7 +93,7 @@ export default function ImportStudentsPage() {
                         <TableCell>{r.data.className}</TableCell>
                         <TableCell>
                           {Object.keys(r.errors).length ? (
-                            <Stack direction="row" gap={0.5} flexWrap="wrap">
+                            <Stack direction="row" sx={{ gap: 0.5, flexWrap: 'wrap' }}>
                               {Object.entries(r.errors).map(([k, code]) => (
                                 <Chip key={k} size="small" color="error" label={`${k}: ${t(`fieldErrors.${code}`, { defaultValue: code })}`} />
                               ))}

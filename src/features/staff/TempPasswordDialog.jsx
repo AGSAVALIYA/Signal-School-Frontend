@@ -20,7 +20,7 @@ export default function TempPasswordDialog({ name, login, password, onClose }) {
     <Dialog open onClose={onClose}>
       <DialogTitle>{t('staff.tempPasswordTitle')}</DialogTitle>
       <DialogContent>
-        <Stack gap={2}>
+        <Stack sx={{ gap: 2 }}>
           <Alert severity="warning">{t('staff.tempPasswordText')}</Alert>
           <Typography>
             {t('auth.identifier')}: <b style={{ userSelect: 'all' }}>{login}</b>

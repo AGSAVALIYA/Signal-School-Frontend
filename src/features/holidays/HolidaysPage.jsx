@@ -32,14 +32,14 @@ export default function HolidaysPage() {
     <>
       <PageHeader title={t('nav.holidays')} subtitle={t('holidays.subtitle')} />
       <Card sx={{ p: 2, mb: 3 }}>
-        <Stack component="form" onSubmit={submit} direction={{ xs: 'column', sm: 'row' }} gap={2}>
+        <Stack component="form" onSubmit={submit} direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2 }}>
           <TextField
             type="date"
             label={t('common.date')}
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
             required
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
           <TextField label={t('holidays.name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
           <TextField select label={t('holidays.type')} value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
@@ -59,10 +59,10 @@ export default function HolidaysPage() {
           data.length ? (
             <Card>
               {data.map((h) => (
-                <Stack key={h.id} direction="row" alignItems="center" gap={2} sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
+                <Stack key={h.id} direction="row" sx={{ gap: 2, alignItems: 'center', p: 1.5, borderBottom: 1, borderColor: 'divider' }}>
                   <Typography sx={{ width: 130, fontVariantNumeric: 'tabular-nums' }}>{fmtDate(h.date)}</Typography>
                   <Typography sx={{ flex: 1 }}>{h.name}</Typography>
-                  <Typography color="text.secondary">{t(`holidays.types.${h.type}`)}</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{t(`holidays.types.${h.type}`)}</Typography>
                   <IconButton
                     aria-label={t('common.delete')}
                     onClick={async () =>

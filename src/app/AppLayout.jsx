@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router';
 import {
   Alert,
   AppBar,
@@ -42,7 +42,8 @@ import { useAuth } from './AuthContext';
 import { useYear } from './YearContext';
 import { can, isStaff } from '../shared/utils/permissions';
 import { YearBanner } from '../shared/components/ui';
-import { useQueueCount } from '../features/attendance/offlineQueue';
+import { dismissFailures, useQueue } from '../features/attendance/offlineQueue';
+import { fmtDate } from '../shared/utils/format';
 import useOnline from '../shared/hooks/useOnline';
 
 const DRAWER = 248;
@@ -68,20 +69,23 @@ const TEACHER_TABS = ['today', 'attendance', 'syllabus', 'me'];
 function YearSwitcher() {
   const { t } = useTranslation();
   const { years, selected, setYear } = useYear();
+  const theme = useTheme();
+  const phone = useMediaQuery(theme.breakpoints.down('sm'));
   if (!years.length) return null;
   return (
     <TextField
       select
       size="small"
       fullWidth={false}
-      label={t('year.label')}
+      label={phone ? undefined : t('year.label')}
+      slotProps={{ htmlInput: { 'aria-label': t('year.label') } }}
       value={selected?.id ?? ''}
       onChange={(e) => setYear(Number(e.target.value))}
-      sx={{ minWidth: 150, '& .MuiInputBase-root': { bgcolor: 'background.paper' } }}
+      sx={{ minWidth: phone ? 0 : 150, flexShrink: 0, '& .MuiInputBase-root': { bgcolor: 'background.paper' } }}
     >
       {years.map((y) => (
         <MenuItem key={y.id} value={y.id}>
-          {y.name} · {t(`year.status.${y.status}`)}
+          {phone ? y.name : `${y.name} · ${t(`year.status.${y.status}`)}`}
         </MenuItem>
       ))}
     </TextField>
@@ -95,14 +99,14 @@ export default function AppLayout() {
   const { role, school } = useAuth();
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  const pending = useQueueCount();
+  const { count: pending, failed } = useQueue();
   const online = useOnline();
   const items = NAV.filter((n) => n.show(role));
   const active = (to) => (to === '/' ? pathname === '/' : pathname.startsWith(to));
   const teacherMobile = !desktop && role === 'teacher';
 
   const menu = (
-    <List sx={{ py: 1 }}>
+    <List component="nav" aria-label={t('common.menu')} sx={{ py: 1 }}>
       {items.map((n) => (
         <ListItemButton
           key={n.to}
@@ -156,6 +160,19 @@ export default function AppLayout() {
         {pending > 0 && (
           <Alert severity="warning" sx={{ mb: 2 }}>
             {t('attendance.pendingSync', { count: pending })}
+          </Alert>
+        )}
+        {failed.length > 0 && (
+          <Alert severity="error" sx={{ mb: 2 }} onClose={dismissFailures}>
+            {t('attendance.syncFailed', { count: failed.length })}
+            <Box component="ul" sx={{ m: 0, pl: 2 }}>
+              {failed.map((f) => (
+                <li key={`${f.sectionId}-${f.date}`}>
+                  {f.sectionName ? `${f.sectionName}, ` : ''}
+                  {fmtDate(f.date)}: {t(`errors.${f.code}`, { defaultValue: t('errors.INTERNAL') })}
+                </li>
+              ))}
+            </Box>
           </Alert>
         )}
         <YearBanner />

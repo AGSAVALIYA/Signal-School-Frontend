@@ -7,25 +7,25 @@ const REASONS = ['migrated', 'dropped_out', 'transferred', 'tc_issued', 'other']
 
 export default function LeaveDialog({ name, onSubmit, onClose }) {
   const { t } = useTranslation();
-  const [form, setForm] = useState({ date: todayISO(), reason: 'migrated', note: '' });
+  const [form, setForm] = useState({ date: todayISO(), reason: 'migrated', note: '', toSchool: '' });
   const [busy, setBusy] = useState(false);
   const submit = async () => {
     setBusy(true);
-    if (await onSubmit(form)) onClose();
+    if (await onSubmit({ ...form, toSchool: form.toSchool.trim() || null, note: form.note.trim() || null })) onClose();
     setBusy(false);
   };
   return (
     <Dialog open onClose={onClose}>
       <DialogTitle>{t('students.leaveTitle', { name })}</DialogTitle>
       <DialogContent>
-        <Stack gap={2} sx={{ pt: 1 }}>
-          <Typography color="text.secondary">{t('students.leaveText')}</Typography>
+        <Stack sx={{ gap: 2, pt: 1 }}>
+          <Typography sx={{ color: 'text.secondary' }}>{t('students.leaveText')}</Typography>
           <TextField
             type="date"
             label={t('common.date')}
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
           <TextField select label={t('students.leaveReason')} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })}>
             {REASONS.map((r) => (
@@ -34,6 +34,9 @@ export default function LeaveDialog({ name, onSubmit, onClose }) {
               </MenuItem>
             ))}
           </TextField>
+          {['transferred', 'tc_issued'].includes(form.reason) && (
+            <TextField label={t('certificate.toSchool')} value={form.toSchool} onChange={(e) => setForm({ ...form, toSchool: e.target.value })} />
+          )}
           <TextField label={t('common.notes')} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} multiline minRows={2} />
         </Stack>
       </DialogContent>

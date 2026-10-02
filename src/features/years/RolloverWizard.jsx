@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import dayjs from 'dayjs';
 import {
   Alert,
@@ -45,7 +45,7 @@ function suggest(year) {
 function Details({ form, setForm, years }) {
   const { t } = useTranslation();
   return (
-    <Stack gap={2} sx={{ maxWidth: 480 }}>
+    <Stack sx={{ gap: 2, maxWidth: 480 }}>
       <TextField select label={t('rollover.sourceYear')} value={form.sourceYearId} onChange={(e) => setForm({ ...form, sourceYearId: Number(e.target.value) })}>
         {years.map((y) => (
           <MenuItem key={y.id} value={y.id}>
@@ -59,14 +59,14 @@ function Details({ form, setForm, years }) {
         label={t('years.start')}
         value={form.startDate}
         onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-        InputLabelProps={{ shrink: true }}
+        slotProps={{ inputLabel: { shrink: true } }}
       />
       <TextField
         type="date"
         label={t('years.end')}
         value={form.endDate}
         onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-        InputLabelProps={{ shrink: true }}
+        slotProps={{ inputLabel: { shrink: true } }}
       />
     </Stack>
   );
@@ -78,18 +78,16 @@ function Classes({ plan, setPlan, grades }) {
   const [name, setName] = useState('');
   const setSection = (i, patch) => setPlan({ ...plan, sections: plan.sections.map((s, k) => (k === i ? { ...s, ...patch } : s)) });
   return (
-    <Stack gap={2}>
-      <Typography color="text.secondary">{t('rollover.classesHelp')}</Typography>
+    <Stack sx={{ gap: 2 }}>
+      <Typography sx={{ color: 'text.secondary' }}>{t('rollover.classesHelp')}</Typography>
       {plan.sections.map((s, i) => (
-        <Stack key={s.key} direction="row" gap={1} alignItems="center">
-          <Checkbox checked={s.include} onChange={(e) => setSection(i, { include: e.target.checked })} inputProps={{ 'aria-label': s.name }} />
+        <Stack key={s.key} direction="row" sx={{ gap: 1, alignItems: 'center' }}>
+          <Checkbox checked={s.include} onChange={(e) => setSection(i, { include: e.target.checked })} slotProps={{ input: { 'aria-label': s.name } }} />
           <TextField size="small" value={s.name} onChange={(e) => setSection(i, { name: e.target.value })} disabled={!s.include} />
-          <Typography color="text.secondary" sx={{ minWidth: 90 }}>
-            {grades.find((g) => g.id === s.gradeId)?.name}
-          </Typography>
+          <Typography sx={{ color: 'text.secondary', minWidth: 90 }}>{grades.find((g) => g.id === s.gradeId)?.name}</Typography>
         </Stack>
       ))}
-      <Stack direction="row" gap={1}>
+      <Stack direction="row" sx={{ gap: 1 }}>
         <TextField select size="small" label={t('classes.grade')} value={gradeId} onChange={(e) => setGradeId(e.target.value)} sx={{ minWidth: 150 }}>
           {grades.map((g) => (
             <MenuItem key={g.id} value={g.id}>
@@ -116,7 +114,7 @@ function Copy({ plan, setPlan }) {
   const { t } = useTranslation();
   const set = (k, v) => setPlan({ ...plan, copy: { ...plan.copy, [k]: v, ...(k === 'subjects' && !v ? { syllabus: false } : {}) } });
   return (
-    <Stack gap={1}>
+    <Stack sx={{ gap: 1 }}>
       <FormControlLabel
         control={<Switch checked={plan.copy.subjects} onChange={(e) => set('subjects', e.target.checked)} />}
         label={t('rollover.copySubjects')}
@@ -160,13 +158,13 @@ function Promotion({ plan, setPlan }) {
   const missing = plan.promotions.filter((p) => ['promote', 'detain'].includes(p.action) && !targets.some((s) => s.key === p.targetKey)).length;
 
   return (
-    <Stack gap={3}>
-      <Typography color="text.secondary">{t('rollover.promotionHelp')}</Typography>
+    <Stack sx={{ gap: 3 }}>
+      <Typography sx={{ color: 'text.secondary' }}>{t('rollover.promotionHelp')}</Typography>
       {missing > 0 && <Alert severity="warning">{t('rollover.missingTargets', { count: missing })}</Alert>}
       {groups.map(([sectionId, g]) => (
         <Card key={sectionId}>
           <CardContent>
-            <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
+            <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 1 }}>
               <Typography variant="h3" sx={{ flex: 1 }}>
                 {g.name} · {t('classes.studentCount', { count: g.items.length })}
               </Typography>
@@ -227,7 +225,7 @@ function Promotion({ plan, setPlan }) {
                             size="small"
                             value={p.action}
                             onChange={(e) => setP([i], { action: e.target.value })}
-                            inputProps={{ 'aria-label': t('rollover.action') }}
+                            slotProps={{ htmlInput: { 'aria-label': t('rollover.action') } }}
                           >
                             {ACTIONS.map((a) => (
                               <MenuItem key={a} value={a}>
@@ -244,7 +242,7 @@ function Promotion({ plan, setPlan }) {
                               value={targets.some((s) => s.key === p.targetKey) ? p.targetKey : ''}
                               error={!targets.some((s) => s.key === p.targetKey)}
                               onChange={(e) => setP([i], { targetKey: e.target.value })}
-                              inputProps={{ 'aria-label': t('rollover.target') }}
+                              slotProps={{ htmlInput: { 'aria-label': t('rollover.target') } }}
                             >
                               {targets.map((s) => (
                                 <MenuItem key={s.key} value={s.key}>
@@ -258,7 +256,7 @@ function Promotion({ plan, setPlan }) {
                               size="small"
                               value={p.reason || 'migrated'}
                               onChange={(e) => setP([i], { reason: e.target.value })}
-                              inputProps={{ 'aria-label': t('students.leaveReason') }}
+                              slotProps={{ htmlInput: { 'aria-label': t('students.leaveReason') } }}
                             >
                               {REASONS.map((r) => (
                                 <MenuItem key={r} value={r}>
@@ -287,7 +285,7 @@ function Review({ plan, setPlan }) {
   const { t } = useTranslation();
   const count = (a) => plan.promotions.filter((p) => p.action === a).length;
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       <Typography variant="h3">
         {plan.name} · {dayjs(plan.startDate).format('DD MMM YYYY')} – {dayjs(plan.endDate).format('DD MMM YYYY')}
       </Typography>
@@ -394,7 +392,7 @@ export default function RolloverWizard() {
       {step === 2 && plan && <Copy plan={plan} setPlan={setPlan} />}
       {step === 3 && plan && <Promotion plan={plan} setPlan={setPlan} />}
       {step === 4 && plan && <Review plan={plan} setPlan={setPlan} />}
-      <Stack direction="row" gap={1} sx={{ mt: 3, position: 'sticky', bottom: 16 }}>
+      <Stack direction="row" sx={{ gap: 1, mt: 3, position: 'sticky', bottom: 16 }}>
         {step > 0 && <Button onClick={() => setStep((s) => s - 1)}>{t('common.back')}</Button>}
         <Button variant="contained" size="large" disabled={!canNext || busy} onClick={next} sx={{ boxShadow: 3 }}>
           {busy ? t('common.saving') : step === STEPS.length - 1 ? t('rollover.create') : t('common.next')}

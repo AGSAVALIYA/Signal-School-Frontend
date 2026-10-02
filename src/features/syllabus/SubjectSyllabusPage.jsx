@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { CheckCircle as CheckCircleIcon, Edit as EditIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -17,12 +17,12 @@ function TopicRow({ topic, canTick, onTick, onUntick, me, staff }) {
   const { t } = useTranslation();
   const done = topic.completion;
   return (
-    <Stack direction="row" alignItems="center" gap={1} sx={{ py: 1, borderBottom: 1, borderColor: 'divider' }} flexWrap="wrap">
+    <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', py: 1, borderBottom: 1, borderColor: 'divider' }}>
       {done ? <CheckCircleIcon color="success" /> : <Box sx={{ width: 24 }} />}
       <Box sx={{ flex: 1, minWidth: 160 }}>
         <Typography>{topic.content}</Typography>
         {done && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {t('syllabus.taughtOnBy', { date: fmtDate(done.completedOn), name: done.teacher?.name || '–' })}
           </Typography>
         )}
@@ -92,15 +92,14 @@ export default function SubjectSyllabusPage() {
           ) : data.chapters.length ? (
             <>
               {canTick && (
-                <Stack direction="row" gap={2} sx={{ mb: 2 }} flexWrap="wrap">
+                <Stack direction="row" sx={{ gap: 2, flexWrap: 'wrap', mb: 2 }}>
                   <TextField
                     type="date"
                     label={t('syllabus.taughtOn')}
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    inputProps={{ max: todayISO() }}
                     sx={{ maxWidth: 200 }}
-                    InputLabelProps={{ shrink: true }}
+                    slotProps={{ htmlInput: { max: todayISO() }, inputLabel: { shrink: true } }}
                   />
                   {staff && (
                     <TextField select label={t('syllabus.teacher')} value={teacherId} onChange={(e) => setTeacherId(e.target.value)} sx={{ maxWidth: 240 }}>
@@ -119,10 +118,8 @@ export default function SubjectSyllabusPage() {
                 return (
                   <Accordion key={c.id} defaultExpanded={done < c.Topics.length} disableGutters>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography fontWeight={700} sx={{ flex: 1 }}>
-                        {c.name}
-                      </Typography>
-                      <Typography color="text.secondary" sx={{ mr: 1 }}>
+                      <Typography sx={{ fontWeight: 700, flex: 1 }}>{c.name}</Typography>
+                      <Typography sx={{ color: 'text.secondary', mr: 1 }}>
                         {done}/{c.Topics.length}
                       </Typography>
                     </AccordionSummary>

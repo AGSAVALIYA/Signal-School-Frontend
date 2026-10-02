@@ -34,7 +34,7 @@ export default function ChangePasswordForm({ onDone }) {
     }
   });
   return (
-    <Stack component="form" gap={2} onSubmit={submit}>
+    <Stack component="form" onSubmit={submit} sx={{ gap: 2 }}>
       <Field control={control} name="currentPassword" type="password" label={t('auth.currentPassword')} autoComplete="current-password" />
       <Field
         control={control}

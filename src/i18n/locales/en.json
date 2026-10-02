@@ -37,9 +37,16 @@
     "status": "Status",
     "update": "Update now",
     "viewAll": "View all",
-    "yes": "Yes"
+    "yes": "Yes",
+    "reload": "Reload",
+    "newer": "Newer",
+    "older": "Older",
+    "pageOf": "Page {{page}} of {{pages}}",
+    "percentDone": "{{percent}}% done"
   },
-  "lang": { "choose": "Choose your language" },
+  "lang": {
+    "choose": "Choose your language"
+  },
   "nav": {
     "today": "Today",
     "dashboard": "Dashboard",
@@ -75,11 +82,17 @@
     "confirmPassword": "Type the new password again",
     "passwordChanged": "Password changed",
     "firstLoginTitle": "Welcome, {{name}}",
-    "firstLoginText": "Please choose your own password. Use the temporary password from the office as the current password."
+    "firstLoginText": "Please choose your own password. Use the temporary password from the office as the current password.",
+    "logoutPending_one": "{{count}} attendance is not uploaded yet and will be lost. Connect to the internet first if you can.",
+    "logoutPending_other": "{{count}} attendances are not uploaded yet and will be lost. Connect to the internet first if you can."
   },
   "year": {
     "label": "Academic year",
-    "status": { "active": "Current", "planned": "Planned", "closed": "Closed" },
+    "status": {
+      "active": "Current",
+      "planned": "Planned",
+      "closed": "Closed"
+    },
     "viewing": "You are viewing {{name}}. Old years can be seen but not changed.",
     "backToCurrent": "Back to {{name}}"
   },
@@ -103,7 +116,6 @@
   "attendance": {
     "title": "Attendance · {{name}}",
     "allPresent": "Mark everyone present",
-    "summary": "Present {{present}} · Absent {{absent}} · Leave {{leave}}",
     "save": "Save attendance",
     "savedAt": "Saved at {{time}}. You can still change it and save again.",
     "savedSummary": "Attendance saved: {{present}} present, {{absent}} absent",
@@ -112,19 +124,32 @@
     "pendingSync_other": "{{count}} attendances waiting for internet",
     "noStudents": "No students in this class",
     "notMarked": "Not marked",
-    "status": { "P": "Present", "A": "Absent", "L": "Leave", "LATE": "Late" },
-    "short": { "P": "P", "A": "A", "L": "L", "LATE": "LT" },
+    "status": {
+      "P": "Present",
+      "A": "Absent",
+      "L": "Leave",
+      "LATE": "Late"
+    },
+    "short": {
+      "P": "P",
+      "A": "A",
+      "L": "L",
+      "LATE": "LT"
+    },
     "registerTitle": "Monthly register",
     "month": "Month",
     "presentPerDay": "Present each day",
-    "registerLegend": "P = Present, A = Absent, L = Leave, LT = Late. Grey days are holidays. % counts only days that were marked."
+    "registerLegend": "P = Present, A = Absent, L = Leave, LT = Late. Grey days are holidays. % counts only days that were marked.",
+    "syncFailed_one": "{{count}} attendance could not be saved. Please take it again:",
+    "syncFailed_other": "{{count}} attendances could not be saved. Please take them again:",
+    "unsaved": "You changed some marks. Press \"Save attendance\" to keep them."
   },
   "students": {
     "add": "Add student",
     "edit": "Edit student",
     "save": "Save student",
     "none": "No students found",
-    "searchPlaceholder": "Search by name, GR number or phone",
+    "searchPlaceholder": "Name, GR no. or phone",
     "allYears": "Search all years",
     "moreDetails": "More details (parents, address, documents)",
     "grAuto": "Leave empty to number automatically",
@@ -162,8 +187,16 @@
       "rollNumber": "Roll no.",
       "consentPhoto": "Parent agreed to photos"
     },
-    "gender": { "F": "Girl", "M": "Boy", "O": "Other" },
-    "statuses": { "active": "Studying", "left": "Left school", "graduated": "Completed school" },
+    "gender": {
+      "F": "Girl",
+      "M": "Boy",
+      "O": "Other"
+    },
+    "statuses": {
+      "active": "Studying",
+      "left": "Left school",
+      "graduated": "Completed school"
+    },
     "enrollmentStatus": {
       "active": "Studying",
       "promoted": "Moved to next class",
@@ -179,8 +212,26 @@
       "tc_issued": "Leaving certificate given",
       "other": "Other"
     },
-    "sections": { "child": "Child", "family": "Family and contact" },
-    "tabs": { "details": "Details", "diary": "Daily diary", "history": "Past years", "reportCard": "Report card" }
+    "sections": {
+      "child": "Child",
+      "family": "Family and contact"
+    },
+    "tabs": {
+      "details": "Details",
+      "diary": "Daily diary",
+      "history": "Past years",
+      "reportCard": "Report card",
+      "health": "Health"
+    },
+    "duplicates": {
+      "title": "Is this child already in the school records?",
+      "text": "These children have a similar name or the same guardian phone. If it is the same child, open the record and use \"Re-admit\" so the old history stays.",
+      "samePhone": "same guardian phone",
+      "addAnyway": "No, add as a new child"
+    },
+    "monthTitle": "Attendance this month",
+    "monthTotals": "Present {{present}} · Absent {{absent}} · Leave {{leave}} · {{percent}}%",
+    "dayOff": "Holiday"
   },
   "import": {
     "title": "Import from Excel",
@@ -234,7 +285,11 @@
   "marks": {
     "subject": "Subject",
     "term": "Term",
-    "terms": { "S1": "Semester 1", "S2": "Semester 2", "ANNUAL": "Annual" },
+    "terms": {
+      "S1": "Semester 1",
+      "S2": "Semester 2",
+      "ANNUAL": "Annual"
+    },
     "grade": "Grade",
     "marks": "Marks",
     "maxMarks": "Out of",
@@ -245,10 +300,16 @@
     "attendanceLine": "Attendance: {{present}} of {{total}} days ({{percent}}%)",
     "classTeacherSign": "Class teacher",
     "principalSign": "Principal",
-    "parentSign": "Parent"
+    "parentSign": "Parent",
+    "maxForAll": "Maximum marks for everyone",
+    "applyToAll": "Fill in"
   },
   "classes": {
-    "tabs": { "sections": "Classes this year", "grades": "Class levels", "activities": "Activities" },
+    "tabs": {
+      "sections": "Classes this year",
+      "grades": "Class levels",
+      "activities": "Activities"
+    },
     "grade": "Class level",
     "gradeName": "New class level (e.g. Std 1)",
     "gradesHelp": "Class levels stay the same every year. Set which level comes next, so students can be moved up automatically at the start of a new year.",
@@ -283,7 +344,12 @@
     "email": "Email",
     "contactHelp": "Mobile number or email is needed to log in",
     "role": "Role",
-    "roles": { "owner": "Trust owner", "admin": "Principal / admin", "clerk": "Office clerk", "teacher": "Teacher" },
+    "roles": {
+      "owner": "Trust owner",
+      "admin": "Principal / admin",
+      "clerk": "Office clerk",
+      "teacher": "Teacher"
+    },
     "tempPasswordTitle": "Login details",
     "tempPasswordText": "This password is shown only once. Share it now; they will choose their own password at first login.",
     "copyMessage": "Copy message for WhatsApp",
@@ -299,9 +365,16 @@
     "lastLogin": "Last login: {{when}}",
     "never": "never",
     "assignmentRole": "Teaches as",
-    "assignmentRoles": { "class_teacher": "Class teacher", "subject_teacher": "Subject teacher" },
+    "assignmentRoles": {
+      "class_teacher": "Class teacher",
+      "subject_teacher": "Subject teacher"
+    },
     "noAssignments": "No classes assigned",
-    "tabs": { "profile": "Profile", "assignments": "Classes", "activity": "Activity" }
+    "tabs": {
+      "profile": "Profile",
+      "assignments": "Classes",
+      "activity": "Activity"
+    }
   },
   "years": {
     "add": "Add academic year",
@@ -328,7 +401,13 @@
     "deleteConfirm": "Delete {{name}}?"
   },
   "rollover": {
-    "steps": { "details": "New year", "classes": "Classes", "copy": "Subjects & syllabus", "promotion": "Move students", "review": "Check & create" },
+    "steps": {
+      "details": "New year",
+      "classes": "Classes",
+      "copy": "Subjects & syllabus",
+      "promotion": "Move students",
+      "review": "Check & create"
+    },
     "sourceYear": "Copy from",
     "classesHelp": "These classes will be created in the new year. Untick classes you do not need, rename, or add new ones.",
     "copySubjects": "Copy subjects of each class",
@@ -340,7 +419,12 @@
     "moveAllTo": "Move all to",
     "action": "What happens",
     "target": "New class",
-    "actions": { "promote": "Move to next class", "detain": "Stay in same class", "leave": "Left school", "graduate": "Completed school" },
+    "actions": {
+      "promote": "Move to next class",
+      "detain": "Stay in same class",
+      "leave": "Left school",
+      "graduate": "Completed school"
+    },
     "missingTargets_one": "{{count}} student needs a new class chosen",
     "missingTargets_other": "{{count}} students need a new class chosen",
     "reviewSections_one": "{{count}} class will be created",
@@ -359,12 +443,19 @@
     "subtitle": "Holidays are not counted as absent days",
     "name": "Holiday name",
     "type": "Type",
-    "types": { "holiday": "Holiday", "exam": "Exam day", "event": "Event" },
+    "types": {
+      "holiday": "Holiday",
+      "exam": "Exam day",
+      "event": "Event"
+    },
     "none": "No holidays added",
     "deleteConfirm": "Delete {{name}}?"
   },
   "school": {
-    "tabs": { "school": "This school", "organization": "All schools" },
+    "tabs": {
+      "school": "This school",
+      "organization": "All schools"
+    },
     "name": "School name",
     "location": "Area / city",
     "address": "Address",
@@ -412,7 +503,12 @@
     "atRiskHelp": "Below 75% attendance in the last 30 days",
     "noneAtRisk": "No child below 75%",
     "birthdays": "Birthdays today: {{names}}",
-    "yearEnds": "{{name}} ends in {{days}} days. Prepare the next academic year."
+    "yearEnds": "{{name}} ends in {{days}} days. Prepare the next academic year.",
+    "mealsToday": "Meals to serve today",
+    "streakTitle": "Absent several days in a row",
+    "streakHelp": "Call the family now: the child may have moved away or need help.",
+    "streakDays_one": "{{count}} school day absent, since {{since}}",
+    "streakDays_other": "{{count}} school days absent in a row, since {{since}}"
   },
   "audit": {
     "subtitle": "Who changed what, and when",
@@ -452,18 +548,39 @@
       "syllabus.save": "Edited the syllabus",
       "syllabus.complete": "Marked a topic as taught",
       "syllabus.uncomplete": "Marked a topic as not taught",
-      "marks.save": "Saved marks"
+      "marks.save": "Saved marks",
+      "health.create": "Added a health check-up",
+      "health.delete": "Deleted a health check-up",
+      "diary.delete": "Deleted a diary note"
+    },
+    "person": "Person",
+    "area": "Kind of change",
+    "areas": {
+      "attendance": "Attendance",
+      "students": "Students",
+      "teaching": "Syllabus, marks & diary",
+      "health": "Health",
+      "staff": "Staff",
+      "years": "Academic years",
+      "setup": "School setup"
     }
   },
   "profile": {
     "language": "Language",
     "school": "School",
     "help": "Need help?",
-    "helpText": "Tap the ? button on any screen for a short explanation. For login problems, ask the school office."
+    "helpText": "Tap the ? button on any screen for a short explanation. For login problems, ask the school office.",
+    "textSize": "Text size",
+    "textSizes": {
+      "normal": "Normal",
+      "large": "Large",
+      "xlarge": "Extra large"
+    },
+    "textSample": "Aa"
   },
   "help": {
     "today": "Your classes are listed here. Tap 'Take attendance' every morning. Green means attendance is done.",
-    "attendance": "Everyone starts as Present. Tap a child's name to change it to Absent, tap again for Leave. Then press 'Save attendance'.",
+    "attendance": "Everyone starts as Present. For a child who did not come, tap A (Absent); for a child on leave, tap L (Leave). Then press 'Save attendance'.",
     "students": "Tap a student to see details, daily diary and past years. Use 'Add student' for a new admission.",
     "syllabus": "Open a subject and press 'Mark as taught' after teaching a topic. The bar shows how much is done.",
     "import": "Download the template, fill it in Excel, upload it, check the rows, then import.",
@@ -471,7 +588,15 @@
     "yearsHistory": "To look at an old year, choose it in the 'Academic year' box at the top. Old years can be seen but not changed.",
     "rollover": "This copies classes, subjects, syllabus and teachers into the new year and moves students up. Nothing is deleted from the old year."
   },
-  "days": { "0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday", "4": "Thursday", "5": "Friday", "6": "Saturday" },
+  "days": {
+    "0": "Sunday",
+    "1": "Monday",
+    "2": "Tuesday",
+    "3": "Wednesday",
+    "4": "Thursday",
+    "5": "Friday",
+    "6": "Saturday"
+  },
   "errors": {
     "NETWORK": "No internet connection. Please check and try again.",
     "VALIDATION": "Some fields need attention",
@@ -499,7 +624,9 @@
     "FILE_TOO_LARGE": "The file is too large",
     "TOPIC_HAS_COMPLETION": "A topic that was already taught cannot be removed",
     "RATE_LIMITED": "Too many attempts. Please wait a moment.",
-    "INTERNAL": "Something went wrong. Please try again."
+    "INTERNAL": "Something went wrong. Please try again.",
+    "crashTitle": "Something went wrong on this screen",
+    "crashText": "Your saved work is safe. Please reload the page. If it happens again, tell the school office."
   },
   "fieldErrors": {
     "REQUIRED": "Required",
@@ -517,6 +644,45 @@
     "TOO_BIG": "Too long",
     "INVALID_FORMAT": "Wrong format",
     "INVALID_VALUE": "Please choose a valid option",
-    "CUSTOM": "Please check this"
+    "CUSTOM": "Please check this",
+    "MORE_THAN_MAX": "More than maximum marks"
+  },
+  "contact": {
+    "call": "Call",
+    "whatsapp": "WhatsApp",
+    "absentMessage": "Namaste. {{name}} did not come to {{school}} today ({{date}}). Please send the child to school tomorrow.",
+    "lowAttendanceMessage": "Namaste. {{name}} came to {{school}} on only {{percent}}% of school days this month. Please send the child to school every day.",
+    "streakMessage": "Namaste. {{name}} has not come to {{school}} for {{days}} school days. Is everything all right? Please send the child to school or call us."
+  },
+  "health": {
+    "add": "Add health check-up",
+    "checkedOn": "Check-up date",
+    "heightCm": "Height (cm)",
+    "weightKg": "Weight (kg)",
+    "notes": "What the doctor found",
+    "notesHint": "e.g. eyes fine, skin rash, needs vitamins",
+    "needsFollowUp": "Needs a doctor again",
+    "followUpNeeded": "The last check-up says this child needs to see a doctor again.",
+    "deleteConfirm": "Delete this check-up?",
+    "heightValue": "Height: {{value}} cm",
+    "weightValue": "Weight: {{value}} kg",
+    "empty": "No health check-ups yet",
+    "emptyText": "Add one after each health camp to see how the child is growing.",
+    "followUpsAlert_one": "{{count}} child needs to see a doctor again (from the last health camp).",
+    "followUpsAlert_other": "{{count}} children need to see a doctor again (from the last health camp)."
+  },
+  "certificate": {
+    "title": "School Leaving Certificate",
+    "open": "Leaving certificate",
+    "approxBirthYear": "Around {{year}} (approximate)",
+    "lastClass": "Last class studied",
+    "attendance": "Attendance in that year",
+    "attendanceValue": "{{present}} of {{total}} days",
+    "leftOn": "Date of leaving",
+    "toSchool": "Joining school (if known)",
+    "statement": "This is to certify that the above details of {{name}} are as per the records of {{school}}.",
+    "date": "Date: {{date}}",
+    "clerkSign": "Prepared by",
+    "stillActive": "This child is still studying here. Mark the child as left before printing the certificate."
   }
 }

@@ -37,4 +37,12 @@ a {
     size: A4 landscape;
     margin: 10mm;
   }
+  @page portrait {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+  .print-portrait {
+    page: portrait;
+    max-width: none !important;
+  }
 }

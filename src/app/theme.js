@@ -27,6 +27,8 @@ export const makeTheme = () =>
       MuiIconButton: { styleOverrides: { root: { minWidth: 44, minHeight: 44 } } },
       MuiTextField: { defaultProps: { fullWidth: true } },
       MuiChip: { styleOverrides: { label: { fontWeight: 600 } } },
+      // Initials on a light teal: readable (contrast > 7:1) instead of white on light grey.
+      MuiAvatar: { styleOverrides: { colorDefault: { backgroundColor: '#d3e6ea', color: '#0b3f4b', fontWeight: 700 } } },
       MuiCard: { defaultProps: { variant: 'outlined' } },
       MuiDialog: { defaultProps: { fullWidth: true, maxWidth: 'sm' } },
     },

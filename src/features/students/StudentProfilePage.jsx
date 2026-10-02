@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Chip, Grid, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
-import { Edit as EditIcon } from '@mui/icons-material';
+import { Description as DescriptionIcon, Edit as EditIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -16,12 +16,14 @@ import { fmtDate, localName } from '../../shared/utils/format';
 import StudentForm from './StudentForm';
 import LeaveDialog from './LeaveDialog';
 import DiaryList from '../diary/DiaryList';
+import HealthTab from '../health/HealthTab';
+import MonthAttendance from './MonthAttendance';
 
 function Info({ label, value }) {
   if (value === null || value === undefined || value === '') return null;
   return (
-    <Grid item xs={12} sm={6} md={4}>
-      <Typography variant="body2" color="text.secondary">
+    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
         {label}
       </Typography>
       <Typography sx={{ overflowWrap: 'anywhere' }}>{value}</Typography>
@@ -34,7 +36,7 @@ function Details({ s }) {
   const f = (k) => t(`students.fields.${k}`);
   const ageText = s.age !== null ? `${t('students.ageYears', { count: s.age })}${s.dobIsApproximate ? ` (${t('students.approx')})` : ''}` : null;
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       <Card>
         <CardContent>
           <Typography variant="h3" gutterBottom>
@@ -52,7 +54,7 @@ function Details({ s }) {
             <Info label={f('aadhaarLast4')} value={s.aadhaarLast4 && `XXXX-XXXX-${s.aadhaarLast4}`} />
           </Grid>
           {s.activities?.length > 0 && (
-            <Stack direction="row" gap={1} sx={{ mt: 2 }} flexWrap="wrap">
+            <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mt: 2 }}>
               {s.activities.map((a) => (
                 <Chip key={a.id} label={localName(a, i18n.language)} />
               ))}
@@ -87,13 +89,14 @@ function History({ id }) {
   return (
     <Query q={q}>
       {({ data }) => (
-        <Stack gap={2}>
+        <Stack sx={{ gap: 2 }}>
+          <MonthAttendance studentId={id} />
           {data.map((h) => {
             const marked = h.present + h.absent + h.leave;
             return (
               <Card key={h.enrollmentId}>
                 <CardContent>
-                  <Stack direction="row" justifyContent="space-between" flexWrap="wrap" gap={1}>
+                  <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', justifyContent: 'space-between' }}>
                     <Typography variant="h3">
                       {h.yearName} · {h.sectionName}
                     </Typography>
@@ -105,7 +108,7 @@ function History({ id }) {
                       : t('students.noAttendance')}
                   </Typography>
                   {h.reports?.length > 0 && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                       {h.reports.map((r) => `${r.subject} (${t(`marks.terms.${r.term}`)}): ${r.grade || r.marks || '–'}`).join(' · ')}
                     </Typography>
                   )}
@@ -126,7 +129,7 @@ function ReportCardLink({ id }) {
   const { t } = useTranslation();
   const [term, setTerm] = useState('S1');
   return (
-    <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap">
+    <Stack direction="row" sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
       <TextField select label={t('marks.term')} value={term} onChange={(e) => setTerm(e.target.value)} sx={{ maxWidth: 200 }}>
         {['S1', 'S2', 'ANNUAL'].map((x) => (
           <MenuItem key={x} value={x}>
@@ -149,6 +152,7 @@ export default function StudentProfilePage() {
   const [tab, setTab] = useState(0);
   const [editing, setEditing] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [readmitting, setReadmitting] = useState(false);
   const [readmitTo, setReadmitTo] = useState(null);
   const run = useAction();
   const q = useGet(`/students/${id}`);
@@ -188,50 +192,71 @@ export default function StudentProfilePage() {
               sx={{ mb: 2 }}
               action={
                 can(role, 'students.leave') && (
-                  <Button color="inherit" onClick={() => setReadmitTo(s.enrollment?.classSectionId ?? null)}>
+                  <Button
+                    color="inherit"
+                    onClick={() => {
+                      setReadmitTo(s.enrollment?.classSectionId ?? null);
+                      setReadmitting(true);
+                    }}
+                  >
                     {t('students.readmit')}
                   </Button>
                 )
               }
             >
-              {t(`students.statuses.${s.status}`)} {s.leftOn && `· ${fmtDate(s.leftOn)}`} {s.leftReason && `· ${t(`students.reasons.${s.leftReason}`)}`}
+              {t(`students.statuses.${s.status}`)} {s.leftOn && `· ${fmtDate(s.leftOn)}`} {s.leftReason && `· ${t(`students.reasons.${s.leftReason}`)}`}{' '}
+              {s.leftToSchool && `· ${s.leftToSchool}`}
             </Alert>
           )}
-          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} alignItems={{ sm: 'center' }} sx={{ mb: 2 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, alignItems: { sm: 'center' }, mb: 2 }}>
             <PhotoPicker url={s.photoUrl} name={s.name} disabled={!canWrite} onUpload={(file) => run(() => photo.mutateAsync(file), t('common.saved'))} />
             <Box sx={{ flex: 1 }} />
+            {can(role, 'students.leave') && s.status !== 'active' && (
+              <Button component={RouterLink} to={`/students/${s.id}/certificate`} startIcon={<DescriptionIcon />} variant="outlined">
+                {t('certificate.open')}
+              </Button>
+            )}
             {can(role, 'students.leave') && s.status === 'active' && !readOnly && (
               <Button color="warning" onClick={() => setLeaving(true)}>
                 {t('students.markLeft')}
               </Button>
             )}
           </Stack>
-          <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="scrollable" sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs
+            value={tab}
+            onChange={(_, v) => setTab(v)}
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+          >
             <Tab label={t('students.tabs.details')} />
             <Tab label={t('students.tabs.diary')} />
             <Tab label={t('students.tabs.history')} />
             <Tab label={t('students.tabs.reportCard')} />
+            <Tab label={t('students.tabs.health')} />
           </Tabs>
           {tab === 0 && <Details s={s} />}
           {tab === 1 && <DiaryList studentId={s.id} canWrite={can(role, 'diary.write') && !readOnly && s.status === 'active'} />}
           {tab === 2 && <History id={s.id} />}
           {tab === 3 && <ReportCardLink id={s.id} />}
+          {tab === 4 && <HealthTab studentId={s.id} canWrite={can(role, 'health.write') && s.status === 'active'} />}
           {editing && <StudentForm student={s} onClose={() => setEditing(false)} onSubmit={(body) => update.mutateAsync(body)} />}
           {leaving && (
             <LeaveDialog name={s.name} onClose={() => setLeaving(false)} onSubmit={(body) => run(() => leave.mutateAsync(body), t('common.saved'))} />
           )}
-          {readmitTo !== null && (
+          {readmitting && (
             <Card sx={{ p: 2, mt: 2 }}>
-              <Stack direction="row" gap={2} flexWrap="wrap">
+              <Stack direction="row" sx={{ gap: 2, flexWrap: 'wrap' }}>
                 <SectionSelect value={readmitTo} onChange={setReadmitTo} sx={{ maxWidth: 260 }} />
                 <Button
                   variant="contained"
                   disabled={!readmitTo}
-                  onClick={async () => (await run(() => readmit.mutateAsync(readmitTo), t('common.saved'))) && setReadmitTo(null)}
+                  onClick={async () => (await run(() => readmit.mutateAsync(readmitTo), t('common.saved'))) && setReadmitting(false)}
                 >
                   {t('students.readmit')}
                 </Button>
-                <Button onClick={() => setReadmitTo(null)}>{t('common.cancel')}</Button>
+                <Button onClick={() => setReadmitting(false)}>{t('common.cancel')}</Button>
               </Stack>
             </Card>
           )}

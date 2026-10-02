@@ -30,17 +30,15 @@ export default function LoginPage() {
 
   return (
     <Box sx={{ minHeight: '100%', display: 'grid', placeItems: 'center', px: 2, py: 4, bgcolor: 'background.default' }}>
-      <Stack gap={3} sx={{ width: '100%', maxWidth: 420 }}>
-        <Stack alignItems="center" gap={1}>
+      <Stack sx={{ gap: 3, width: '100%', maxWidth: 420 }}>
+        <Stack sx={{ gap: 1, alignItems: 'center' }}>
           <Box component="img" src="/sslogo.png" alt="" sx={{ height: 72 }} />
-          <Typography variant="h1" textAlign="center">
+          <Typography variant="h1" sx={{ textAlign: 'center' }}>
             {t('common.appName')}
           </Typography>
         </Stack>
         <Box>
-          <Typography textAlign="center" color="text.secondary" sx={{ mb: 1 }}>
-            {t('lang.choose')}
-          </Typography>
+          <Typography sx={{ color: 'text.secondary', textAlign: 'center', mb: 1 }}>{t('lang.choose')}</Typography>
           <LanguagePicker />
         </Box>
         <Card>
@@ -54,9 +52,9 @@ export default function LoginPage() {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               autoComplete="username"
-              inputProps={{ autoCapitalize: 'none' }}
               required
               autoFocus
+              slotProps={{ htmlInput: { autoCapitalize: 'none' } }}
             />
             <TextField
               label={t('auth.password')}
@@ -65,20 +63,22 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton aria-label={show ? t('auth.hidePassword') : t('auth.showPassword')} onClick={() => setShow((s) => !s)} edge="end">
-                      {show ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton aria-label={show ? t('auth.hidePassword') : t('auth.showPassword')} onClick={() => setShow((s) => !s)} edge="end">
+                        {show ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
             <Button type="submit" size="large" variant="contained" disabled={busy}>
               {busy ? t('auth.loggingIn') : t('auth.login')}
             </Button>
-            <Typography variant="body2" color="text.secondary" textAlign="center">
+            <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center' }}>
               {t('auth.forgot')}
             </Typography>
           </CardContent>

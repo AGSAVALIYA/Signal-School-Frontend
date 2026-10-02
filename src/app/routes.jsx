@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { can, isStaff } from '../shared/utils/permissions';
 
 // Every page is lazy-loaded; `perm` hides routes the role cannot use.
@@ -13,6 +13,7 @@ const P = {
   Students: page(() => import('../features/students/StudentListPage')),
   Student: page(() => import('../features/students/StudentProfilePage')),
   Import: page(() => import('../features/students/ImportStudentsPage')),
+  Certificate: page(() => import('../features/students/LeavingCertificatePage')),
   Syllabus: page(() => import('../features/syllabus/SyllabusPage')),
   Subject: page(() => import('../features/syllabus/SubjectSyllabusPage')),
   Marks: page(() => import('../features/marks/MarksPage')),
@@ -38,6 +39,7 @@ export const routes = (role) =>
     { path: '/students', element: <P.Students /> },
     { path: '/students/import', element: <P.Import />, perm: 'students.import' },
     { path: '/students/:id', element: <P.Student /> },
+    { path: '/students/:id/certificate', element: <P.Certificate />, perm: 'students.leave' },
     { path: '/report-card/:studentId', element: <P.ReportCard /> },
     { path: '/syllabus', element: <P.Syllabus /> },
     { path: '/syllabus/subjects/:id', element: <P.Subject /> },

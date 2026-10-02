@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { Button, Card, CardContent, Chip, IconButton, List, ListItem, ListItemText, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -39,10 +39,10 @@ function Profile({ u }) {
             </MenuItem>
           ))}
         </TextField>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {t('staff.lastLogin', { when: u.lastLoginAt ? fmtDateTime(u.lastLoginAt) : t('staff.never') })}
         </Typography>
-        <Stack direction="row" gap={1} flexWrap="wrap">
+        <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
           <Button
             variant="contained"
             onClick={() => run(() => save.mutateAsync({ ...form, email: form.email || null, phone: form.phone || null }), t('common.saved'))}
@@ -89,9 +89,9 @@ function Assignments({ u }) {
   const remove = useSend((id) => api.delete(`/assignments/${id}`), { invalidate: inv });
   const subjects = sections.find((s) => s.id === form.classSectionId)?.Subjects || [];
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       <Card sx={{ p: 2 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2 }}>
           <TextField
             select
             label={t('students.fields.class')}

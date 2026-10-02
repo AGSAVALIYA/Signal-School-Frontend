@@ -3,7 +3,7 @@ import { Checkbox, FormControlLabel, MenuItem, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 // TextField bound to react-hook-form; error codes (client or server) are translated.
-export function Field({ control, name, label, select, options = [], type = 'text', required, ...rest }) {
+export function Field({ control, name, label, select, options = [], type = 'text', required, slotProps, ...rest }) {
   const { t } = useTranslation();
   return (
     <Controller
@@ -19,8 +19,8 @@ export function Field({ control, name, label, select, options = [], type = 'text
           select={select}
           error={Boolean(fieldState.error)}
           helperText={fieldState.error ? t(`fieldErrors.${fieldState.error.message}`, { defaultValue: t('fieldErrors.INVALID') }) : rest.helperText}
-          InputLabelProps={type === 'date' ? { shrink: true } : undefined}
           {...rest}
+          slotProps={{ ...slotProps, inputLabel: type === 'date' ? { shrink: true, ...slotProps?.inputLabel } : slotProps?.inputLabel }}
         >
           {select &&
             options.map((o) => (
