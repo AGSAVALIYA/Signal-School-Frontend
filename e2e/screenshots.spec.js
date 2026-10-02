@@ -19,7 +19,10 @@ test('screens for the docs', async ({ page }) => {
   await login(page, 'sunita@demo.test');
   await settle(page);
   await shot(page, 'teacher-today');
-  await page.getByRole('link', { name: /Take attendance|Change attendance/ }).first().click();
+  await page
+    .getByRole('link', { name: /Take attendance|Change attendance/ })
+    .first()
+    .click();
   await settle(page);
   await shot(page, 'take-attendance');
 
@@ -33,7 +36,10 @@ test('screens for the docs', async ({ page }) => {
 
   await page.goto('/me');
   await page.getByRole('button', { name: /Log out/ }).click();
-  await page.getByRole('dialog').getByRole('button', { name: /Log out/ }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: /Log out/ })
+    .click();
   await login(page, 'owner@demo.test');
   await settle(page);
   await shot(page, 'dashboard');

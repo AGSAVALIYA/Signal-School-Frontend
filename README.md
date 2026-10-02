@@ -5,6 +5,17 @@ cheap phones, takes attendance offline, and speaks English / हिंदी / �
 **Signal-School-Backend**, which also holds the full documentation (`docs/`: user stories, user guide, architecture,
 API, security, testing strategy, deployment).
 
+| Attendance — one tap per child | Teacher home in Marathi | Login with language choice |
+|---|---|---|
+| <img src="docs/screenshots/phone-take-attendance.png" width="240" alt="Attendance sheet with P, A, L buttons"> | <img src="docs/screenshots/phone-teacher-today-marathi.png" width="240" alt="Teacher home in Marathi"> | <img src="docs/screenshots/phone-login.png" width="240" alt="Login with four languages"> |
+
+| Principal's dashboard | Child's profile |
+|---|---|
+| <img src="docs/screenshots/desktop-dashboard.png" width="420" alt="Dashboard"> | <img src="docs/screenshots/desktop-student-profile.png" width="420" alt="Student profile"> |
+
+More in [`docs/screenshots/`](docs/screenshots) (refresh with `npm run screenshots`). New here, human or AI agent?
+Read [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Run
 
 ```bash
@@ -23,6 +34,7 @@ npm run lint              # ESLint 9 (flat config) incl. "no untranslated text i
 npm test                  # Vitest: locale parity, offline queue, components, utils
 npm run build
 npx playwright test       # end-to-end at phone (360 px) and desktop width; needs the API running with seed data
+npm run screenshots       # refresh docs/screenshots
 ```
 
 ## Structure

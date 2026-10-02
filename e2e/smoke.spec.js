@@ -105,7 +105,10 @@ test('extra large text still fits a phone screen', async ({ page }) => {
     await expectNoHorizontalScroll(page);
   }
   await page.goto('/');
-  await page.getByRole('link', { name: /Take attendance|Change attendance/ }).first().click();
+  await page
+    .getByRole('link', { name: /Take attendance|Change attendance/ })
+    .first()
+    .click();
   await expect(page.getByRole('button', { name: /: Absent$/ }).first()).toBeVisible();
   await expectNoHorizontalScroll(page);
   await page.goto('/me');
@@ -139,7 +142,10 @@ test('office is warned before admitting a child twice, and sees one child’s mo
   await dialog.getByRole('button', { name: 'Save student' }).click();
   await expect(dialog.getByText('Is this child already in the school records?')).toBeVisible();
   await expect(dialog.getByRole('button', { name: 'No, add as a new child' })).toBeVisible();
-  await dialog.getByText(new RegExp(`^${name} · GR`)).first().click();
+  await dialog
+    .getByText(new RegExp(`^${name} · GR`))
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/students\/\d+$/);
   await page.getByRole('tab', { name: 'Past years' }).click();
   await expect(page.getByRole('grid', { name: 'Attendance this month' })).toBeVisible();
