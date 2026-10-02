@@ -37,6 +37,12 @@ npx playwright test       # end-to-end at phone (360 px) and desktop width; need
 npm run screenshots       # refresh docs/screenshots
 ```
 
+## Deploy (Vercel)
+
+`vercel.json` sets the Vite build (`npm run build` → `dist/`), single-page-app routing and security headers. Set
+`VITE_API_URL` (e.g. `https://api.example.org`) in the Vercel project's environment variables, and add the deployed web
+origin to the API's `CORS_ORIGINS`. Any static host works the same way; see the API repo's `docs/deployment.md` for nginx.
+
 ## Structure
 
 ```

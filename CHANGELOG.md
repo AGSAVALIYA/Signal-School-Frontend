@@ -17,6 +17,8 @@ versions: [Semantic Versioning](https://semver.org/).
 - `AGENTS.md`, `CONTRIBUTING.md`, README screenshots and `npm run screenshots` (#7).
 
 ### Fixed
+- Vercel previews/deploys: `vercel.json` declares the Vite build (`dist/`), SPA routing and security headers
+  (the project was still configured for the old Create React App `build/` output).
 - Accessibility (axe WCAG 2.1 AA, every screen): labelled progress bars, readable avatar colours, valid list markup,
   keyboard-reachable scrolling tables, photo button visible to screen readers, calendar semantics.
 - Marks on phones: one block per child instead of a sideways-scrolling table; "Maximum marks for everyone" fill-in.
