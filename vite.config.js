@@ -37,5 +37,5 @@ export default defineConfig({
   ],
   server: { port: 5173, proxy: { '/api': 'http://localhost:3000', '/files': 'http://localhost:3000' } },
   build: { chunkSizeWarningLimit: 600 },
-  test: { environment: 'jsdom', setupFiles: './src/test/setup.js', globals: true },
+  test: { environment: 'jsdom', setupFiles: './src/test/setup.js', globals: true, include: ['src/**/*.test.{js,jsx}'] },
 });
