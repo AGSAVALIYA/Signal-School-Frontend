@@ -112,7 +112,6 @@
   "attendance": {
     "title": "Attendance · {{name}}",
     "allPresent": "Mark everyone present",
-    "summary": "Present {{present}} · Absent {{absent}} · Leave {{leave}}",
     "save": "Save attendance",
     "savedAt": "Saved at {{time}}. You can still change it and save again.",
     "savedSummary": "Attendance saved: {{present}} present, {{absent}} absent",
@@ -544,7 +543,7 @@
   },
   "help": {
     "today": "Your classes are listed here. Tap 'Take attendance' every morning. Green means attendance is done.",
-    "attendance": "Everyone starts as Present. Tap a child's name to change it to Absent, tap again for Leave. Then press 'Save attendance'.",
+    "attendance": "Everyone starts as Present. For a child who did not come, tap A (Absent); for a child on leave, tap L (Leave). Then press 'Save attendance'.",
     "students": "Tap a student to see details, daily diary and past years. Use 'Add student' for a new admission.",
     "syllabus": "Open a subject and press 'Mark as taught' after teaching a topic. The bar shows how much is done.",
     "import": "Download the template, fill it in Excel, upload it, check the rows, then import.",

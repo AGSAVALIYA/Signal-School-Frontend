@@ -50,9 +50,11 @@ test('teacher takes attendance for the class in a few taps', async ({ page }) =>
     .getByRole('link', { name: /Take attendance|Change attendance/ })
     .first()
     .click();
-  const rows = page.locator('main button[aria-label*=":"]');
-  await expect(rows.first()).toBeVisible();
-  await rows.first().click(); // Present → Absent
+  const absent = page.getByRole('button', { name: /: Absent$/ });
+  await expect(absent.first()).toBeVisible();
+  await absent.first().click(); // one tap: Absent
+  await expect(absent.first()).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText('Absent: 1')).toBeVisible();
   await page.getByRole('button', { name: /Save attendance/i }).click();
   await expect(page.getByText(/Saved at/i)).toBeVisible();
   expect(errors).toEqual([]);
