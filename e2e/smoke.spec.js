@@ -111,3 +111,16 @@ test('extra large text still fits a phone screen', async ({ page }) => {
   await page.goto('/me');
   await page.getByRole('button', { name: 'Normal' }).click();
 });
+
+test('principal filters the activity log', async ({ page }) => {
+  const errors = watchErrors(page);
+  await login(page, 'owner@demo.test');
+  await page.goto('/audit');
+  await page.getByLabel('Kind of change').click();
+  await page.getByRole('option', { name: 'Health' }).click();
+  await expect(page.locator('main')).toContainText(/health check-up|No activity yet/);
+  await page.getByLabel('Person').click();
+  await page.getByRole('option').nth(1).click();
+  await expect(page.locator('main h1')).toBeVisible();
+  expect(errors).toEqual([]);
+});

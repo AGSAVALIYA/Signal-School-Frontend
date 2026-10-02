@@ -38,7 +38,10 @@
     "update": "Update now",
     "viewAll": "View all",
     "yes": "Yes",
-    "reload": "Reload"
+    "reload": "Reload",
+    "newer": "Newer",
+    "older": "Older",
+    "pageOf": "Page {{page}} of {{pages}}"
   },
   "lang": {
     "choose": "Choose your language"
@@ -530,9 +533,20 @@
       "syllabus.complete": "Marked a topic as taught",
       "syllabus.uncomplete": "Marked a topic as not taught",
       "marks.save": "Saved marks",
-      "health.create": "added a health check-up",
-      "health.delete": "deleted a health check-up",
-      "diary.delete": "deleted a diary note"
+      "health.create": "Added a health check-up",
+      "health.delete": "Deleted a health check-up",
+      "diary.delete": "Deleted a diary note"
+    },
+    "person": "Person",
+    "area": "Kind of change",
+    "areas": {
+      "attendance": "Attendance",
+      "students": "Students",
+      "teaching": "Syllabus, marks & diary",
+      "health": "Health",
+      "staff": "Staff",
+      "years": "Academic years",
+      "setup": "School setup"
     }
   },
   "profile": {
