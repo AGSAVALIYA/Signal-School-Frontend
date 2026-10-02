@@ -22,7 +22,16 @@ function Row({ row, status, onChange, disabled }) {
   const choices = status === 'LATE' ? [...CHOICES, 'LATE'] : CHOICES;
   return (
     <Box
-      sx={{ display: 'flex', gap: { xs: 1, sm: 1.5 }, alignItems: 'center', px: { xs: 1, sm: 1.5 }, py: 1, borderBottom: 1, borderColor: 'divider', minHeight: 64 }}
+      sx={{
+        display: 'flex',
+        gap: { xs: 1, sm: 1.5 },
+        alignItems: 'center',
+        px: { xs: 1, sm: 1.5 },
+        py: 1,
+        borderBottom: 1,
+        borderColor: 'divider',
+        minHeight: 64,
+      }}
     >
       <Typography sx={{ width: 24, flexShrink: 0, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{row.rollNumber ?? ''}</Typography>
       <Avatar src={row.photoUrl || undefined} alt="" sx={{ width: 36, height: 36, fontSize: '0.9rem', display: { xs: 'none', sm: 'flex' } }}>
@@ -127,7 +136,12 @@ function Sheet({ sheet, sectionId, date }) {
 
       <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }} aria-live="polite">
         {['P', 'A', 'L'].map((c) => (
-          <Chip key={c} color={TONE[c]} variant={counts[c] ? 'filled' : 'outlined'} label={`${t(`attendance.status.${c}`)}: ${counts[c] + (c === 'P' ? counts.LATE : 0)}`} />
+          <Chip
+            key={c}
+            color={TONE[c]}
+            variant={counts[c] ? 'filled' : 'outlined'}
+            label={`${t(`attendance.status.${c}`)}: ${counts[c] + (c === 'P' ? counts.LATE : 0)}`}
+          />
         ))}
         <Box sx={{ flex: 1 }} />
         {sheet.editable && (

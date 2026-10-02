@@ -91,6 +91,42 @@ export default function DashboardPage() {
                   {t('dashboard.yearEnds', { name: data.year.name, days: Math.max(daysLeft, 0) })}
                 </Alert>
               )}
+              {data.consecutiveAbsences?.length > 0 && (
+                <Card sx={{ borderColor: 'error.main' }}>
+                  <CardContent>
+                    <Typography variant="h3">{t('dashboard.streakTitle')}</Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                      {t('dashboard.streakHelp')}
+                    </Typography>
+                    <List dense>
+                      {data.consecutiveAbsences.map((s) => (
+                        <ListItem
+                          key={s.id}
+                          disableGutters
+                          secondaryAction={
+                            <ContactButtons
+                              phone={s.guardianPhone}
+                              language={s.guardianLanguage}
+                              message="contact.streakMessage"
+                              params={{ name: s.name, school: school?.name, days: s.days }}
+                            />
+                          }
+                        >
+                          <ListItemText
+                            primary={
+                              <RouterLink to={`/students/${s.id}`} style={{ color: 'inherit' }}>
+                                {`${s.name} · ${s.sectionName}`}
+                              </RouterLink>
+                            }
+                            secondary={t('dashboard.streakDays', { count: s.days, since: fmtDate(s.since) })}
+                            sx={{ pr: 12 }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </CardContent>
+                </Card>
+              )}
               <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
                 <Stat label={t('dashboard.students')} value={data.counts.students} />
                 <Stat label={t('dashboard.teachers')} value={data.counts.teachers} />

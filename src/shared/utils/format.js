@@ -14,11 +14,4 @@ export const localName = (item, lng) => (item ? item.nameTranslations?.[lng] || 
 const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
 const firstLetter = (word) => (segmenter ? segmenter.segment(word)[Symbol.iterator]().next().value?.segment : Array.from(word)[0]) || '';
 
-export const initials = (name = '') =>
-  (name || '')
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(firstLetter)
-    .join('')
-    .toUpperCase();
+export const initials = (name = '') => (name || '').split(/\s+/).filter(Boolean).slice(0, 2).map(firstLetter).join('').toUpperCase();

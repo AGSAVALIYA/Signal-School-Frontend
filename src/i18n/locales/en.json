@@ -221,7 +221,16 @@
       "history": "Past years",
       "reportCard": "Report card",
       "health": "Health"
-    }
+    },
+    "duplicates": {
+      "title": "Is this child already in the school records?",
+      "text": "These children have a similar name or the same guardian phone. If it is the same child, open the record and use \"Re-admit\" so the old history stays.",
+      "samePhone": "same guardian phone",
+      "addAnyway": "No, add as a new child"
+    },
+    "monthTitle": "Attendance this month",
+    "monthTotals": "Present {{present}} · Absent {{absent}} · Leave {{leave}} · {{percent}}%",
+    "dayOff": "Holiday"
   },
   "import": {
     "title": "Import from Excel",
@@ -492,7 +501,11 @@
     "noneAtRisk": "No child below 75%",
     "birthdays": "Birthdays today: {{names}}",
     "yearEnds": "{{name}} ends in {{days}} days. Prepare the next academic year.",
-    "mealsToday": "Meals to serve today"
+    "mealsToday": "Meals to serve today",
+    "streakTitle": "Absent several days in a row",
+    "streakHelp": "Call the family now: the child may have moved away or need help.",
+    "streakDays_one": "{{count}} school day absent, since {{since}}",
+    "streakDays_other": "{{count}} school days absent in a row, since {{since}}"
   },
   "audit": {
     "subtitle": "Who changed what, and when",
@@ -634,7 +647,8 @@
     "call": "Call",
     "whatsapp": "WhatsApp",
     "absentMessage": "Namaste. {{name}} did not come to {{school}} today ({{date}}). Please send the child to school tomorrow.",
-    "lowAttendanceMessage": "Namaste. {{name}} came to {{school}} on only {{percent}}% of school days this month. Please send the child to school every day."
+    "lowAttendanceMessage": "Namaste. {{name}} came to {{school}} on only {{percent}}% of school days this month. Please send the child to school every day.",
+    "streakMessage": "Namaste. {{name}} has not come to {{school}} for {{days}} school days. Is everything all right? Please send the child to school or call us."
   },
   "health": {
     "add": "Add health check-up",

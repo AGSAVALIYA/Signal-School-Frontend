@@ -17,6 +17,7 @@ import StudentForm from './StudentForm';
 import LeaveDialog from './LeaveDialog';
 import DiaryList from '../diary/DiaryList';
 import HealthTab from '../health/HealthTab';
+import MonthAttendance from './MonthAttendance';
 
 function Info({ label, value }) {
   if (value === null || value === undefined || value === '') return null;
@@ -89,6 +90,7 @@ function History({ id }) {
     <Query q={q}>
       {({ data }) => (
         <Stack sx={{ gap: 2 }}>
+          <MonthAttendance studentId={id} />
           {data.map((h) => {
             const marked = h.present + h.absent + h.leave;
             return (

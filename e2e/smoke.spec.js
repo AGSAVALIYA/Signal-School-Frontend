@@ -124,3 +124,25 @@ test('principal filters the activity log', async ({ page }) => {
   await expect(page.locator('main h1')).toBeVisible();
   expect(errors).toEqual([]);
 });
+
+test('office is warned before admitting a child twice, and sees one child’s month', async ({ page }) => {
+  const errors = watchErrors(page);
+  await login(page, 'clerk@demo.test');
+  await page.goto('/students');
+  const first = page.locator('main .MuiListItemButton-root').first();
+  const name = (await first.locator('.MuiListItemText-primary').textContent()).trim();
+  await page.getByRole('button', { name: 'Add student' }).click();
+  const dialog = page.getByRole('dialog');
+  await dialog.getByLabel(/^Full name/).fill(name);
+  await dialog.getByRole('combobox', { name: /^Class/ }).click();
+  await page.getByRole('option').first().click();
+  await dialog.getByRole('button', { name: 'Save student' }).click();
+  await expect(dialog.getByText('Is this child already in the school records?')).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'No, add as a new child' })).toBeVisible();
+  await dialog.getByText(new RegExp(`^${name} · GR`)).first().click();
+  await expect(page).toHaveURL(/\/students\/\d+$/);
+  await page.getByRole('tab', { name: 'Past years' }).click();
+  await expect(page.getByRole('grid', { name: 'Attendance this month' })).toBeVisible();
+  await expectNoHorizontalScroll(page);
+  expect(errors).toEqual([]);
+});
