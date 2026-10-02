@@ -18,14 +18,14 @@ export default function LeaveDialog({ name, onSubmit, onClose }) {
     <Dialog open onClose={onClose}>
       <DialogTitle>{t('students.leaveTitle', { name })}</DialogTitle>
       <DialogContent>
-        <Stack gap={2} sx={{ pt: 1 }}>
-          <Typography color="text.secondary">{t('students.leaveText')}</Typography>
+        <Stack sx={{ gap: 2, pt: 1 }}>
+          <Typography sx={{ color: 'text.secondary' }}>{t('students.leaveText')}</Typography>
           <TextField
             type="date"
             label={t('common.date')}
             value={form.date}
             onChange={(e) => setForm({ ...form, date: e.target.value })}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
           <TextField select label={t('students.leaveReason')} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })}>
             {REASONS.map((r) => (

@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Grid, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 import { CheckCircle as CheckCircleIcon, RadioButtonUnchecked as RadioButtonUncheckedIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -18,16 +18,16 @@ const SETUP = [
 
 function Trend({ rows }) {
   const { t } = useTranslation();
-  if (!rows.length) return <Typography color="text.secondary">{t('dashboard.noTrend')}</Typography>;
+  if (!rows.length) return <Typography sx={{ color: 'text.secondary' }}>{t('dashboard.noTrend')}</Typography>;
   return (
-    <Stack direction="row" gap={0.5} alignItems="flex-end" sx={{ height: 140, overflowX: 'auto' }} role="img" aria-label={t('dashboard.trend')}>
+    <Stack direction="row" sx={{ gap: 0.5, alignItems: 'flex-end', height: 140, overflowX: 'auto' }} role="img" aria-label={t('dashboard.trend')}>
       {rows.map((r) => {
         const pct = r.marked ? Math.round((100 * r.present) / r.marked) : 0;
         return (
-          <Stack key={r.date} alignItems="center" sx={{ minWidth: 34, flex: 1 }} title={`${fmtDate(r.date)}: ${pct}%`}>
+          <Stack key={r.date} sx={{ alignItems: 'center', minWidth: 34, flex: 1 }} title={`${fmtDate(r.date)}: ${pct}%`}>
             <Typography variant="caption">{pct}</Typography>
             <Box sx={{ width: '70%', height: `${pct}px`, bgcolor: pct < 75 ? 'warning.main' : 'primary.main', borderRadius: '4px 4px 0 0' }} />
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {dayjs(r.date).format('DD')}
             </Typography>
           </Stack>
@@ -50,7 +50,7 @@ export default function DashboardPage() {
           const done = today?.sections.filter((s) => s.submittedAt) || [];
           const daysLeft = data.year ? dayjs(data.year.endDate).diff(dayjs(), 'day') : null;
           return (
-            <Stack gap={3}>
+            <Stack sx={{ gap: 3 }}>
               {setupLeft.length > 0 && (
                 <Card>
                   <CardContent>
@@ -58,7 +58,7 @@ export default function DashboardPage() {
                       {t('dashboard.setupTitle')}
                     </Typography>
                     {SETUP.map(([k, to]) => (
-                      <Stack key={k} direction="row" gap={1} alignItems="center" sx={{ py: 0.5 }}>
+                      <Stack key={k} direction="row" sx={{ gap: 1, alignItems: 'center', py: 0.5 }}>
                         {data.setup[k] ? <CheckCircleIcon color="success" /> : <RadioButtonUncheckedIcon color="disabled" />}
                         <Typography sx={{ flex: 1 }}>{t(`dashboard.setup.${k}`)}</Typography>
                         {!data.setup[k] && (
@@ -97,7 +97,7 @@ export default function DashboardPage() {
                 {today && <Stat label={t('dashboard.absentToday')} value={today.absentees.length} tone="error" />}
               </Box>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={7}>
+                <Grid size={{ xs: 12, md: 7 }}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
                       <Typography variant="h3" gutterBottom>
@@ -107,10 +107,10 @@ export default function DashboardPage() {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={5}>
+                <Grid size={{ xs: 12, md: 5 }}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
-                      <Stack direction="row" alignItems="center">
+                      <Stack direction="row" sx={{ alignItems: 'center' }}>
                         <Typography variant="h3" sx={{ flex: 1 }}>
                           {t('dashboard.pendingClasses')}
                         </Typography>
@@ -125,11 +125,11 @@ export default function DashboardPage() {
                             {s.name}
                           </Typography>
                         ))}
-                      {today && done.length === today.sections.length && <Typography color="success.main">{t('dashboard.allDone')}</Typography>}
+                      {today && done.length === today.sections.length && <Typography sx={{ color: 'success.main' }}>{t('dashboard.allDone')}</Typography>}
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
                       <Typography variant="h3" gutterBottom>
@@ -147,11 +147,11 @@ export default function DashboardPage() {
                     </CardContent>
                   </Card>
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <Card sx={{ height: '100%' }}>
                     <CardContent>
                       <Typography variant="h3">{t('dashboard.atRisk')}</Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {t('dashboard.atRiskHelp')}
                       </Typography>
                       <List dense>
@@ -160,13 +160,13 @@ export default function DashboardPage() {
                             <ListItemText primary={`${s.name} · ${s.sectionName}`} secondary={[`${s.percent}%`, s.guardianPhone].filter(Boolean).join(' · ')} />
                           </ListItem>
                         ))}
-                        {!data.atRisk.length && <Typography color="success.main">{t('dashboard.noneAtRisk')}</Typography>}
+                        {!data.atRisk.length && <Typography sx={{ color: 'success.main' }}>{t('dashboard.noneAtRisk')}</Typography>}
                       </List>
                     </CardContent>
                   </Card>
                 </Grid>
                 {data.birthdays.length > 0 && (
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <Alert severity="success">
                       {t('dashboard.birthdays', { names: data.birthdays.map((b) => `${b.name} (${b.sectionName})`).join(', ') })}
                     </Alert>

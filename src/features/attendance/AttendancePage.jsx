@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { Alert, Box, Button, Card, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { TableView as TableViewIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -34,7 +34,7 @@ export default function AttendancePage() {
             return data.sections.length ? (
               <Grid container spacing={2}>
                 {data.sections.map((s) => (
-                  <Grid item xs={12} sm={6} md={4} key={s.id}>
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={s.id}>
                     <SectionCard s={s} />
                   </Grid>
                 ))}
@@ -46,8 +46,8 @@ export default function AttendancePage() {
           const present = done.reduce((n, s) => n + (s.present || 0), 0);
           const marked = done.reduce((n, s) => n + (s.present || 0) + (s.absent || 0) + (s.leave || 0), 0);
           return (
-            <Stack gap={3}>
-              <Typography color="text.secondary">{fmtDate(data.date)}</Typography>
+            <Stack sx={{ gap: 3 }}>
+              <Typography sx={{ color: 'text.secondary' }}>{fmtDate(data.date)}</Typography>
               {data.holiday && <Alert severity="info">{data.holiday.name || t('today.weeklyOff')}</Alert>}
               <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}>
                 <Stat label={t('dashboard.classesDone')} value={`${done.length}/${data.sections.length}`} />
@@ -91,7 +91,11 @@ export default function AttendancePage() {
                   </Typography>
                   <Card>
                     {data.absentees.map((a) => (
-                      <Stack key={a.id} direction="row" gap={1} sx={{ p: 1.5, borderBottom: 1, borderColor: 'divider' }} alignItems="center" flexWrap="wrap">
+                      <Stack
+                        key={a.id}
+                        direction="row"
+                        sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', p: 1.5, borderBottom: 1, borderColor: 'divider' }}
+                      >
                         <Typography component={RouterLink} to={`/students/${a.id}`} sx={{ flex: 1, minWidth: 160 }}>
                           {a.name} · {a.sectionName}
                         </Typography>

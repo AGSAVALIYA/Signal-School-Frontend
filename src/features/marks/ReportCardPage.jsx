@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router';
 import { Box, Button, Card, CardContent, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { Print as PrintIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -30,14 +30,14 @@ export default function ReportCardPage() {
           </Box>
           <Card sx={{ maxWidth: 800, mx: 'auto' }} className="print-area">
             <CardContent sx={{ p: 4 }}>
-              <Stack direction="row" gap={2} alignItems="center" sx={{ mb: 3 }}>
+              <Stack direction="row" sx={{ gap: 2, alignItems: 'center', mb: 3 }}>
                 {data.school.logoUrl && <Box component="img" src={data.school.logoUrl} alt="" sx={{ height: 64 }} />}
                 <Box sx={{ flex: 1 }}>
                   <Typography variant="h1">{data.school.name}</Typography>
-                  <Typography color="text.secondary">{data.school.address}</Typography>
+                  <Typography sx={{ color: 'text.secondary' }}>{data.school.address}</Typography>
                 </Box>
               </Stack>
-              <Typography variant="h2" textAlign="center" gutterBottom>
+              <Typography variant="h2" gutterBottom sx={{ textAlign: 'center' }}>
                 {t('marks.reportCard')} · {t(`marks.terms.${data.term}`)} · {data.year.name}
               </Typography>
               <Grid container spacing={2} sx={{ my: 2 }}>
@@ -49,11 +49,11 @@ export default function ReportCardPage() {
                   [t('students.fields.dob'), fmtDate(data.student.dob)],
                   [t('students.fields.guardianName'), data.student.guardianName],
                 ].map(([k, v]) => (
-                  <Grid item xs={6} key={k}>
-                    <Typography variant="body2" color="text.secondary">
+                  <Grid size={{ xs: 6 }} key={k}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                       {k}
                     </Typography>
-                    <Typography fontWeight={600}>{v || '–'}</Typography>
+                    <Typography sx={{ fontWeight: 600 }}>{v || '–'}</Typography>
                   </Grid>
                 ))}
               </Grid>
@@ -78,7 +78,7 @@ export default function ReportCardPage() {
                 </TableBody>
               </Table>
               <Typography sx={{ mt: 3 }}>{data.attendance.total ? t('marks.attendanceLine', data.attendance) : t('students.noAttendance')}</Typography>
-              <Stack direction="row" justifyContent="space-between" sx={{ mt: 8 }}>
+              <Stack direction="row" sx={{ justifyContent: 'space-between', mt: 8 }}>
                 <Typography>{t('marks.classTeacherSign')}</Typography>
                 <Typography>{t('marks.principalSign')}</Typography>
                 <Typography>{t('marks.parentSign')}</Typography>

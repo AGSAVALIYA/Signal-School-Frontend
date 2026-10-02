@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link as RouterLink, useParams } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Chip, Grid, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -20,8 +20,8 @@ import DiaryList from '../diary/DiaryList';
 function Info({ label, value }) {
   if (value === null || value === undefined || value === '') return null;
   return (
-    <Grid item xs={12} sm={6} md={4}>
-      <Typography variant="body2" color="text.secondary">
+    <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
         {label}
       </Typography>
       <Typography sx={{ overflowWrap: 'anywhere' }}>{value}</Typography>
@@ -34,7 +34,7 @@ function Details({ s }) {
   const f = (k) => t(`students.fields.${k}`);
   const ageText = s.age !== null ? `${t('students.ageYears', { count: s.age })}${s.dobIsApproximate ? ` (${t('students.approx')})` : ''}` : null;
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       <Card>
         <CardContent>
           <Typography variant="h3" gutterBottom>
@@ -52,7 +52,7 @@ function Details({ s }) {
             <Info label={f('aadhaarLast4')} value={s.aadhaarLast4 && `XXXX-XXXX-${s.aadhaarLast4}`} />
           </Grid>
           {s.activities?.length > 0 && (
-            <Stack direction="row" gap={1} sx={{ mt: 2 }} flexWrap="wrap">
+            <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mt: 2 }}>
               {s.activities.map((a) => (
                 <Chip key={a.id} label={localName(a, i18n.language)} />
               ))}
@@ -87,13 +87,13 @@ function History({ id }) {
   return (
     <Query q={q}>
       {({ data }) => (
-        <Stack gap={2}>
+        <Stack sx={{ gap: 2 }}>
           {data.map((h) => {
             const marked = h.present + h.absent + h.leave;
             return (
               <Card key={h.enrollmentId}>
                 <CardContent>
-                  <Stack direction="row" justifyContent="space-between" flexWrap="wrap" gap={1}>
+                  <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', justifyContent: 'space-between' }}>
                     <Typography variant="h3">
                       {h.yearName} · {h.sectionName}
                     </Typography>
@@ -105,7 +105,7 @@ function History({ id }) {
                       : t('students.noAttendance')}
                   </Typography>
                   {h.reports?.length > 0 && (
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                       {h.reports.map((r) => `${r.subject} (${t(`marks.terms.${r.term}`)}): ${r.grade || r.marks || '–'}`).join(' · ')}
                     </Typography>
                   )}
@@ -126,7 +126,7 @@ function ReportCardLink({ id }) {
   const { t } = useTranslation();
   const [term, setTerm] = useState('S1');
   return (
-    <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap">
+    <Stack direction="row" sx={{ gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
       <TextField select label={t('marks.term')} value={term} onChange={(e) => setTerm(e.target.value)} sx={{ maxWidth: 200 }}>
         {['S1', 'S2', 'ANNUAL'].map((x) => (
           <MenuItem key={x} value={x}>
@@ -197,7 +197,7 @@ export default function StudentProfilePage() {
               {t(`students.statuses.${s.status}`)} {s.leftOn && `· ${fmtDate(s.leftOn)}`} {s.leftReason && `· ${t(`students.reasons.${s.leftReason}`)}`}
             </Alert>
           )}
-          <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} alignItems={{ sm: 'center' }} sx={{ mb: 2 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, alignItems: { sm: 'center' }, mb: 2 }}>
             <PhotoPicker url={s.photoUrl} name={s.name} disabled={!canWrite} onUpload={(file) => run(() => photo.mutateAsync(file), t('common.saved'))} />
             <Box sx={{ flex: 1 }} />
             {can(role, 'students.leave') && s.status === 'active' && !readOnly && (
@@ -222,7 +222,7 @@ export default function StudentProfilePage() {
           )}
           {readmitTo !== null && (
             <Card sx={{ p: 2, mt: 2 }}>
-              <Stack direction="row" gap={2} flexWrap="wrap">
+              <Stack direction="row" sx={{ gap: 2, flexWrap: 'wrap' }}>
                 <SectionSelect value={readmitTo} onChange={setReadmitTo} sx={{ maxWidth: 260 }} />
                 <Button
                   variant="contained"

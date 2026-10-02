@@ -41,7 +41,7 @@ function Grid({ data, onSave, saving, readOnly }) {
                     value={r.grade ?? ''}
                     onChange={(e) => set(i, 'grade', e.target.value.toUpperCase().slice(0, 5))}
                     disabled={readOnly}
-                    inputProps={{ 'aria-label': t('marks.grade') }}
+                    slotProps={{ htmlInput: { 'aria-label': t('marks.grade') } }}
                   />
                 </TableCell>
                 <TableCell>
@@ -51,7 +51,7 @@ function Grid({ data, onSave, saving, readOnly }) {
                     value={r.marks ?? ''}
                     onChange={(e) => set(i, 'marks', e.target.value)}
                     disabled={readOnly}
-                    inputProps={{ 'aria-label': t('marks.marks') }}
+                    slotProps={{ htmlInput: { 'aria-label': t('marks.marks') } }}
                   />
                 </TableCell>
                 <TableCell>
@@ -61,7 +61,7 @@ function Grid({ data, onSave, saving, readOnly }) {
                     value={r.maxMarks ?? ''}
                     onChange={(e) => set(i, 'maxMarks', e.target.value)}
                     disabled={readOnly}
-                    inputProps={{ 'aria-label': t('marks.maxMarks') }}
+                    slotProps={{ htmlInput: { 'aria-label': t('marks.maxMarks') } }}
                   />
                 </TableCell>
                 <TableCell sx={{ minWidth: 200 }}>
@@ -70,7 +70,7 @@ function Grid({ data, onSave, saving, readOnly }) {
                     value={r.remarks ?? ''}
                     onChange={(e) => set(i, 'remarks', e.target.value)}
                     disabled={readOnly}
-                    inputProps={{ 'aria-label': t('marks.remarks') }}
+                    slotProps={{ htmlInput: { 'aria-label': t('marks.remarks') } }}
                   />
                 </TableCell>
               </TableRow>
@@ -119,7 +119,7 @@ export default function MarksPage() {
   return (
     <>
       <PageHeader title={t('nav.marks')} />
-      <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} sx={{ mb: 2 }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, mb: 2 }}>
         <SectionSelect
           value={section?.id}
           onChange={(v) => {

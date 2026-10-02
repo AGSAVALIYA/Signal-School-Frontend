@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from './AuthContext';
 import { YearProvider } from './YearContext';

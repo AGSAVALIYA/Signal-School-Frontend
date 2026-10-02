@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { Alert, Box, Button, Card, CardActions, CardContent, Chip, Grid, Stack, Typography } from '@mui/material';
 import { EditNote as EditNoteIcon, FactCheck as FactCheckIcon, People as PeopleIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -15,11 +15,11 @@ export function SectionCard({ s, onNote }) {
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardContent sx={{ flex: 1 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={1}>
+        <Stack direction="row" sx={{ gap: 1, alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <Typography variant="h3">{s.name}</Typography>
           {s.isClassTeacher && <Chip size="small" label={t('today.classTeacher')} />}
         </Stack>
-        <Typography sx={{ mt: 1 }} color={done ? 'success.main' : 'warning.main'} fontWeight={600}>
+        <Typography sx={{ color: done ? 'success.main' : 'warning.main', fontWeight: 600, mt: 1 }}>
           {done ? t('today.attendanceDone', { present: s.present, total: s.strength, time: fmtTime(s.submittedAt) }) : t('today.attendanceNotTaken')}
         </Typography>
       </CardContent>
@@ -55,11 +55,11 @@ export default function TodayPage() {
   return (
     <Query q={q}>
       {({ data }) => (
-        <Stack gap={3}>
-          <Stack direction="row" alignItems="center">
+        <Stack sx={{ gap: 3 }}>
+          <Stack direction="row" sx={{ alignItems: 'center' }}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="h1">{t('today.greeting', { name: me.name.split(' ')[0] })}</Typography>
-              <Typography color="text.secondary">{fmtDate(data.date)}</Typography>
+              <Typography sx={{ color: 'text.secondary' }}>{fmtDate(data.date)}</Typography>
             </Box>
             <HelpTip text={t('help.today')} />
           </Stack>
@@ -77,7 +77,7 @@ export default function TodayPage() {
                 {data.sections.length ? (
                   <Grid container spacing={2}>
                     {data.sections.map((s) => (
-                      <Grid item xs={12} sm={6} md={4} key={s.id}>
+                      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={s.id}>
                         <SectionCard s={s} onNote={setNote} />
                       </Grid>
                     ))}
@@ -93,12 +93,12 @@ export default function TodayPage() {
                   </Typography>
                   <Grid container spacing={2}>
                     {data.subjects.map((s) => (
-                      <Grid item xs={12} sm={6} md={4} key={s.id}>
+                      <Grid size={{ xs: 12, sm: 6, md: 4 }} key={s.id}>
                         <Card component={RouterLink} to={`/syllabus/subjects/${s.id}`} sx={{ display: 'block', textDecoration: 'none', p: 2 }}>
-                          <Typography fontWeight={700}>
+                          <Typography sx={{ fontWeight: 700 }}>
                             {s.name} · {s.sectionName}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                             {t('syllabus.progressText', { done: s.done, total: s.total, percent: s.percent })}
                           </Typography>
                           <ProgressBar percent={s.percent} />

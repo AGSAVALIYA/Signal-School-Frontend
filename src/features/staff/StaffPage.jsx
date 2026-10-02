@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import {
   Avatar,
   Button,
@@ -51,7 +51,7 @@ function AddDialog({ onClose, onCreated }) {
     <Dialog open onClose={onClose}>
       <DialogTitle>{t('staff.add')}</DialogTitle>
       <DialogContent>
-        <Stack component="form" id="add-user" onSubmit={submit} gap={2} sx={{ pt: 1 }}>
+        <Stack component="form" id="add-user" onSubmit={submit} sx={{ gap: 2, pt: 1 }}>
           <TextField label={t('common.name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required autoFocus />
           <TextField
             label={t('staff.phone')}

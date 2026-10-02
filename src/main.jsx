@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import '@fontsource/noto-sans/400.css';
@@ -31,7 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={makeTheme()}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <BrowserRouter>
           <NotifyProvider>
             <ConfirmProvider>
               <AuthProvider>

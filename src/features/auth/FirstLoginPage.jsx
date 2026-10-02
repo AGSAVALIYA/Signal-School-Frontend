@@ -10,12 +10,12 @@ export default function FirstLoginPage() {
   const { me, logout } = useAuth();
   return (
     <Box sx={{ minHeight: '100%', display: 'grid', placeItems: 'center', px: 2, py: 4 }}>
-      <Stack gap={3} sx={{ width: '100%', maxWidth: 440 }}>
+      <Stack sx={{ gap: 3, width: '100%', maxWidth: 440 }}>
         <LanguagePicker />
         <Card>
           <CardContent sx={{ display: 'grid', gap: 2, p: 3 }}>
             <Typography variant="h2">{t('auth.firstLoginTitle', { name: me.name })}</Typography>
-            <Typography color="text.secondary">{t('auth.firstLoginText')}</Typography>
+            <Typography sx={{ color: 'text.secondary' }}>{t('auth.firstLoginText')}</Typography>
             <ChangePasswordForm />
             <Button onClick={logout}>{t('auth.logout')}</Button>
           </CardContent>

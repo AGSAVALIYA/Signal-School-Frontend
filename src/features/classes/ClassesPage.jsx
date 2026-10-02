@@ -41,11 +41,12 @@ function AddInline({ label, onAdd, children }) {
     <Stack
       component="form"
       direction="row"
-      gap={1}
+
       onSubmit={async (e) => {
         e.preventDefault();
         if (v.trim() && (await onAdd(v.trim()))) setV('');
       }}
+      sx={{ gap: 1 }}
     >
       {children}
       <TextField size="small" label={label} value={v} onChange={(e) => setV(e.target.value)} />
@@ -69,7 +70,7 @@ function SectionCard({ s, teachers, readOnly }) {
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ display: 'grid', gap: 2 }}>
-        <Stack direction="row" gap={1} alignItems="center">
+        <Stack direction="row" sx={{ gap: 1, alignItems: 'center' }}>
           <TextField
             size="small"
             label={t('classes.sectionName')}
@@ -93,7 +94,7 @@ function SectionCard({ s, teachers, readOnly }) {
             <DeleteIcon />
           </IconButton>
         </Stack>
-        <Typography color="text.secondary">
+        <Typography sx={{ color: 'text.secondary' }}>
           {s.Grade?.name} · {t('classes.studentCount', { count: s.studentCount })}
         </Typography>
         <TextField
@@ -111,10 +112,10 @@ function SectionCard({ s, teachers, readOnly }) {
           ))}
         </TextField>
         <Box>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Typography variant="body2" gutterBottom sx={{ color: 'text.secondary' }}>
             {t('classes.subjects')}
           </Typography>
-          <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mb: 1 }}>
+          <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mb: 1 }}>
             {s.Subjects.map((sub) => (
               <Chip
                 key={sub.id}
@@ -146,7 +147,7 @@ function SectionsTab() {
   const [gradeId, setGradeId] = useState('');
   const add = useSend((name) => api.post('/sections', { gradeId, name }), { invalidate: INV });
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       {!readOnly && (
         <Card sx={{ p: 2 }}>
           <AddInline label={t('classes.sectionName')} onAdd={(n) => gradeId && run(() => add.mutateAsync(n), t('common.saved'))}>
@@ -165,7 +166,7 @@ function SectionsTab() {
           data.length ? (
             <Grid container spacing={2}>
               {data.map((s) => (
-                <Grid item xs={12} md={6} key={s.id}>
+                <Grid size={{ xs: 12, md: 6 }} key={s.id}>
                   <SectionCard s={s} teachers={teachers.data?.data || []} readOnly={readOnly} />
                 </Grid>
               ))}
@@ -198,8 +199,8 @@ function GradesTab() {
           run(() => order.mutateAsync(list));
         };
         return (
-          <Stack gap={2}>
-            <Typography color="text.secondary">{t('classes.gradesHelp')}</Typography>
+          <Stack sx={{ gap: 2 }}>
+            <Typography sx={{ color: 'text.secondary' }}>{t('classes.gradesHelp')}</Typography>
             <Card>
               <List disablePadding>
                 {data.map((g, i) => (
@@ -314,8 +315,8 @@ function ActivitiesTab() {
   const add = useSend((name) => api.post('/activities', { name }), { invalidate: INV });
   const remove = useSend((id) => api.delete(`/activities/${id}`), { invalidate: INV });
   return (
-    <Stack gap={2}>
-      <Typography color="text.secondary">{t('classes.activitiesHelp')}</Typography>
+    <Stack sx={{ gap: 2 }}>
+      <Typography sx={{ color: 'text.secondary' }}>{t('classes.activitiesHelp')}</Typography>
       <Query q={q}>
         {({ data }) => (
           <Card>

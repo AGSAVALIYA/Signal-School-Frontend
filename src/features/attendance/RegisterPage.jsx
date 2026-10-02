@@ -39,7 +39,7 @@ export default function RegisterPage() {
           </>
         }
       />
-      <Stack direction="row" gap={2} sx={{ mb: 2 }} flexWrap="wrap" className="no-print">
+      <Stack direction="row" sx={{ gap: 2, flexWrap: 'wrap', mb: 2 }} className="no-print">
         <SectionSelect value={section} onChange={setSectionId} sx={{ maxWidth: 260 }} />
         <TextField
           type="month"
@@ -47,7 +47,7 @@ export default function RegisterPage() {
           value={month}
           onChange={(e) => e.target.value && setMonth(e.target.value)}
           sx={{ maxWidth: 200 }}
-          InputLabelProps={{ shrink: true }}
+          slotProps={{ inputLabel: { shrink: true } }}
         />
       </Stack>
       {!section ? (
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                 </TableBody>
               </Table>
               <Box sx={{ p: 2 }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                   {t('attendance.registerLegend')}
                 </Typography>
               </Box>

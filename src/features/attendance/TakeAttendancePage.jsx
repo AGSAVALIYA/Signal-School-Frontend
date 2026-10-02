@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router';
 import { Alert, Avatar, Box, Button, ButtonBase, InputAdornment, Paper, Stack, TextField, Typography } from '@mui/material';
 import { Save as SaveIcon, Search as SearchIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -89,7 +89,7 @@ function Sheet({ sheet, sectionId, date }) {
   };
 
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       {sheet.holiday && (
         <Alert severity="info">{sheet.holiday.type === 'weekly_off' ? t('today.weeklyOff') : t('today.holiday', { name: sheet.holiday.name })}</Alert>
       )}
@@ -98,8 +98,8 @@ function Sheet({ sheet, sectionId, date }) {
       {savedAt && !dirty && !queued && <Alert severity="success">{t('attendance.savedAt', { time: fmtTime(savedAt) })}</Alert>}
       {!savedAt && sheet.editable && <Alert severity="info">{t('help.attendance')}</Alert>}
 
-      <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center">
-        <Typography fontWeight={700} sx={{ flex: 1, fontSize: '1.1rem' }}>
+      <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+        <Typography sx={{ fontWeight: 700, flex: 1, fontSize: '1.1rem' }}>
           {t('attendance.summary', { present: counts.P, absent: counts.A, leave: counts.L })}
         </Typography>
         {sheet.editable && (
@@ -113,12 +113,14 @@ function Sheet({ sheet, sectionId, date }) {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         size="small"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
+        slotProps={{
+          input: {
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          },
         }}
       />
       <Paper variant="outlined">
@@ -133,9 +135,7 @@ function Sheet({ sheet, sectionId, date }) {
             />
           ))
         ) : (
-          <Typography sx={{ p: 3 }} color="text.secondary">
-            {t('attendance.noStudents')}
-          </Typography>
+          <Typography sx={{ color: 'text.secondary', p: 3 }}>{t('attendance.noStudents')}</Typography>
         )}
       </Paper>
       {sheet.editable && sheet.rows.length > 0 && (
@@ -170,10 +170,9 @@ export default function TakeAttendancePage() {
         type="date"
         label={t('common.date')}
         value={date}
-        inputProps={{ max: todayISO() }}
         onChange={(e) => e.target.value && setParams({ date: e.target.value })}
         sx={{ mb: 2, maxWidth: 220 }}
-        InputLabelProps={{ shrink: true }}
+        slotProps={{ htmlInput: { max: todayISO() }, inputLabel: { shrink: true } }}
       />
       <Query q={q}>{({ data }) => <Sheet sheet={data} sectionId={sectionId} date={date} />}</Query>
     </Box>

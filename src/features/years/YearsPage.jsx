@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from '@mui/material';
 import { Autorenew as AutorenewIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -20,21 +20,21 @@ function YearDialog({ year, onClose, onSave }) {
     <Dialog open onClose={onClose}>
       <DialogTitle>{year ? t('years.edit') : t('years.add')}</DialogTitle>
       <DialogContent>
-        <Stack gap={2} sx={{ pt: 1 }}>
+        <Stack sx={{ gap: 2, pt: 1 }}>
           <TextField label={t('years.name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="2026-27" />
           <TextField
             type="date"
             label={t('years.start')}
             value={form.startDate}
             onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
           <TextField
             type="date"
             label={t('years.end')}
             value={form.endDate}
             onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
         </Stack>
       </DialogContent>
@@ -55,14 +55,14 @@ function UnlockDialog({ year, onClose, onSave }) {
     <Dialog open onClose={onClose}>
       <DialogTitle>{t('years.unlockTitle', { name: year.name })}</DialogTitle>
       <DialogContent>
-        <Stack gap={2} sx={{ pt: 1 }}>
-          <Typography color="text.secondary">{t('years.unlockText')}</Typography>
+        <Stack sx={{ gap: 2, pt: 1 }}>
+          <Typography sx={{ color: 'text.secondary' }}>{t('years.unlockText')}</Typography>
           <TextField
             type="number"
             label={t('years.unlockMinutes')}
             value={form.minutes}
             onChange={(e) => setForm({ ...form, minutes: Number(e.target.value) })}
-            inputProps={{ min: 5, max: 240 }}
+            slotProps={{ htmlInput: { min: 5, max: 240 } }}
           />
           <TextField label={t('years.unlockReason')} value={form.reason} onChange={(e) => setForm({ ...form, reason: e.target.value })} required />
         </Stack>
@@ -122,23 +122,23 @@ export default function YearsPage() {
       ) : (
         <Grid container spacing={2}>
           {years.map((y) => (
-            <Grid item xs={12} md={6} key={y.id}>
+            <Grid size={{ xs: 12, md: 6 }} key={y.id}>
               <Card>
                 <CardContent sx={{ display: 'grid', gap: 1 }}>
-                  <Stack direction="row" alignItems="center" gap={1}>
+                  <Stack direction="row" sx={{ gap: 1, alignItems: 'center' }}>
                     <Typography variant="h3" sx={{ flex: 1 }}>
                       {y.name}
                     </Typography>
                     <Chip color={COLOR[y.status]} label={t(`year.status.${y.status}`)} />
                   </Stack>
-                  <Typography color="text.secondary">
+                  <Typography sx={{ color: 'text.secondary' }}>
                     {fmtDate(y.startDate)} – {fmtDate(y.endDate)}
                   </Typography>
                   <Typography>{t('years.counts', { sections: y.sectionCount, students: y.studentCount })}</Typography>
                   {y.unlockedUntil && new Date(y.unlockedUntil) > new Date() && (
                     <Chip color="warning" label={t('years.unlockedUntil', { time: fmtDateTime(y.unlockedUntil) })} />
                   )}
-                  <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1 }}>
+                  <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mt: 1 }}>
                     <Button size="small" onClick={() => setEditing(y)}>
                       {t('common.edit')}
                     </Button>

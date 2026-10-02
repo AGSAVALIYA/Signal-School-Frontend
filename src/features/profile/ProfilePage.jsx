@@ -23,14 +23,14 @@ export default function ProfilePage() {
   return (
     <Box sx={{ maxWidth: 640 }}>
       <PageHeader title={t('nav.me')} />
-      <Stack gap={2}>
+      <Stack sx={{ gap: 2 }}>
         <Card>
           <CardContent sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
             <PhotoPicker url={me.photoUrl} name={me.name} onUpload={upload} />
             <Box>
               <Typography variant="h2">{me.name}</Typography>
-              <Typography color="text.secondary">{[me.phone, me.email].filter(Boolean).join(' · ')}</Typography>
-              <Typography color="text.secondary">
+              <Typography sx={{ color: 'text.secondary' }}>{[me.phone, me.email].filter(Boolean).join(' · ')}</Typography>
+              <Typography sx={{ color: 'text.secondary' }}>
                 {school?.name} · {t(`staff.roles.${school?.role}`)}
               </Typography>
             </Box>
@@ -70,7 +70,7 @@ export default function ProfilePage() {
             <Typography variant="h3" gutterBottom>
               {t('profile.help')}
             </Typography>
-            <Typography color="text.secondary">{t('profile.helpText')}</Typography>
+            <Typography sx={{ color: 'text.secondary' }}>{t('profile.helpText')}</Typography>
           </CardContent>
         </Card>
         <Button

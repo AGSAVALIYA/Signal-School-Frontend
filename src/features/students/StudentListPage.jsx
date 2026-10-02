@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router';
 import {
   Avatar,
   Box,
@@ -80,18 +80,20 @@ export default function StudentListPage() {
           </>
         }
       />
-      <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} sx={{ mb: 2 }} flexWrap="wrap">
+      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, flexWrap: 'wrap', mb: 2 }}>
         <TextField
           placeholder={t('students.searchPlaceholder')}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           sx={{ flex: 2, minWidth: 220 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            },
           }}
         />
         <SectionSelect
@@ -135,7 +137,7 @@ export default function StudentListPage() {
                     />
                     <Box>
                       {s.status !== 'active' ? (
-                        <Typography color="text.secondary">{t(`students.statuses.${s.status}`)}</Typography>
+                        <Typography sx={{ color: 'text.secondary' }}>{t(`students.statuses.${s.status}`)}</Typography>
                       ) : (
                         !allYears && <StatusChip status={s.todayStatus} />
                       )}

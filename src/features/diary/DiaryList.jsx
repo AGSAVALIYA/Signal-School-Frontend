@@ -24,7 +24,7 @@ export default function DiaryList({ studentId, canWrite }) {
   const remove = useSend(({ kind, id }) => api.delete(`/diary/entries/${kind}/${id}`), { invalidate: ['/diary'] });
 
   return (
-    <Stack gap={2}>
+    <Stack sx={{ gap: 2 }}>
       {canWrite && (
         <Button startIcon={<AddIcon />} variant="outlined" onClick={() => setAdding(true)} sx={{ alignSelf: 'flex-start' }}>
           {t('diary.addStudentNote')}
@@ -36,8 +36,8 @@ export default function DiaryList({ studentId, canWrite }) {
             data.map((e) => (
               <Card key={`${e.kind}-${e.id}`}>
                 <CardContent>
-                  <Stack direction="row" alignItems="center" gap={1} flexWrap="wrap">
-                    <Typography fontWeight={700}>{fmtDate(e.date)}</Typography>
+                  <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <Typography sx={{ fontWeight: 700 }}>{fmtDate(e.date)}</Typography>
                     {e.kind === 'class' && <Chip size="small" label={t('diary.classLabel')} />}
                     {e.attendance && <StatusChip status={e.attendance} />}
                     <Box sx={{ flex: 1 }} />
@@ -63,7 +63,7 @@ export default function DiaryList({ studentId, canWrite }) {
                       sx={{ mt: 1, maxHeight: 160, maxWidth: '100%', borderRadius: 1, cursor: 'zoom-in' }}
                     />
                   )}
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                     {[e.subjects?.join(', '), e.author && t('diary.byAuthor', { name: e.author })].filter(Boolean).join(' · ')}
                   </Typography>
                 </CardContent>

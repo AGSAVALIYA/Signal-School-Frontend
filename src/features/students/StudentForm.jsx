@@ -91,7 +91,7 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
   });
 
   const g = (name, label, props = {}) => (
-    <Grid item xs={12} sm={props.half === false ? 12 : 6}>
+    <Grid size={{ xs: 12, sm: props.half === false ? 12 : 6 }}>
       <Field control={control} name={name} label={label} {...props} />
     </Grid>
   );
@@ -110,17 +110,17 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
           })}
           {g('gender', t('students.fields.gender'), { select: true, options: ['F', 'M', 'O'].map((v) => ({ value: v, label: t(`students.gender.${v}`) })) })}
           {dobUnknown ? g('approxAge', t('students.fields.approxAge'), { type: 'number' }) : g('dob', t('students.fields.dob'), { type: 'date' })}
-          <Grid item xs={12} sx={{ mt: -1 }}>
+          <Grid size={{ xs: 12 }} sx={{ mt: -1 }}>
             <CheckField control={control} name="dobUnknown" label={t('students.fields.dobUnknown')} />
           </Grid>
           {g('guardianName', t('students.fields.guardianName'))}
-          {g('guardianPhone', t('students.fields.guardianPhone'), { type: 'tel', inputProps: { inputMode: 'tel' } })}
-          <Grid item xs={12}>
+          {g('guardianPhone', t('students.fields.guardianPhone'), { type: 'tel', slotProps: { htmlInput: { inputMode: 'tel' } } })}
+          <Grid size={{ xs: 12 }}>
             <Button onClick={() => setMore((m) => !m)} endIcon={<ExpandMoreIcon sx={{ transform: more ? 'rotate(180deg)' : 'none' }} />}>
               {t('students.moreDetails')}
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Collapse in={more}>
               <Grid container spacing={2}>
                 {g('guardianRelation', t('students.fields.guardianRelation'))}
@@ -132,8 +132,8 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
                 {g('grNumber', t('students.fields.grNumber'), { helperText: student ? undefined : t('students.grAuto') })}
                 {g('admissionDate', t('students.fields.admissionDate'), { type: 'date' })}
                 {g('bloodGroup', t('students.fields.bloodGroup'))}
-                {g('aadhaarLast4', t('students.fields.aadhaarLast4'), { inputProps: { inputMode: 'numeric', maxLength: 4 } })}
-                <Grid item xs={12} sm={6}>
+                {g('aadhaarLast4', t('students.fields.aadhaarLast4'), { slotProps: { htmlInput: { inputMode: 'numeric', maxLength: 4 } } })}
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CheckField control={control} name="consentPhoto" label={t('students.fields.consentPhoto')} />
                 </Grid>
               </Grid>

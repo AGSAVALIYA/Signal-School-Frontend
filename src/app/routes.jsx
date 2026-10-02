@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { can, isStaff } from '../shared/utils/permissions';
 
 // Every page is lazy-loaded; `perm` hides routes the role cannot use.
