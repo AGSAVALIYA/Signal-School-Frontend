@@ -1,5 +1,5 @@
 import { useCallback, useId, useState } from 'react';
-import { Avatar, Badge, Box, Button, CircularProgress, IconButton } from '@mui/material';
+import { Avatar, Box, Button, CircularProgress, IconButton } from '@mui/material';
 import { PhotoCamera as PhotoCameraIcon } from '@mui/icons-material';
 import imageCompression from 'browser-image-compression';
 import { useTranslation } from 'react-i18next';
@@ -42,26 +42,31 @@ export default function PhotoPicker({ url, name, onUpload, size = 96, disabled }
   return (
     <PhotoInput onFile={upload}>
       {(open) => (
-        <Badge
-          overlap="circular"
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          badgeContent={
-            !disabled && (
-              <IconButton
-                size="small"
-                aria-label={t('common.changePhoto')}
-                onClick={open}
-                sx={{ bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' } }}
-              >
-                {busy ? <CircularProgress size={18} color="inherit" /> : <PhotoCameraIcon fontSize="small" />}
-              </IconButton>
-            )
-          }
-        >
+        // Plain positioned button (not a Badge, whose badge is hidden from screen readers but would be focusable).
+        <Box sx={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
           <Avatar src={url || undefined} alt={name} sx={{ width: size, height: size, fontSize: size / 3 }}>
             {initials(name)}
           </Avatar>
-        </Badge>
+          {!disabled && (
+            <IconButton
+              size="small"
+              aria-label={t('common.changePhoto')}
+              onClick={open}
+              sx={{
+                position: 'absolute',
+                right: -4,
+                bottom: -4,
+                bgcolor: 'primary.main',
+                color: 'white',
+                border: 2,
+                borderColor: 'background.paper',
+                '&:hover': { bgcolor: 'primary.dark' },
+              }}
+            >
+              {busy ? <CircularProgress size={18} color="inherit" /> : <PhotoCameraIcon fontSize="small" />}
+            </IconButton>
+          )}
+        </Box>
       )}
     </PhotoInput>
   );

@@ -105,7 +105,7 @@ export default function StaffPage() {
         {({ data }) =>
           data.length ? (
             <Card>
-              <List disablePadding>
+              <List component="div" disablePadding>
                 {data.map((u) => (
                   <ListItemButton key={u.id} divider onClick={() => navigate(`/staff/${u.id}`)}>
                     <ListItemAvatar>

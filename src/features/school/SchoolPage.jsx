@@ -131,7 +131,7 @@ function Organization() {
       <Query q={org}>{({ data }) => <Typography variant="h2">{data.name}</Typography>}</Query>
       <Query q={summary}>
         {({ data }) => (
-          <Card sx={{ overflowX: 'auto' }}>
+          <Card sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={t('school.tabs.organization')}>
             <Table size="small">
               <TableHead>
                 <TableRow>

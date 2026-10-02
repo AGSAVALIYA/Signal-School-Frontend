@@ -116,7 +116,7 @@ export default function StudentListPage() {
         {({ data, meta }) =>
           data.length ? (
             <Card>
-              <List disablePadding>
+              <List component="div" disablePadding>
                 {data.map((s) => (
                   <ListItemButton key={s.id} onClick={() => navigate(`/students/${s.id}`)} divider sx={{ gap: 1, flexWrap: 'wrap' }}>
                     <ListItemAvatar>

@@ -57,7 +57,7 @@ export default function AttendancePage() {
                 <Stat label={t('dashboard.absentToday')} value={data.absentees.length} tone="error" />
                 <Stat label={t('dashboard.mealsToday')} value={done.length ? present : '–'} />
               </Box>
-              <Card sx={{ overflowX: 'auto' }}>
+              <Card sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={t('nav.attendance')}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>

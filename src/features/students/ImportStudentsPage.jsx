@@ -75,7 +75,7 @@ export default function ImportStudentsPage() {
               <Alert severity={preview.valid === preview.total ? 'success' : 'warning'} sx={{ mb: 2 }}>
                 {t('import.summary', { valid: preview.valid, total: preview.total })}
               </Alert>
-              <Box sx={{ overflowX: 'auto' }}>
+              <Box sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={t('import.title')}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>

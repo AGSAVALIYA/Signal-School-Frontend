@@ -36,19 +36,19 @@ export default function MonthAttendance({ studentId }) {
             const blanks = dayjs(data.days[0].date).day();
             return (
               <>
-                <Box role="grid" aria-label={t('students.monthTitle')} sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0.5, maxWidth: 420 }}>
+                <Box role="list" aria-label={t('students.monthTitle')} sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 0.5, maxWidth: 420 }}>
                   {weekdays.map((w) => (
-                    <Typography key={w} variant="caption" sx={{ textAlign: 'center', color: 'text.secondary' }}>
+                    <Typography key={w} variant="caption" aria-hidden sx={{ textAlign: 'center', color: 'text.secondary' }}>
                       {w}
                     </Typography>
                   ))}
                   {Array.from({ length: blanks }, (_, i) => (
-                    <Box key={`b${i}`} />
+                    <Box key={`b${i}`} aria-hidden />
                   ))}
                   {data.days.map((d) => (
                     <Box
                       key={d.date}
-                      role="gridcell"
+                      role="listitem"
                       title={d.holiday || (d.status ? t(`attendance.status.${d.status}`) : '')}
                       aria-label={`${dayjs(d.date).format('D MMM')}: ${d.off ? t('students.dayOff') : d.status ? t(`attendance.status.${d.status}`) : t('attendance.notMarked')}`}
                       sx={{
@@ -59,7 +59,7 @@ export default function MonthAttendance({ studentId }) {
                         fontSize: '0.85rem',
                         fontWeight: d.status ? 700 : 400,
                         bgcolor: d.off ? 'action.hover' : d.status ? `${TONE[d.status]}.main` : 'transparent',
-                        color: d.off ? 'text.disabled' : d.status ? `${TONE[d.status]}.contrastText` : 'text.primary',
+                        color: d.off ? 'text.secondary' : d.status ? `${TONE[d.status]}.contrastText` : 'text.primary',
                         border: !d.off && !d.status ? 1 : 0,
                         borderColor: 'divider',
                       }}

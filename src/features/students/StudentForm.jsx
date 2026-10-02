@@ -137,7 +137,7 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
           <Alert severity="warning" sx={{ mb: 2 }} ref={warning}>
             <AlertTitle>{t('students.duplicates.title')}</AlertTitle>
             {t('students.duplicates.text')}
-            <List dense disablePadding>
+            <List component="div" dense disablePadding>
               {matches.map((d) => (
                 <ListItemButton key={d.id} onClick={() => navigate(`/students/${d.id}`)} sx={{ borderRadius: 1 }}>
                   <ListItemText

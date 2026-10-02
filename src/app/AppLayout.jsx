@@ -106,7 +106,7 @@ export default function AppLayout() {
   const teacherMobile = !desktop && role === 'teacher';
 
   const menu = (
-    <List sx={{ py: 1 }}>
+    <List component="nav" aria-label={t('common.menu')} sx={{ py: 1 }}>
       {items.map((n) => (
         <ListItemButton
           key={n.to}

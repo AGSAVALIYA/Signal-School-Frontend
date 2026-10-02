@@ -141,11 +141,13 @@ export function Stat({ label, value, tone }) {
   );
 }
 
-export function ProgressBar({ percent }) {
+export function ProgressBar({ percent, label }) {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{ height: 8, borderRadius: 4, bgcolor: 'action.hover', overflow: 'hidden' }}
       role="progressbar"
+      aria-label={label || t('common.percentDone', { percent })}
       aria-valuenow={percent}
       aria-valuemin={0}
       aria-valuemax={100}
