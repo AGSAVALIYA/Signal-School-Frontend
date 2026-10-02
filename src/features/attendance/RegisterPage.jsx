@@ -4,7 +4,7 @@ import { Download as DownloadIcon, Print as PrintIcon } from '@mui/icons-materia
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
 import { api } from '../../api/client';
-import { EmptyState, PageHeader, Query } from '../../shared/components/ui';
+import { EmptyState, Loading, PageHeader, Query } from '../../shared/components/ui';
 import SectionSelect, { useSections } from '../../shared/components/SectionSelect';
 import { monthISO } from '../../shared/utils/format';
 import { useAction } from '../../shared/hooks/useNotify';
@@ -12,7 +12,7 @@ import { useAction } from '../../shared/hooks/useNotify';
 // Monthly register (students × days). Printing uses the browser, so every script prints correctly.
 export default function RegisterPage() {
   const { t } = useTranslation();
-  const { sections } = useSections();
+  const { sections, isLoading: sectionsLoading } = useSections();
   const [sectionId, setSectionId] = useState(null);
   const [month, setMonth] = useState(monthISO());
   const section = sectionId ?? sections[0]?.id;
@@ -50,12 +50,15 @@ export default function RegisterPage() {
           slotProps={{ inputLabel: { shrink: true } }}
         />
       </Stack>
-      {!section ? (
+      {sectionsLoading ? (
+        <Loading />
+      ) : !section ? (
         <EmptyState title={t('classes.noSections')} />
       ) : (
         <Query q={q}>
           {({ data }) => (
-            <Card sx={{ overflowX: 'auto' }}>
+            // Wide table scrolls inside the card; focusable so keyboard users can scroll it too.
+            <Card sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={`${data.section.name} · ${data.month}`}>
               <Typography variant="h3" sx={{ p: 2 }} className="print-only">
                 {data.section.name} · {data.month}
               </Typography>
@@ -71,7 +74,7 @@ export default function RegisterPage() {
                     <TableCell>#</TableCell>
                     <TableCell>{t('common.name')}</TableCell>
                     {data.days.map((d) => (
-                      <TableCell key={d.date} sx={{ color: d.off ? 'text.disabled' : undefined }}>
+                      <TableCell key={d.date} sx={{ color: d.off ? 'text.secondary' : undefined }}>
                         {Number(d.date.slice(8))}
                       </TableCell>
                     ))}

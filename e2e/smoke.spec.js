@@ -150,7 +150,24 @@ test('office is warned before admitting a child twice, and sees one child’s mo
     .click();
   await expect(page).toHaveURL(/\/students\/\d+$/);
   await page.getByRole('tab', { name: 'Past years' }).click();
-  await expect(page.getByRole('grid', { name: 'Attendance this month' })).toBeVisible();
+  await expect(page.getByRole('list', { name: 'Attendance this month' })).toBeVisible();
+  await expectNoHorizontalScroll(page);
+  expect(errors).toEqual([]);
+});
+
+test('teacher enters marks on a phone-friendly form and cannot exceed the maximum', async ({ page }) => {
+  const errors = watchErrors(page);
+  await login(page, 'sunita@demo.test');
+  await page.goto('/marks');
+  await page.getByLabel('Maximum marks for everyone').fill('50');
+  await page.getByRole('button', { name: 'Fill in' }).click();
+  const firstMarks = page.getByRole('spinbutton', { name: /: Marks$/ }).first();
+  await firstMarks.fill('60');
+  await expect(page.getByText('More than maximum marks')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
+  await firstMarks.fill('42');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.getByText('Saved', { exact: true })).toBeVisible();
   await expectNoHorizontalScroll(page);
   expect(errors).toEqual([]);
 });

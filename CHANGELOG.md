@@ -17,6 +17,11 @@ versions: [Semantic Versioning](https://semver.org/).
 - `AGENTS.md`, `CONTRIBUTING.md`, README screenshots and `npm run screenshots` (#7).
 
 ### Fixed
+- Accessibility (axe WCAG 2.1 AA, every screen): labelled progress bars, readable avatar colours, valid list markup,
+  keyboard-reachable scrolling tables, photo button visible to screen readers, calendar semantics.
+- Marks on phones: one block per child instead of a sideways-scrolling table; "Maximum marks for everyone" fill-in.
+- Register and Marks no longer flash "no classes" while classes are loading.
+- Text size buttons show a sample letter and fit a phone; dashboard call/WhatsApp buttons no longer squeeze names.
 - Avatar initials keep Hindi, Marathi and Gujarati syllables whole (#6).
 - Student form no longer leaks an internal layout prop to the page.
 - Hindi, Marathi and Gujarati messages use the same words as the buttons they mention.

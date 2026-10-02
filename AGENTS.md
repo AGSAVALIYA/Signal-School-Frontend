@@ -29,7 +29,7 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 | `src/features/<area>/` | One folder per screen area (today, attendance, students, diary, syllabus, marks, health, classes, staff, years, holidays, school, dashboard, audit, profile, auth) |
 | `src/shared/` | `components/` (ui, fields, PhotoPicker, SectionSelect, ContactButtons), `hooks/` (useNotify/useAction, useConfirm, useDraft, useTextSize…), `utils/` (format, permissions) |
 | `src/i18n/locales/{en,hi,mr,gu}.json` | Every visible string |
-| `e2e/` | Playwright: `smoke.spec.js` (all pages × roles, journeys), `screenshots.spec.js` |
+| `e2e/` | Playwright: `smoke.spec.js` (all pages × roles, journeys), `a11y.spec.js` (axe WCAG 2.1 AA scan of every screen), `screenshots.spec.js` |
 
 ## Invariants — do not break
 1. **No literal UI text.** Use `t('area.key')`; add the key to **all four** locale files with the same `{{placeholders}}`
@@ -38,6 +38,9 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 2. **MUI 9 APIs:** layout props go in `sx` (`<Stack sx={{ gap: 1, alignItems: 'center' }}>`, `<Typography sx={{ color: 'text.secondary' }}>`);
    `Grid size={{ xs: 12, md: 6 }}`; inputs use `slotProps={{ input, htmlInput, inputLabel }}`. Old props are silently ignored.
 3. **Phones first:** must work at 360 px with no sideways page scroll (e2e checks it), touch targets ≥ 44 px, and at 130% text size.
+   Wide tables either get a stacked phone layout (see Marks) or scroll inside a `role="region"` with `tabIndex={0}`.
+   **Accessible:** `a11y.spec.js` must stay at zero violations — label progress bars and icon buttons, keep contrast ≥ 4.5:1,
+   never put non-`li` children in a `<List>` (use `component="div"`/`"nav"` for lists of buttons).
 4. **Server is the authority.** `can(role, perm)` only hides UI; keep `shared/utils/permissions.js` in sync with the API's matrix.
 5. **Errors:** show `t('errors.' + err.code)` (via `useAction`/`useNotify`/`ErrorState`), keep the user's input, map field errors with `applyServerErrors`.
 6. **Data:** fetch with `useGet(url, params)`; mutate with `useSend(fn, { invalidate: ['/prefix'] })`. Query keys include school and year.
@@ -48,7 +51,7 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 ## Adding a screen (checklist)
 - [ ] `src/features/<area>/<Page>.jsx`, route in `app/routes.jsx` with `perm`, menu entry in `NAV` if needed.
 - [ ] Strings in en/hi/mr/gu.
-- [ ] Add the path for the relevant roles to `PAGES` in `e2e/smoke.spec.js`; add a journey test if it has a task flow.
+- [ ] Add the path for the relevant roles to `PAGES` in `e2e/smoke.spec.js` and `e2e/a11y.spec.js`; add a journey test if it has a task flow.
 - [ ] `npm run lint && npm test && npm run build`, and e2e against a seeded API.
 - [ ] `CHANGELOG.md` entry; update screenshots if the screen is in the README.
 

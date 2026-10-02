@@ -41,7 +41,8 @@
     "reload": "Reload",
     "newer": "Newer",
     "older": "Older",
-    "pageOf": "Page {{page}} of {{pages}}"
+    "pageOf": "Page {{page}} of {{pages}}",
+    "percentDone": "{{percent}}% done"
   },
   "lang": {
     "choose": "Choose your language"
@@ -148,7 +149,7 @@
     "edit": "Edit student",
     "save": "Save student",
     "none": "No students found",
-    "searchPlaceholder": "Search by name, GR number or phone",
+    "searchPlaceholder": "Name, GR no. or phone",
     "allYears": "Search all years",
     "moreDetails": "More details (parents, address, documents)",
     "grAuto": "Leave empty to number automatically",
@@ -299,7 +300,9 @@
     "attendanceLine": "Attendance: {{present}} of {{total}} days ({{percent}}%)",
     "classTeacherSign": "Class teacher",
     "principalSign": "Principal",
-    "parentSign": "Parent"
+    "parentSign": "Parent",
+    "maxForAll": "Maximum marks for everyone",
+    "applyToAll": "Fill in"
   },
   "classes": {
     "tabs": {
@@ -572,7 +575,8 @@
       "normal": "Normal",
       "large": "Large",
       "xlarge": "Extra large"
-    }
+    },
+    "textSample": "Aa"
   },
   "help": {
     "today": "Your classes are listed here. Tap 'Take attendance' every morning. Green means attendance is done.",

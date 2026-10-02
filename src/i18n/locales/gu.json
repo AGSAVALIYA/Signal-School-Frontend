@@ -41,7 +41,8 @@
     "reload": "ફરી ખોલો",
     "newer": "નવું",
     "older": "જૂનું",
-    "pageOf": "પાનું {{page}} / {{pages}}"
+    "pageOf": "પાનું {{page}} / {{pages}}",
+    "percentDone": "{{percent}}% પૂર્ણ"
   },
   "lang": {
     "choose": "તમારી ભાષા પસંદ કરો"
@@ -148,7 +149,7 @@
     "edit": "વિદ્યાર્થીની વિગત બદલો",
     "save": "વિદ્યાર્થી સાચવો",
     "none": "કોઈ વિદ્યાર્થી મળ્યો નથી",
-    "searchPlaceholder": "નામ, જનરલ રજિસ્ટર નંબર અથવા ફોનથી શોધો",
+    "searchPlaceholder": "નામ, રજિ. નં. અથવા ફોન",
     "allYears": "બધાં વર્ષોમાં શોધો",
     "moreDetails": "વધુ વિગતો (વાલી, સરનામું, દસ્તાવેજ)",
     "grAuto": "આપમેળે નંબર આપવા ખાલી રાખો",
@@ -299,7 +300,9 @@
     "attendanceLine": "હાજરી: {{total}} માંથી {{present}} દિવસ ({{percent}}%)",
     "classTeacherSign": "વર્ગ શિક્ષક",
     "principalSign": "આચાર્ય",
-    "parentSign": "વાલી"
+    "parentSign": "વાલી",
+    "maxForAll": "બધા માટે મહત્તમ ગુણ",
+    "applyToAll": "બધામાં ભરો"
   },
   "classes": {
     "tabs": {
@@ -572,7 +575,8 @@
       "normal": "સામાન્ય",
       "large": "મોટું",
       "xlarge": "ખૂબ મોટું"
-    }
+    },
+    "textSample": "અ"
   },
   "help": {
     "today": "તમારા વર્ગ અહીં દેખાય છે. દરરોજ સવારે 'હાજરી લો' દબાવો. લીલો રંગ એટલે હાજરી થઈ ગઈ.",

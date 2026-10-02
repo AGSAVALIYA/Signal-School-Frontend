@@ -53,10 +53,16 @@ export default function ProfilePage() {
             <Typography variant="h3" gutterBottom>
               {t('profile.textSize')}
             </Typography>
-            <ToggleButtonGroup exclusive value={textSize} onChange={(_, v) => v && setTextSize(v)} aria-label={t('profile.textSize')}>
+            <ToggleButtonGroup exclusive fullWidth value={textSize} onChange={(_, v) => v && setTextSize(v)} aria-label={t('profile.textSize')}>
               {Object.keys(TEXT_SIZES).map((k) => (
-                <ToggleButton key={k} value={k} sx={{ px: 2, fontSize: `${TEXT_SIZES[k] / 100}rem`, textTransform: 'none' }}>
-                  {t(`profile.textSizes.${k}`)}
+                <ToggleButton key={k} value={k} sx={{ flexDirection: 'column', gap: 0.5, textTransform: 'none', py: 1 }}>
+                  {/* A sample letter at that size (scaled from 1rem, so it previews the choice) */}
+                  <Box component="span" aria-hidden sx={{ fontSize: `${(TEXT_SIZES[k] / 100) * 1.25}rem`, lineHeight: 1, fontWeight: 700 }}>
+                    {t('profile.textSample')}
+                  </Box>
+                  <Box component="span" sx={{ fontSize: '0.8rem', lineHeight: 1.2 }}>
+                    {t(`profile.textSizes.${k}`)}
+                  </Box>
                 </ToggleButton>
               ))}
             </ToggleButtonGroup>

@@ -22,7 +22,7 @@ function Trend({ rows }) {
   const { t } = useTranslation();
   if (!rows.length) return <Typography sx={{ color: 'text.secondary' }}>{t('dashboard.noTrend')}</Typography>;
   return (
-    <Stack direction="row" sx={{ gap: 0.5, alignItems: 'flex-end', height: 140, overflowX: 'auto' }} role="img" aria-label={t('dashboard.trend')}>
+    <Stack direction="row" sx={{ gap: 0.5, alignItems: 'flex-end', height: 140, overflowX: 'auto' }} role="img" aria-label={t('dashboard.trend')} tabIndex={0}>
       {rows.map((r) => {
         const pct = r.marked ? Math.round((100 * r.present) / r.marked) : 0;
         return (
@@ -100,18 +100,7 @@ export default function DashboardPage() {
                     </Typography>
                     <List dense>
                       {data.consecutiveAbsences.map((s) => (
-                        <ListItem
-                          key={s.id}
-                          disableGutters
-                          secondaryAction={
-                            <ContactButtons
-                              phone={s.guardianPhone}
-                              language={s.guardianLanguage}
-                              message="contact.streakMessage"
-                              params={{ name: s.name, school: school?.name, days: s.days }}
-                            />
-                          }
-                        >
+                        <ListItem key={s.id} disableGutters sx={{ flexWrap: 'wrap', gap: 1 }}>
                           <ListItemText
                             primary={
                               <RouterLink to={`/students/${s.id}`} style={{ color: 'inherit' }}>
@@ -119,7 +108,13 @@ export default function DashboardPage() {
                               </RouterLink>
                             }
                             secondary={t('dashboard.streakDays', { count: s.days, since: fmtDate(s.since) })}
-                            sx={{ pr: 12 }}
+                            sx={{ flex: '1 1 200px', my: 0 }}
+                          />
+                          <ContactButtons
+                            phone={s.guardianPhone}
+                            language={s.guardianLanguage}
+                            message="contact.streakMessage"
+                            params={{ name: s.name, school: school?.name, days: s.days }}
                           />
                         </ListItem>
                       ))}
@@ -201,18 +196,7 @@ export default function DashboardPage() {
                       </Typography>
                       <List dense>
                         {data.atRisk.map((s) => (
-                          <ListItem
-                            key={s.id}
-                            disableGutters
-                            secondaryAction={
-                              <ContactButtons
-                                phone={s.guardianPhone}
-                                language={s.guardianLanguage}
-                                message="contact.lowAttendanceMessage"
-                                params={{ name: s.name, school: school?.name, percent: s.percent }}
-                              />
-                            }
-                          >
+                          <ListItem key={s.id} disableGutters sx={{ flexWrap: 'wrap', gap: 1 }}>
                             <ListItemText
                               primary={
                                 <RouterLink to={`/students/${s.id}`} style={{ color: 'inherit' }}>
@@ -220,7 +204,13 @@ export default function DashboardPage() {
                                 </RouterLink>
                               }
                               secondary={`${s.percent}%`}
-                              sx={{ pr: 12 }}
+                              sx={{ flex: '1 1 200px', my: 0 }}
+                            />
+                            <ContactButtons
+                              phone={s.guardianPhone}
+                              language={s.guardianLanguage}
+                              message="contact.lowAttendanceMessage"
+                              params={{ name: s.name, school: school?.name, percent: s.percent }}
                             />
                           </ListItem>
                         ))}
