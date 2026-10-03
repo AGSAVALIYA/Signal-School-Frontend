@@ -7,8 +7,11 @@ versions: [Semantic Versioning](https://semver.org/).
 
 ### Changed
 - Attendance: P / A / L buttons per child instead of tap-to-cycle; counts as coloured chips (#3).
+- Student list, attendance sheet and staff list show small photo thumbnails (`thumbUrl`, lazy-loaded) instead of
+  downloading every full photo.
 
 ### Added
+- `Dockerfile` (Vite build served by nginx with the API proxied under `/api` and `/files`); CI builds it.
 - Text size setting (Normal / Large / Extra large) under Me (#4).
 - Activity log filters by person and kind of change, with paging (#5).
 - "Is this child already in the school records?" check when adding a student.

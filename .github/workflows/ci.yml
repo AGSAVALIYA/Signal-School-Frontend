@@ -14,3 +14,5 @@ jobs:
       - run: npm audit --audit-level=moderate
       - run: npm test
       - run: npm run build
+      - name: Docker image builds
+        run: docker build -t signal-school-web .

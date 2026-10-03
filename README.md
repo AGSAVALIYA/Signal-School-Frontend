@@ -37,6 +37,18 @@ npx playwright test       # end-to-end at phone (360 px) and desktop width; need
 npm run screenshots       # refresh docs/screenshots
 ```
 
+## Deploy with Docker
+
+`Dockerfile` builds the app and serves it with nginx, which also forwards `/api` and `/files` to the API
+(`API_UPSTREAM`, default `http://api:3000`), gzips, sets security headers and caches hashed assets for a year. The
+whole school (database, Redis, API, this app) starts with `npm run stack` in **Signal-School-Backend**, which clones
+this repository; see its `docs/deployment.md`.
+
+```bash
+docker build -t signal-school-web .
+docker run -p 8080:80 --add-host=host.docker.internal:host-gateway -e API_UPSTREAM=http://host.docker.internal:3000 signal-school-web
+```
+
 ## Deploy (Vercel)
 
 `vercel.json` sets the Vite build (`npm run build` → `dist/`), single-page-app routing and security headers. Set

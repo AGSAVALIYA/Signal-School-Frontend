@@ -18,6 +18,8 @@ npm test               # Vitest unit tests (locale parity, offline queue, compon
 npm run build          # production build + service worker
 npx playwright test    # e2e at 360×740 and 1280×800; needs the API running with `npm run db:seed` data
 npm run screenshots    # refresh docs/screenshots (same requirement)
+E2E_BASE_URL=http://localhost:8080 npx playwright test   # e2e against the Docker stack (`npm run stack -- demo` in the API repo)
+docker build -t signal-school-web .                      # nginx image (docker/nginx.conf.template)
 ```
 Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sunita@demo.test` (teacher), `rahul@demo.test`.
 
@@ -58,5 +60,6 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 ## Gotchas
 - `useDraft(source)` resets local edits when the server object changes; don't copy server data into `useState` by hand.
 - The service worker caches some GET endpoints (see `vite.config.js`); logout deletes that cache.
+- List avatars use `thumbUrl` (160 px) with `loading: 'lazy'`; `photoUrl` is the full photo, only for profile pages.
 - `Intl.Segmenter` is used for initials (Indic grapheme clusters); there is a code-point fallback.
 - Playwright uses the preinstalled Chromium at `/opt/pw-browsers/...` when present (see `playwright.config.js`).
