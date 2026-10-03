@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import { Button } from '@mui/material';
 import { Route, Routes, Navigate, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,8 @@ import { YearProvider } from './YearContext';
 import AppLayout from './AppLayout';
 import { routes } from './routes';
 import LoginPage from '../features/auth/LoginPage';
-import FirstLoginPage from '../features/auth/FirstLoginPage';
+// The first-login form brings the form libraries (react-hook-form, zod): load them only for new users.
+const FirstLoginPage = lazy(() => import('../features/auth/FirstLoginPage'));
 import { EmptyState, Loading } from '../shared/components/ui';
 import UpdatePrompt from './UpdatePrompt';
 import ErrorBoundary from './ErrorBoundary';
@@ -18,7 +19,12 @@ export default function App() {
   const { pathname } = useLocation();
   if (loading) return <Loading />;
   if (!me) return <LoginPage />;
-  if (me.mustChangePassword) return <FirstLoginPage />;
+  if (me.mustChangePassword)
+    return (
+      <Suspense fallback={<Loading />}>
+        <FirstLoginPage />
+      </Suspense>
+    );
   if (!me.schools.length)
     return (
       <EmptyState

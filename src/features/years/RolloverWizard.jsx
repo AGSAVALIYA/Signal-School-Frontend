@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import dayjs from 'dayjs';
 import {
@@ -132,9 +132,137 @@ function Copy({ plan, setPlan }) {
   );
 }
 
+// One child's decision. Memoised: a school can have 1,000+ children, and a change must not re-render every dropdown.
+const PromotionRow = memo(function PromotionRow({ p, i, targets, onSet }) {
+  const { t } = useTranslation();
+  return (
+    <TableRow>
+      <TableCell sx={{ minWidth: 160 }}>{p.studentName}</TableCell>
+      <TableCell>
+        <TextField
+          select
+          size="small"
+          value={p.action}
+          onChange={(e) => onSet([i], { action: e.target.value })}
+          slotProps={{ htmlInput: { 'aria-label': t('rollover.action') } }}
+        >
+          {ACTIONS.map((a) => (
+            <MenuItem key={a} value={a}>
+              {t(`rollover.actions.${a}`)}
+            </MenuItem>
+          ))}
+        </TextField>
+      </TableCell>
+      <TableCell sx={{ minWidth: 180 }}>
+        {['promote', 'detain'].includes(p.action) ? (
+          <TextField
+            select
+            size="small"
+            value={targets.some((s) => s.key === p.targetKey) ? p.targetKey : ''}
+            error={!targets.some((s) => s.key === p.targetKey)}
+            onChange={(e) => onSet([i], { targetKey: e.target.value })}
+            slotProps={{ htmlInput: { 'aria-label': t('rollover.target') } }}
+          >
+            {targets.map((s) => (
+              <MenuItem key={s.key} value={s.key}>
+                {s.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        ) : p.action === 'leave' ? (
+          <TextField
+            select
+            size="small"
+            value={p.reason || 'migrated'}
+            onChange={(e) => onSet([i], { reason: e.target.value })}
+            slotProps={{ htmlInput: { 'aria-label': t('students.leaveReason') } }}
+          >
+            {REASONS.map((r) => (
+              <MenuItem key={r} value={r}>
+                {t(`students.reasons.${r}`)}
+              </MenuItem>
+            ))}
+          </TextField>
+        ) : (
+          '–'
+        )}
+      </TableCell>
+    </TableRow>
+  );
+});
+
+// One class in the promotion step. Re-renders only when one of its children's decisions changed.
+const sameRows = (a, b) =>
+  a.name === b.name && a.targets === b.targets && a.onSet === b.onSet && a.rows.length === b.rows.length && a.rows.every((r, k) => r === b.rows[k]);
+const ClassCard = memo(function ClassCard({ name, items, rows, targets, onSet }) {
+  const { t } = useTranslation();
+  return (
+    <Card>
+      <CardContent>
+        <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 1 }}>
+          <Typography variant="h3" sx={{ flex: 1 }}>
+            {name} · {t('classes.studentCount', { count: items.length })}
+          </Typography>
+          <TextField
+            select
+            size="small"
+            label={t('rollover.applyToAll')}
+            value=""
+            onChange={(e) => onSet(items, { action: e.target.value })}
+            sx={{ minWidth: 180 }}
+            fullWidth={false}
+          >
+            {ACTIONS.map((a) => (
+              <MenuItem key={a} value={a}>
+                {t(`rollover.actions.${a}`)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            size="small"
+            label={t('rollover.moveAllTo')}
+            value=""
+            onChange={(e) =>
+              onSet(
+                items.filter((_, k) => rows[k].action === 'promote'),
+                { targetKey: e.target.value },
+              )
+            }
+            sx={{ minWidth: 180 }}
+            fullWidth={false}
+          >
+            {targets.map((s) => (
+              <MenuItem key={s.key} value={s.key}>
+                {s.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Stack>
+        <Box sx={{ overflowX: 'auto' }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('common.name')}</TableCell>
+                <TableCell>{t('rollover.action')}</TableCell>
+                <TableCell>{t('rollover.target')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {items.map((i, k) => (
+                <PromotionRow key={rows[k].enrollmentId} p={rows[k]} i={i} targets={targets} onSet={onSet} />
+              ))}
+            </TableBody>
+          </Table>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}, sameRows);
+
 function Promotion({ plan, setPlan }) {
   const { t } = useTranslation();
-  const targets = plan.sections.filter((s) => s.include);
+  const targets = useMemo(() => plan.sections.filter((s) => s.include), [plan.sections]);
   const groups = useMemo(() => {
     const map = new Map();
     plan.promotions.forEach((p, i) => {
@@ -143,18 +271,23 @@ function Promotion({ plan, setPlan }) {
     });
     return [...map.entries()];
   }, [plan.promotions]);
-  const setP = (indexes, patch) =>
-    setPlan({
-      ...plan,
-      promotions: plan.promotions.map((p, i) => {
-        if (!indexes.includes(i)) return p;
-        const next = { ...p, ...patch };
-        if (patch.action === 'detain') next.targetKey = `src-${p.fromSectionId}`;
-        if (patch.action === 'leave' || patch.action === 'graduate') next.targetKey = null;
-        if (patch.action === 'leave' && !next.reason) next.reason = 'migrated';
-        return next;
-      }),
-    });
+  const setP = useCallback(
+    (indexes, patch) => {
+      const pick = new Set(indexes);
+      setPlan((prev) => ({
+        ...prev,
+        promotions: prev.promotions.map((p, i) => {
+          if (!pick.has(i)) return p;
+          const next = { ...p, ...patch };
+          if (patch.action === 'detain') next.targetKey = `src-${p.fromSectionId}`;
+          if (patch.action === 'leave' || patch.action === 'graduate') next.targetKey = null;
+          if (patch.action === 'leave' && !next.reason) next.reason = 'migrated';
+          return next;
+        }),
+      }));
+    },
+    [setPlan],
+  );
   const missing = plan.promotions.filter((p) => ['promote', 'detain'].includes(p.action) && !targets.some((s) => s.key === p.targetKey)).length;
 
   return (
@@ -162,120 +295,7 @@ function Promotion({ plan, setPlan }) {
       <Typography sx={{ color: 'text.secondary' }}>{t('rollover.promotionHelp')}</Typography>
       {missing > 0 && <Alert severity="warning">{t('rollover.missingTargets', { count: missing })}</Alert>}
       {groups.map(([sectionId, g]) => (
-        <Card key={sectionId}>
-          <CardContent>
-            <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 1 }}>
-              <Typography variant="h3" sx={{ flex: 1 }}>
-                {g.name} · {t('classes.studentCount', { count: g.items.length })}
-              </Typography>
-              <TextField
-                select
-                size="small"
-                label={t('rollover.applyToAll')}
-                value=""
-                onChange={(e) => setP(g.items, { action: e.target.value })}
-                sx={{ minWidth: 180 }}
-                fullWidth={false}
-              >
-                {ACTIONS.map((a) => (
-                  <MenuItem key={a} value={a}>
-                    {t(`rollover.actions.${a}`)}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                select
-                size="small"
-                label={t('rollover.moveAllTo')}
-                value=""
-                onChange={(e) =>
-                  setP(
-                    g.items.filter((i) => plan.promotions[i].action === 'promote'),
-                    { targetKey: e.target.value },
-                  )
-                }
-                sx={{ minWidth: 180 }}
-                fullWidth={false}
-              >
-                {targets.map((s) => (
-                  <MenuItem key={s.key} value={s.key}>
-                    {s.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Stack>
-            <Box sx={{ overflowX: 'auto' }}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{t('common.name')}</TableCell>
-                    <TableCell>{t('rollover.action')}</TableCell>
-                    <TableCell>{t('rollover.target')}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {g.items.map((i) => {
-                    const p = plan.promotions[i];
-                    return (
-                      <TableRow key={p.enrollmentId}>
-                        <TableCell sx={{ minWidth: 160 }}>{p.studentName}</TableCell>
-                        <TableCell>
-                          <TextField
-                            select
-                            size="small"
-                            value={p.action}
-                            onChange={(e) => setP([i], { action: e.target.value })}
-                            slotProps={{ htmlInput: { 'aria-label': t('rollover.action') } }}
-                          >
-                            {ACTIONS.map((a) => (
-                              <MenuItem key={a} value={a}>
-                                {t(`rollover.actions.${a}`)}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </TableCell>
-                        <TableCell sx={{ minWidth: 180 }}>
-                          {['promote', 'detain'].includes(p.action) ? (
-                            <TextField
-                              select
-                              size="small"
-                              value={targets.some((s) => s.key === p.targetKey) ? p.targetKey : ''}
-                              error={!targets.some((s) => s.key === p.targetKey)}
-                              onChange={(e) => setP([i], { targetKey: e.target.value })}
-                              slotProps={{ htmlInput: { 'aria-label': t('rollover.target') } }}
-                            >
-                              {targets.map((s) => (
-                                <MenuItem key={s.key} value={s.key}>
-                                  {s.name}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                          ) : p.action === 'leave' ? (
-                            <TextField
-                              select
-                              size="small"
-                              value={p.reason || 'migrated'}
-                              onChange={(e) => setP([i], { reason: e.target.value })}
-                              slotProps={{ htmlInput: { 'aria-label': t('students.leaveReason') } }}
-                            >
-                              {REASONS.map((r) => (
-                                <MenuItem key={r} value={r}>
-                                  {t(`students.reasons.${r}`)}
-                                </MenuItem>
-                              ))}
-                            </TextField>
-                          ) : (
-                            '–'
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </Box>
-          </CardContent>
-        </Card>
+        <ClassCard key={sectionId} name={g.name} items={g.items} rows={g.items.map((i) => plan.promotions[i])} targets={targets} onSet={setP} />
       ))}
     </Stack>
   );

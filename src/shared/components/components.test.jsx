@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '../../i18n';
 import ContactButtons, { waNumber } from './ContactButtons';
 import ErrorBoundary from '../../app/ErrorBoundary';
@@ -11,10 +11,10 @@ describe('ContactButtons', () => {
     expect(waNumber('')).toBe('');
   });
 
-  it('writes the WhatsApp message in the guardian language', () => {
+  it('writes the WhatsApp message in the guardian language (loaded on demand)', async () => {
     render(<ContactButtons phone="9876543210" language="mr" message="contact.absentMessage" params={{ name: 'Asha', school: 'Signal', date: '1 Oct' }} />);
     const wa = screen.getByRole('link', { name: /WhatsApp/ });
-    expect(decodeURIComponent(wa.getAttribute('href'))).toContain('नमस्कार');
+    await waitFor(() => expect(decodeURIComponent(wa.getAttribute('href'))).toContain('नमस्कार'));
     expect(screen.getByRole('link', { name: /Call/ })).toHaveAttribute('href', 'tel:9876543210');
   });
 

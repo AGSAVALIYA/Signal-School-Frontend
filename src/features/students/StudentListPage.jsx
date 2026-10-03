@@ -1,3 +1,4 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router';
 import {
@@ -48,7 +49,12 @@ export default function StudentListPage() {
   const [adding, setAdding] = useState(false);
   const search = useDebounce(q);
   const run = useAction();
-  const query = useGet('/students', { sectionId: sectionId || undefined, q: search || undefined, status, allYears: String(allYears), pageSize });
+  // Keep the current rows on screen while "show more" or a new search loads (no spinner, scroll position kept).
+  const query = useGet(
+    '/students',
+    { sectionId: sectionId || undefined, q: search || undefined, status, allYears: String(allYears), pageSize },
+    { placeholderData: keepPreviousData },
+  );
   const create = useSend((body) => api.post('/students', body), { invalidate: ['/students', '/sections', '/today'] });
 
   return (
@@ -120,7 +126,7 @@ export default function StudentListPage() {
                 {data.map((s) => (
                   <ListItemButton key={s.id} onClick={() => navigate(`/students/${s.id}`)} divider sx={{ gap: 1, flexWrap: 'wrap' }}>
                     <ListItemAvatar>
-                      <Avatar src={s.photoUrl || undefined} alt="">
+                      <Avatar src={s.thumbUrl || undefined} alt="" slotProps={{ img: { loading: 'lazy' } }}>
                         {initials(s.name)}
                       </Avatar>
                     </ListItemAvatar>
