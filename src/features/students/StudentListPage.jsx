@@ -120,7 +120,7 @@ export default function StudentListPage() {
                 {data.map((s) => (
                   <ListItemButton key={s.id} onClick={() => navigate(`/students/${s.id}`)} divider sx={{ gap: 1, flexWrap: 'wrap' }}>
                     <ListItemAvatar>
-                      <Avatar src={s.photoUrl || undefined} alt="">
+                      <Avatar src={s.thumbUrl || undefined} alt="" slotProps={{ img: { loading: 'lazy' } }}>
                         {initials(s.name)}
                       </Avatar>
                     </ListItemAvatar>

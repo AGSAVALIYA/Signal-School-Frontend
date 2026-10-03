@@ -34,7 +34,12 @@ function Row({ row, status, onChange, disabled }) {
       }}
     >
       <Typography sx={{ width: 24, flexShrink: 0, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{row.rollNumber ?? ''}</Typography>
-      <Avatar src={row.photoUrl || undefined} alt="" sx={{ width: 36, height: 36, fontSize: '0.9rem', display: { xs: 'none', sm: 'flex' } }}>
+      <Avatar
+        src={row.thumbUrl || undefined}
+        alt=""
+        slotProps={{ img: { loading: 'lazy' } }}
+        sx={{ width: 36, height: 36, fontSize: '0.9rem', display: { xs: 'none', sm: 'flex' } }}
+      >
         {initials(row.name)}
       </Avatar>
       <Typography id={`name-${row.studentId}`} sx={{ flex: 1, minWidth: 0, fontSize: '1.05rem', overflowWrap: 'anywhere' }}>

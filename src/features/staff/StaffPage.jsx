@@ -109,7 +109,9 @@ export default function StaffPage() {
                 {data.map((u) => (
                   <ListItemButton key={u.id} divider onClick={() => navigate(`/staff/${u.id}`)}>
                     <ListItemAvatar>
-                      <Avatar src={u.photoUrl || undefined}>{initials(u.name)}</Avatar>
+                      <Avatar src={u.thumbUrl || undefined} alt="" slotProps={{ img: { loading: 'lazy' } }}>
+                        {initials(u.name)}
+                      </Avatar>
                     </ListItemAvatar>
                     <ListItemText primary={u.name} secondary={[u.phone, u.email].filter(Boolean).join(' · ')} />
                     <Chip label={t(`staff.roles.${u.role}`)} />
