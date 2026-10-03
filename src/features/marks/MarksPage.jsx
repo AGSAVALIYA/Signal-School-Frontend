@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { Box, Button, Card, MenuItem, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography, useMediaQuery } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
@@ -13,18 +13,15 @@ import useDraft from '../../shared/hooks/useDraft';
 
 const TERMS = ['S1', 'S2', 'ANNUAL'];
 
-function Grid({ data, onSave, saving, readOnly, aboveTabs }) {
+const num = (v) => (v === '' || v === null ? null : Number(v));
+const tooHigh = (r) => num(r.marks) !== null && num(r.maxMarks) !== null && num(r.marks) > num(r.maxMarks);
+
+// One child's inputs. Memoised: a keystroke re-renders only that child's row, not ~200 text fields
+// (typing lagged ~190 ms per key on a slow phone before).
+const MarkRow = memo(function MarkRow({ r, i, phone, readOnly, onSet }) {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const phone = useMediaQuery(theme.breakpoints.down('sm'));
-  const [rows, setRows] = useDraft(data, (d) => d.rows);
-  const [allMax, setAllMax] = useState('');
-  const set = (i, k, v) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, [k]: v } : r)));
-  const num = (v) => (v === '' || v === null ? null : Number(v));
-  const tooHigh = (r) => num(r.marks) !== null && num(r.maxMarks) !== null && num(r.marks) > num(r.maxMarks);
-  const invalid = rows.some(tooHigh);
   // One input per field; `label` is visible on phones (stacked layout) and the accessible name on tables.
-  const input = (r, i, key, { width, numeric, upper } = {}) => (
+  const input = (key, { width, numeric, upper } = {}) => (
     <TextField
       size="small"
       label={phone ? t(`marks.${key}`) : undefined}
@@ -32,12 +29,47 @@ function Grid({ data, onSave, saving, readOnly, aboveTabs }) {
       value={r[key] ?? ''}
       error={key === 'marks' && tooHigh(r)}
       helperText={key === 'marks' && tooHigh(r) ? t('fieldErrors.MORE_THAN_MAX') : undefined}
-      onChange={(e) => set(i, key, upper ? e.target.value.toUpperCase().slice(0, 5) : e.target.value)}
+      onChange={(e) => onSet(i, key, upper ? e.target.value.toUpperCase().slice(0, 5) : e.target.value)}
       disabled={readOnly}
       sx={width ? { width } : undefined}
       slotProps={{ htmlInput: { 'aria-label': `${r.name}: ${t(`marks.${key}`)}`, ...(numeric ? { inputMode: 'decimal', min: 0 } : {}) } }}
     />
   );
+  if (phone)
+    return (
+      <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'grid', gap: 1.5 }}>
+        <Typography sx={{ fontWeight: 600 }}>
+          {r.rollNumber ? `${r.rollNumber}. ` : ''}
+          {r.name}
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
+          {input('grade', { upper: true })}
+          {input('marks', { numeric: true })}
+          {input('maxMarks', { numeric: true })}
+        </Box>
+        {input('remarks')}
+      </Box>
+    );
+  return (
+    <TableRow>
+      <TableCell>{r.rollNumber ?? ''}</TableCell>
+      <TableCell sx={{ minWidth: 160 }}>{r.name}</TableCell>
+      <TableCell>{input('grade', { width: 90, upper: true })}</TableCell>
+      <TableCell>{input('marks', { width: 110, numeric: true })}</TableCell>
+      <TableCell>{input('maxMarks', { width: 110, numeric: true })}</TableCell>
+      <TableCell sx={{ minWidth: 200 }}>{input('remarks')}</TableCell>
+    </TableRow>
+  );
+});
+
+function Grid({ data, onSave, saving, readOnly, aboveTabs }) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const phone = useMediaQuery(theme.breakpoints.down('sm'));
+  const [rows, setRows] = useDraft(data, (d) => d.rows);
+  const [allMax, setAllMax] = useState('');
+  const set = useCallback((i, k, v) => setRows((rs) => rs.map((r, j) => (j === i ? { ...r, [k]: v } : r))), [setRows]);
+  const invalid = rows.some(tooHigh);
   const save = () =>
     onSave(
       rows.map((r) => ({
@@ -70,18 +102,7 @@ function Grid({ data, onSave, saving, readOnly, aboveTabs }) {
         // Phones: one block per child, no sideways scrolling.
         <Box>
           {rows.map((r, i) => (
-            <Box key={r.enrollmentId} sx={{ p: 2, borderBottom: 1, borderColor: 'divider', display: 'grid', gap: 1.5 }}>
-              <Typography sx={{ fontWeight: 600 }}>
-                {r.rollNumber ? `${r.rollNumber}. ` : ''}
-                {r.name}
-              </Typography>
-              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
-                {input(r, i, 'grade', { upper: true })}
-                {input(r, i, 'marks', { numeric: true })}
-                {input(r, i, 'maxMarks', { numeric: true })}
-              </Box>
-              {input(r, i, 'remarks')}
-            </Box>
+            <MarkRow key={r.enrollmentId} r={r} i={i} phone readOnly={readOnly} onSet={set} />
           ))}
         </Box>
       ) : (
@@ -99,14 +120,7 @@ function Grid({ data, onSave, saving, readOnly, aboveTabs }) {
             </TableHead>
             <TableBody>
               {rows.map((r, i) => (
-                <TableRow key={r.enrollmentId}>
-                  <TableCell>{r.rollNumber ?? ''}</TableCell>
-                  <TableCell sx={{ minWidth: 160 }}>{r.name}</TableCell>
-                  <TableCell>{input(r, i, 'grade', { width: 90, upper: true })}</TableCell>
-                  <TableCell>{input(r, i, 'marks', { width: 110, numeric: true })}</TableCell>
-                  <TableCell>{input(r, i, 'maxMarks', { width: 110, numeric: true })}</TableCell>
-                  <TableCell sx={{ minWidth: 200 }}>{input(r, i, 'remarks')}</TableCell>
-                </TableRow>
+                <MarkRow key={r.enrollmentId} r={r} i={i} phone={false} readOnly={readOnly} onSet={set} />
               ))}
             </TableBody>
           </Table>

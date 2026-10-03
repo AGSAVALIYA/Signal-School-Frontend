@@ -60,6 +60,10 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 ## Gotchas
 - `useDraft(source)` resets local edits when the server object changes; don't copy server data into `useState` by hand.
 - The service worker caches some GET endpoints (see `vite.config.js`); logout deletes that cache.
+- Lists with one input per child (attendance, marks, rollover) use memoised rows with stable callbacks
+  (`useCallback`, functional `setState`); keep it that way or a tap re-renders the whole class.
+- Only English is bundled; other locales load on demand (`src/i18n/index.js`). To read another language's text in code
+  (e.g. a WhatsApp message in the guardian's language) call `loadLanguage(lng)` first.
 - List avatars use `thumbUrl` (160 px) with `loading: 'lazy'`; `photoUrl` is the full photo, only for profile pages.
 - `Intl.Segmenter` is used for initials (Indic grapheme clusters); there is a code-point fallback.
 - Playwright uses the preinstalled Chromium at `/opt/pw-browsers/...` when present (see `playwright.config.js`).

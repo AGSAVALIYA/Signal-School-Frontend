@@ -23,8 +23,15 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: '/index.html',
-        globPatterns: ['**/*.{js,css,html,woff2,png,ico}'],
+        // Fonts are not precached (only the subsets a user's language needs get downloaded); they are cached on first use.
+        globPatterns: ['**/*.{js,css,html,png,ico}'],
+        globIgnores: ['**/logo512.png'],
         runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'font',
+            handler: 'CacheFirst',
+            options: { cacheName: 'fonts', expiration: { maxEntries: 40, maxAgeSeconds: 365 * 86400 } },
+          },
           {
             // Lets a teacher reopen today's attendance sheet without network.
             urlPattern: ({ url }) => /\/api\/v1\/(today|me|attendance\/sections|sections|academic-years)/.test(url.pathname),

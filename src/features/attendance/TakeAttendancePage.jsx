@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { Alert, Avatar, Box, Button, Chip, InputAdornment, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { Save as SaveIcon, Search as SearchIcon } from '@mui/icons-material';
@@ -17,7 +17,8 @@ const TONE = { P: 'success', A: 'error', L: 'warning', LATE: 'info' };
 const CHOICES = ['P', 'A', 'L'];
 
 // One row per child: every status is one tap away (no hidden "tap to cycle").
-function Row({ row, status, onChange, disabled }) {
+// Memoised: a tap re-renders only that child's row, not the whole class (matters on cheap phones).
+const Row = memo(function Row({ row, status, onChange, disabled }) {
   const { t } = useTranslation();
   const choices = status === 'LATE' ? [...CHOICES, 'LATE'] : CHOICES;
   return (
@@ -49,7 +50,7 @@ function Row({ row, status, onChange, disabled }) {
         exclusive
         value={status}
         disabled={disabled}
-        onChange={(_, v) => v && onChange(v)}
+        onChange={(_, v) => v && onChange(row.studentId, v)}
         aria-labelledby={`name-${row.studentId}`}
         sx={{ flexShrink: 0 }}
       >
@@ -76,7 +77,7 @@ function Row({ row, status, onChange, disabled }) {
       </ToggleButtonGroup>
     </Box>
   );
-}
+});
 
 function Sheet({ sheet, sectionId, date }) {
   const { t } = useTranslation();
@@ -88,6 +89,7 @@ function Sheet({ sheet, sectionId, date }) {
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useDraft(sheet, (s) => s.session?.submittedAt || null);
   const [queued, setQueued] = useState(false);
+  const mark = useCallback((studentId, v) => setMarks((m) => ({ ...m, [studentId]: v })), [setMarks]);
 
   const counts = useMemo(() => {
     const c = { P: 0, A: 0, L: 0, LATE: 0 };
@@ -176,15 +178,7 @@ function Sheet({ sheet, sectionId, date }) {
       />
       <Paper variant="outlined">
         {rows.length ? (
-          rows.map((r) => (
-            <Row
-              key={r.studentId}
-              row={r}
-              status={marks[r.studentId] || 'P'}
-              disabled={!sheet.editable}
-              onChange={(v) => setMarks((m) => ({ ...m, [r.studentId]: v }))}
-            />
-          ))
+          rows.map((r) => <Row key={r.studentId} row={r} status={marks[r.studentId] || 'P'} disabled={!sheet.editable} onChange={mark} />)
         ) : (
           <Typography sx={{ color: 'text.secondary', p: 3 }}>{t('attendance.noStudents')}</Typography>
         )}

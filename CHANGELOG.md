@@ -9,6 +9,11 @@ versions: [Semantic Versioning](https://semver.org/).
 - Attendance: P / A / L buttons per child instead of tap-to-cycle; counts as coloured chips (#3).
 - Student list, attendance sheet and staff list show small photo thumbnails (`thumbUrl`, lazy-loaded) instead of
   downloading every full photo.
+- Faster on cheap phones (measured with the CPU slowed 4×): one attendance tap 141 → 16 ms, one keystroke in marks
+  188 → 17 ms, one change in the new-year wizard with 1,200 children 5.5 s → 0.14 s (memoised rows).
+- First download 313 → 244 KB (gzip): other languages, the form libraries and unused font subsets load only when
+  needed; the offline cache on first visit is 1.4 MB instead of 2.0 MB.
+- Student list and activity log keep the current rows on screen while more rows, a search or the next page load.
 
 ### Added
 - `Dockerfile` (Vite build served by nginx with the API proxied under `/api` and `/files`); CI builds it.

@@ -1,3 +1,4 @@
+import { keepPreviousData } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Box, Button, Card, List, ListItem, ListItemText, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,11 @@ export default function AuditPage() {
   const [area, setArea] = useState('');
   const [page, setPage] = useState(1);
   const staff = useGet('/users');
-  const q = useGet('/audit', { pageSize: PAGE, page, userId: userId || undefined, areas: area ? AREAS[area].join(',') : undefined });
+  const q = useGet(
+    '/audit',
+    { pageSize: PAGE, page, userId: userId || undefined, areas: area ? AREAS[area].join(',') : undefined },
+    { placeholderData: keepPreviousData },
+  );
   const filter = (set) => (e) => {
     set(e.target.value);
     setPage(1);
