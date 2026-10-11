@@ -637,6 +637,7 @@
     "DATE_IN_FUTURE": "You cannot choose a future date",
     "DATE_OUTSIDE_YEAR": "This date is outside the academic year",
     "ATTENDANCE_LOCKED": "This date is too old to change. Ask the principal.",
+    "VIEW_ONLY": "You can see this attendance, but only teachers and the principal can change it.",
     "WRONG_PASSWORD": "Current password is wrong",
     "ROLLOVER_INVALID": "Some students still need a new class",
     "FILE_TYPE": "This file type is not allowed",

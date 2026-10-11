@@ -47,6 +47,12 @@ export default function StudentListPage() {
   const [q, setQ] = useState('');
   const [status, setStatus] = useState('active');
   const [allYears, setAllYears] = useState(false);
+  // Searching all years is mostly for children who left, so it widens the default "Studying" filter (and back).
+  const toggleAllYears = (on) => {
+    setAllYears(on);
+    if (on && status === 'active') setStatus('all');
+    if (!on && status === 'all') setStatus('active');
+  };
   const [pageSize, setPageSize] = useState(PAGE);
   const [adding, setAdding] = useState(false);
   const search = useDebounce(q);
@@ -122,7 +128,7 @@ export default function StudentListPage() {
           </TextField>
         </Grid>
         <Grid size={{ xs: 12, md: 2 }}>
-          <FormControlLabel control={<Checkbox checked={allYears} onChange={(e) => setAllYears(e.target.checked)} />} label={t('students.allYears')} />
+          <FormControlLabel control={<Checkbox checked={allYears} onChange={(e) => toggleAllYears(e.target.checked)} />} label={t('students.allYears')} />
         </Grid>
       </Grid>
       <Query q={query} loading={<ListSkeleton />}>
@@ -171,7 +177,8 @@ export default function StudentListPage() {
               title={t('students.none')}
               action={
                 canAdd && (
-                  <Button variant="contained" startIcon={<I.addPerson />} onClick={() => setAdding(true)}>
+                  // On phones the floating button is already there.
+                  <Button variant="contained" startIcon={<I.addPerson />} onClick={() => setAdding(true)} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
                     {t('students.add')}
                   </Button>
                 )
