@@ -1,14 +1,15 @@
 import { useParams, useSearchParams } from 'react-router';
 import { Box, Button, Card, CardContent, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import { Print as PrintIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
 import { PageHeader, Query } from '../../shared/components/ui';
 import { fmtDate } from '../../shared/utils/format';
+import { useIcons } from '../../theme/LookContext';
 
 // Printable report card; the browser renders and prints every Indian script correctly.
 export default function ReportCardPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { studentId } = useParams();
   const [params] = useSearchParams();
   const term = params.get('term') || 'S1';
@@ -22,7 +23,7 @@ export default function ReportCardPage() {
               back
               title={t('marks.reportCard')}
               actions={
-                <Button startIcon={<PrintIcon />} variant="contained" onClick={() => window.print()}>
+                <Button startIcon={<I.print />} variant="contained" onClick={() => window.print()}>
                   {t('common.print')}
                 </Button>
               }

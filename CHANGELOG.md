@@ -5,7 +5,24 @@ versions: [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+### Added
+- **School looks (themes)**, chosen by the principal under School settings → Look and applied to everyone in the
+  school: *Signal Shala* (default, the school website's red and traffic-light colours, DM Sans / Radio Canada Big),
+  *Blackboard*, *Notebook*, *Marigold*, *Calm teal* (the previous look) and *Easy to read* (high contrast, larger
+  letters). Each has its own colours, fonts, shapes, surfaces and icon set; there is no dark look. "Try it" previews a
+  look on the principal's screen only until it is saved. Contrast is checked by unit tests and every look passes the
+  axe scan (`e2e/looks.spec.js`).
+- Bottom tabs on phones for every role (the four daily screens plus "More" with large tiles); the side menu on wider
+  screens is grouped into daily work, school setup and other.
+
 ### Changed
+- Redesigned for teachers: a greeting card with today's to-do on the teacher home, class cards with clear done /
+  not-done state, stat cards with icons, children shown with their faces and call / WhatsApp buttons in one row,
+  classes as cards instead of a table on the attendance overview, absent rows tinted on the attendance sheet with the
+  counts staying visible while scrolling, a profile card on the child's page, settings cards on Me, a branded login
+  screen, list skeletons while loading, an "add student" button within thumb reach on phones, and empty states that
+  say what to do next.
+- Icons, fonts and colours come from the look (`useIcons()`, palette), never hard-coded in screens.
 - Attendance: P / A / L buttons per child instead of tap-to-cycle; counts as coloured chips (#3).
 - Student list, attendance sheet and staff list show small photo thumbnails (`thumbUrl`, lazy-loaded) instead of
   downloading every full photo.

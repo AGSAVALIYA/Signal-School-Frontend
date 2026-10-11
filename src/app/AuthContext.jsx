@@ -5,6 +5,7 @@ import { api } from '../api/client';
 import { session } from '../api/session';
 import { useSession } from '../api/hooks';
 import { clearQueue } from '../features/attendance/offlineQueue';
+import { useLook } from '../theme/LookContext';
 
 const AuthContext = createContext(null);
 
@@ -13,14 +14,20 @@ export function AuthProvider({ children }) {
   const qc = useQueryClient();
   const [me, setMe] = useState(null);
   const [loading, setLoading] = useState(Boolean(s.accessToken));
+  const { setLook } = useLook();
 
-  const applyMe = useCallback((user) => {
-    setMe(user);
-    const current = user.schools.find((x) => x.id === session.get().schoolId) || user.schools.find((x) => x.isDefault) || user.schools[0];
-    session.set({ schoolId: current?.id ?? null });
-    const lng = user.preferredLanguage || session.get().language || current?.defaultLanguage;
-    if (lng && lng !== i18n.language) i18n.changeLanguage(lng);
-  }, []);
+  const applyMe = useCallback(
+    (user) => {
+      setMe(user);
+      const current = user.schools.find((x) => x.id === session.get().schoolId) || user.schools.find((x) => x.isDefault) || user.schools[0];
+      session.set({ schoolId: current?.id ?? null });
+      // Everyone in a school sees the look the principal chose.
+      if (current?.theme) setLook(current.theme);
+      const lng = user.preferredLanguage || session.get().language || current?.defaultLanguage;
+      if (lng && lng !== i18n.language) i18n.changeLanguage(lng);
+    },
+    [setLook],
+  );
 
   const refreshMe = useCallback(async () => {
     const { data } = await api.get('/me');
@@ -69,8 +76,10 @@ export function AuthProvider({ children }) {
     (schoolId) => {
       session.set({ schoolId, yearId: null });
       qc.clear();
+      const next = me?.schools.find((x) => x.id === schoolId);
+      if (next?.theme) setLook(next.theme);
     },
-    [qc],
+    [qc, me, setLook],
   );
 
   const value = useMemo(() => {

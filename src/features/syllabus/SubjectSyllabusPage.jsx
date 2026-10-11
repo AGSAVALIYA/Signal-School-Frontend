@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { CheckCircle as CheckCircleIcon, Edit as EditIcon, ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -12,13 +11,15 @@ import { EmptyState, PageHeader, ProgressBar, Query } from '../../shared/compone
 import { useAction } from '../../shared/hooks/useNotify';
 import { fmtDate, todayISO } from '../../shared/utils/format';
 import SyllabusEditor from './SyllabusEditor';
+import { useIcons } from '../../theme/LookContext';
 
 function TopicRow({ topic, canTick, onTick, onUntick, me, staff }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const done = topic.completion;
   return (
     <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', py: 1, borderBottom: 1, borderColor: 'divider' }}>
-      {done ? <CheckCircleIcon color="success" /> : <Box sx={{ width: 24 }} />}
+      {done ? <I.done color="success" /> : <Box sx={{ width: 24 }} />}
       <Box sx={{ flex: 1, minWidth: 160 }}>
         <Typography>{topic.content}</Typography>
         {done && (
@@ -45,6 +46,7 @@ function TopicRow({ topic, canTick, onTick, onUntick, me, staff }) {
 
 export default function SubjectSyllabusPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { id } = useParams();
   const { me, role } = useAuth();
   const { readOnly } = useYear();
@@ -73,7 +75,7 @@ export default function SubjectSyllabusPage() {
               can(role, 'syllabus.edit') &&
               !readOnly &&
               !editing && (
-                <Button startIcon={<EditIcon />} variant="outlined" onClick={() => setEditing(true)}>
+                <Button startIcon={<I.edit />} variant="outlined" onClick={() => setEditing(true)}>
                   {t('syllabus.edit')}
                 </Button>
               )
@@ -117,7 +119,7 @@ export default function SubjectSyllabusPage() {
                 const done = c.Topics.filter((x) => x.completion).length;
                 return (
                   <Accordion key={c.id} defaultExpanded={done < c.Topics.length} disableGutters>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <AccordionSummary expandIcon={<I.expand />}>
                       <Typography sx={{ fontWeight: 700, flex: 1 }}>{c.name}</Typography>
                       <Typography sx={{ color: 'text.secondary', mr: 1 }}>
                         {done}/{c.Topics.length}
@@ -142,6 +144,7 @@ export default function SubjectSyllabusPage() {
             </>
           ) : (
             <EmptyState
+              icon="syllabus"
               title={t('syllabus.empty')}
               action={
                 can(role, 'syllabus.edit') &&

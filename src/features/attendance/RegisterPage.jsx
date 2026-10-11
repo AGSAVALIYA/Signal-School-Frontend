@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Box, Button, Card, Stack, Table, TableBody, TableCell, TableHead, TableRow, TextField, Typography } from '@mui/material';
-import { Download as DownloadIcon, Print as PrintIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -8,10 +7,12 @@ import { EmptyState, Loading, PageHeader, Query } from '../../shared/components/
 import SectionSelect, { useSections } from '../../shared/components/SectionSelect';
 import { monthISO } from '../../shared/utils/format';
 import { useAction } from '../../shared/hooks/useNotify';
+import { useIcons } from '../../theme/LookContext';
 
 // Monthly register (students × days). Printing uses the browser, so every script prints correctly.
 export default function RegisterPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { sections, isLoading: sectionsLoading } = useSections();
   const [sectionId, setSectionId] = useState(null);
   const [month, setMonth] = useState(monthISO());
@@ -21,15 +22,16 @@ export default function RegisterPage() {
   return (
     <>
       <PageHeader
+        icon="register"
         title={t('attendance.registerTitle')}
         back="/attendance"
         actions={
           <>
-            <Button startIcon={<PrintIcon />} onClick={() => window.print()} variant="outlined" className="no-print">
+            <Button startIcon={<I.print />} onClick={() => window.print()} variant="outlined" className="no-print">
               {t('common.print')}
             </Button>
             <Button
-              startIcon={<DownloadIcon />}
+              startIcon={<I.download />}
               variant="outlined"
               className="no-print"
               onClick={() => run(() => api.download('/attendance/register', { sectionId: section, month, format: 'xlsx' }, `attendance-${month}.xlsx`))}
@@ -53,7 +55,7 @@ export default function RegisterPage() {
       {sectionsLoading ? (
         <Loading />
       ) : !section ? (
-        <EmptyState title={t('classes.noSections')} />
+        <EmptyState icon="classes" title={t('classes.noSections')} />
       ) : (
         <Query q={q}>
           {({ data }) => (

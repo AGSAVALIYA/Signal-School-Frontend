@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { IconButton, Stack, Tooltip } from '@mui/material';
-import { Call as CallIcon, WhatsApp as WhatsAppIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import i18n, { loadLanguage } from '../../i18n';
+import { useIcons } from '../../theme/LookContext';
 
 // WhatsApp needs the country code; Indian 10-digit mobile numbers get +91.
 export const waNumber = (phone = '') => {
@@ -13,6 +13,7 @@ export const waNumber = (phone = '') => {
 // Big call / WhatsApp buttons. `message` is a translation key, written in the guardian's language when known.
 export default function ContactButtons({ phone, language, message, params }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const lng = language || i18n.language;
   // The guardian's language may not be the one on screen: load its texts first (English until then).
   const [, setLoaded] = useState(null);
@@ -29,7 +30,7 @@ export default function ContactButtons({ phone, language, message, params }) {
     <Stack direction="row" sx={{ gap: 0.5 }}>
       <Tooltip title={t('contact.call')}>
         <IconButton component="a" href={`tel:${phone}`} aria-label={`${t('contact.call')} ${phone}`} color="primary">
-          <CallIcon />
+          <I.call />
         </IconButton>
       </Tooltip>
       <Tooltip title={t('contact.whatsapp')}>
@@ -41,7 +42,7 @@ export default function ContactButtons({ phone, language, message, params }) {
           aria-label={`${t('contact.whatsapp')} ${phone}`}
           sx={{ color: '#1a7f4b' }}
         >
-          <WhatsAppIcon />
+          <I.whatsApp />
         </IconButton>
       </Tooltip>
     </Stack>

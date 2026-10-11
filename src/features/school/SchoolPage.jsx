@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 import {
   Avatar,
   Box,
@@ -31,6 +32,7 @@ import { PhotoInput } from '../../shared/components/PhotoPicker';
 import { LANGUAGES } from '../../i18n';
 import { useAction } from '../../shared/hooks/useNotify';
 import useDraft from '../../shared/hooks/useDraft';
+import LookPicker from './LookPicker';
 
 const DAYS = [0, 1, 2, 3, 4, 5, 6];
 
@@ -188,19 +190,26 @@ function Organization() {
 export default function SchoolPage() {
   const { t } = useTranslation();
   const { role } = useAuth();
-  const [tab, setTab] = useState(0);
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') || 'school';
   const q = useGet('/school');
   return (
     <>
-      <PageHeader title={t('nav.school')} />
-      {can(role, 'org.manage') && (
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}>
-          <Tab label={t('school.tabs.school')} />
-          <Tab label={t('school.tabs.organization')} />
-        </Tabs>
-      )}
-      {tab === 0 && <Query q={q}>{({ data }) => <SchoolForm school={data} />}</Query>}
-      {tab === 1 && <Organization />}
+      <PageHeader title={t('nav.school')} icon="school" />
+      <Tabs
+        value={tab}
+        onChange={(_, v) => setParams({ tab: v }, { replace: true })}
+        variant="scrollable"
+        allowScrollButtonsMobile
+        sx={{ mb: 2, borderBottom: 1, borderColor: 'divider' }}
+      >
+        <Tab value="school" label={t('school.tabs.school')} />
+        <Tab value="look" label={t('school.tabs.look')} />
+        {can(role, 'org.manage') && <Tab value="organization" label={t('school.tabs.organization')} />}
+      </Tabs>
+      {tab === 'school' && <Query q={q}>{({ data }) => <SchoolForm school={data} />}</Query>}
+      {tab === 'look' && <Query q={q}>{({ data }) => <LookPicker school={data} />}</Query>}
+      {tab === 'organization' && can(role, 'org.manage') && <Organization />}
     </>
   );
 }

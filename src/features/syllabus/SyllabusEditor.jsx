@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { Button, Card, CardContent, IconButton, Stack, TextField, Tooltip } from '@mui/material';
-import {
-  Add as AddIcon,
-  ArrowDownward as ArrowDownwardIcon,
-  ArrowUpward as ArrowUpwardIcon,
-  Delete as DeleteIcon,
-  Lock as LockIcon,
-} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import { useIcons } from '../../theme/LookContext';
 
 const move = (list, i, d) => {
   const j = i + d;
@@ -20,6 +14,7 @@ const move = (list, i, d) => {
 // Edits chapters/topics in place (ids kept), so teachers' "taught" ticks survive renames and reordering.
 export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const [tree, setTree] = useState(() =>
     chapters.map((c) => ({ id: c.id, name: c.name, topics: c.Topics.map((x) => ({ id: x.id, content: x.content, locked: Boolean(x.completion) })) })),
   );
@@ -55,17 +50,17 @@ export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
             <Stack direction="row" sx={{ gap: 1, alignItems: 'center' }}>
               <TextField label={t('syllabus.chapterName')} value={c.name} onChange={(e) => setChapter(i, { name: e.target.value })} />
               <IconButton aria-label={t('common.moveUp')} onClick={() => setTree((tr) => move(tr, i, -1))}>
-                <ArrowUpwardIcon />
+                <I.up />
               </IconButton>
               <IconButton aria-label={t('common.moveDown')} onClick={() => setTree((tr) => move(tr, i, 1))}>
-                <ArrowDownwardIcon />
+                <I.down />
               </IconButton>
               <IconButton
                 aria-label={t('syllabus.removeChapter')}
                 disabled={c.topics.some((x) => x.locked)}
                 onClick={() => setTree((tr) => tr.filter((_, k) => k !== i))}
               >
-                <DeleteIcon />
+                <I.delete />
               </IconButton>
             </Stack>
             <Stack sx={{ gap: 1, mt: 2, pl: { sm: 2 } }}>
@@ -77,15 +72,15 @@ export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
                     onChange={(e) => setTopics(i, (ts) => ts.map((y, k) => (k === j ? { ...y, content: e.target.value } : y)))}
                   />
                   <IconButton size="small" aria-label={t('common.moveUp')} onClick={() => setTopics(i, (ts) => move(ts, j, -1))}>
-                    <ArrowUpwardIcon fontSize="small" />
+                    <I.up fontSize="small" />
                   </IconButton>
                   {x.locked ? (
                     <Tooltip title={t('syllabus.taughtLocked')}>
-                      <LockIcon color="disabled" sx={{ mx: 1.5 }} />
+                      <I.lock color="disabled" sx={{ mx: 1.5 }} />
                     </Tooltip>
                   ) : (
                     <IconButton size="small" aria-label={t('syllabus.removeTopic')} onClick={() => setTopics(i, (ts) => ts.filter((_, k) => k !== j))}>
-                      <DeleteIcon fontSize="small" />
+                      <I.delete fontSize="small" />
                     </IconButton>
                   )}
                 </Stack>
@@ -99,14 +94,14 @@ export default function SyllabusEditor({ chapters, onSave, onCancel, saving }) {
                 value={paste[i] || ''}
                 onChange={(e) => setPaste((p) => ({ ...p, [i]: e.target.value }))}
               />
-              <Button size="small" startIcon={<AddIcon />} onClick={() => addPasted(i)} disabled={!paste[i]?.trim()} sx={{ alignSelf: 'flex-start' }}>
+              <Button size="small" startIcon={<I.add />} onClick={() => addPasted(i)} disabled={!paste[i]?.trim()} sx={{ alignSelf: 'flex-start' }}>
                 {t('syllabus.addTheseTopics')}
               </Button>
             </Stack>
           </CardContent>
         </Card>
       ))}
-      <Button startIcon={<AddIcon />} variant="outlined" onClick={() => setTree((tr) => [...tr, { name: '', topics: [] }])} sx={{ alignSelf: 'flex-start' }}>
+      <Button startIcon={<I.add />} variant="outlined" onClick={() => setTree((tr) => [...tr, { name: '', topics: [] }])} sx={{ alignSelf: 'flex-start' }}>
         {t('syllabus.addChapter')}
       </Button>
       <Stack direction="row" sx={{ gap: 1, position: 'sticky', bottom: 16 }}>

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router';
 import { Button, Card, CardContent, Chip, IconButton, List, ListItem, ListItemText, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -13,6 +12,7 @@ import { useConfirm } from '../../shared/hooks/useConfirm';
 import { fmtDateTime } from '../../shared/utils/format';
 import TempPasswordDialog from './TempPasswordDialog';
 import { ROLES } from './StaffPage';
+import { useIcons } from '../../theme/LookContext';
 
 function Profile({ u }) {
   const { t } = useTranslation();
@@ -80,6 +80,7 @@ function Profile({ u }) {
 
 function Assignments({ u }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const run = useAction();
   const { sections } = useSections();
   const q = useGet('/assignments', { userId: u.id });
@@ -145,7 +146,7 @@ function Assignments({ u }) {
                     divider
                     secondaryAction={
                       <IconButton aria-label={t('common.delete')} onClick={() => run(() => remove.mutateAsync(a.id))}>
-                        <DeleteIcon />
+                        <I.delete />
                       </IconButton>
                     }
                   >
@@ -158,7 +159,7 @@ function Assignments({ u }) {
               </List>
             </Card>
           ) : (
-            <EmptyState title={t('staff.noAssignments')} />
+            <EmptyState icon="staff" title={t('staff.noAssignments')} />
           )
         }
       </Query>
@@ -186,7 +187,7 @@ function Activity({ u }) {
             </List>
           </Card>
         ) : (
-          <EmptyState title={t('audit.none')} />
+          <EmptyState icon="staff" title={t('audit.none')} />
         )
       }
     </Query>
@@ -202,7 +203,7 @@ export default function StaffDetailPage() {
     <Query q={q}>
       {({ data }) => {
         const u = data.find((x) => String(x.id) === id);
-        if (!u) return <EmptyState title={t('errors.NOT_FOUND')} />;
+        if (!u) return <EmptyState icon="staff" title={t('errors.NOT_FOUND')} />;
         return (
           <>
             <PageHeader back="/staff" title={u.name} actions={<Chip label={`${t(`staff.roles.${u.role}`)} · ${t(`staff.${u.status}`)}`} />} />

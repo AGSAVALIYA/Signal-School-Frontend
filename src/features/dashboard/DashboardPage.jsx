@@ -1,10 +1,10 @@
 import { Link as RouterLink } from 'react-router';
-import { Alert, Box, Button, Card, CardContent, Grid, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
-import { LocalHospital as LocalHospitalIcon, CheckCircle as CheckCircleIcon, RadioButtonUnchecked as RadioButtonUncheckedIcon } from '@mui/icons-material';
+import { Alert, Box, Button, Card, CardContent, Chip, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useGet } from '../../api/hooks';
-import { PageHeader, ProgressBar, Query, Stat } from '../../shared/components/ui';
+import { IconTile, PageHeader, PersonRow, ProgressBar, Query, Stat, StatGrid, percentTone } from '../../shared/components/ui';
+import { useIcons } from '../../theme/LookContext';
 import { fmtDate } from '../../shared/utils/format';
 import { useAuth } from '../../app/AuthContext';
 import ContactButtons from '../../shared/components/ContactButtons';
@@ -27,8 +27,10 @@ function Trend({ rows }) {
         const pct = r.marked ? Math.round((100 * r.present) / r.marked) : 0;
         return (
           <Stack key={r.date} sx={{ alignItems: 'center', minWidth: 34, flex: 1 }} title={`${fmtDate(r.date)}: ${pct}%`}>
-            <Typography variant="caption">{pct}</Typography>
-            <Box sx={{ width: '70%', height: `${pct}px`, bgcolor: pct < 75 ? 'warning.main' : 'primary.main', borderRadius: '4px 4px 0 0' }} />
+            <Typography variant="caption" sx={{ fontWeight: 600 }}>
+              {pct}
+            </Typography>
+            <Box sx={{ width: '70%', maxWidth: 36, height: `${pct}px`, bgcolor: `${percentTone(pct)}.main`, borderRadius: '6px 6px 2px 2px' }} />
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {dayjs(r.date).format('DD')}
             </Typography>
@@ -43,9 +45,10 @@ export default function DashboardPage() {
   const { t } = useTranslation();
   const q = useGet('/dashboard');
   const { school } = useAuth();
+  const I = useIcons();
   return (
     <>
-      <PageHeader title={t('nav.dashboard')} />
+      <PageHeader title={t('nav.dashboard')} icon="dashboard" subtitle={q.data?.data.today ? fmtDate(q.data.data.today.date) : undefined} />
       <Query q={q}>
         {({ data }) => {
           const setupLeft = SETUP.filter(([k]) => !data.setup[k]);
@@ -54,6 +57,23 @@ export default function DashboardPage() {
           const daysLeft = data.year ? dayjs(data.year.endDate).diff(dayjs(), 'day') : null;
           return (
             <Stack sx={{ gap: 3 }}>
+              <StatGrid>
+                <Stat icon="students" label={t('dashboard.students')} value={data.counts.students} />
+                <Stat icon="teacher" tone="secondary" label={t('dashboard.teachers')} value={data.counts.teachers} />
+                <Stat icon="classes" tone="info" label={t('dashboard.sections')} value={data.counts.sections} />
+                {today && (
+                  <Stat
+                    icon="attendance"
+                    label={t('dashboard.classesDone')}
+                    value={`${done.length}/${today.sections.length}`}
+                    tone={done.length === today.sections.length ? 'success' : 'warning'}
+                  />
+                )}
+                {today && <Stat icon="absent" label={t('dashboard.absentToday')} value={today.absentees.length} tone="error" />}
+                {today && done.length > 0 && (
+                  <Stat icon="meals" tone="secondary" label={t('dashboard.mealsToday')} value={done.reduce((n, s) => n + (s.present || 0), 0)} />
+                )}
+              </StatGrid>
               {setupLeft.length > 0 && (
                 <Card>
                   <CardContent>
@@ -62,7 +82,7 @@ export default function DashboardPage() {
                     </Typography>
                     {SETUP.map(([k, to]) => (
                       <Stack key={k} direction="row" sx={{ gap: 1, alignItems: 'center', py: 0.5 }}>
-                        {data.setup[k] ? <CheckCircleIcon color="success" /> : <RadioButtonUncheckedIcon color="disabled" />}
+                        {data.setup[k] ? <I.done color="success" /> : <I.todo color="disabled" />}
                         <Typography sx={{ flex: 1 }}>{t(`dashboard.setup.${k}`)}</Typography>
                         {!data.setup[k] && (
                           <Button size="small" component={RouterLink} to={to}>
@@ -75,7 +95,7 @@ export default function DashboardPage() {
                 </Card>
               )}
               {data.counts.healthFollowUps > 0 && (
-                <Alert severity="warning" icon={<LocalHospitalIcon />}>
+                <Alert severity="warning" icon={<I.health />}>
                   {t('health.followUpsAlert', { count: data.counts.healthFollowUps })}
                 </Alert>
               )}
@@ -92,50 +112,40 @@ export default function DashboardPage() {
                 </Alert>
               )}
               {data.consecutiveAbsences?.length > 0 && (
-                <Card sx={{ borderColor: 'error.main' }}>
+                <Card sx={{ borderLeft: 6, borderLeftColor: 'error.main', borderLeftStyle: 'solid' }}>
                   <CardContent>
-                    <Typography variant="h3">{t('dashboard.streakTitle')}</Typography>
-                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                      {t('dashboard.streakHelp')}
-                    </Typography>
-                    <List dense>
+                    <Stack direction="row" sx={{ gap: 1.5, alignItems: 'center' }}>
+                      <IconTile name="absent" tone="error" />
+                      <Box>
+                        <Typography variant="h3">{t('dashboard.streakTitle')}</Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                          {t('dashboard.streakHelp')}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                    <Box sx={{ mt: 1 }}>
                       {data.consecutiveAbsences.map((s) => (
-                        <ListItem key={s.id} disableGutters sx={{ flexWrap: 'wrap', gap: 1 }}>
-                          <ListItemText
-                            primary={
-                              <RouterLink to={`/students/${s.id}`} style={{ color: 'inherit' }}>
-                                {`${s.name} · ${s.sectionName}`}
-                              </RouterLink>
-                            }
-                            secondary={t('dashboard.streakDays', { count: s.days, since: fmtDate(s.since) })}
-                            sx={{ flex: '1 1 200px', my: 0 }}
-                          />
-                          <ContactButtons
-                            phone={s.guardianPhone}
-                            language={s.guardianLanguage}
-                            message="contact.streakMessage"
-                            params={{ name: s.name, school: school?.name, days: s.days }}
-                          />
-                        </ListItem>
+                        <PersonRow
+                          key={s.id}
+                          photo={s.thumbUrl}
+                          name={s.name}
+                          to={`/students/${s.id}`}
+                          badge={<Chip size="small" color="error" label={t('dashboard.daysChip', { count: s.days })} />}
+                          detail={`${s.sectionName} · ${t('dashboard.since', { date: fmtDate(s.since) })}`}
+                          actions={
+                            <ContactButtons
+                              phone={s.guardianPhone}
+                              language={s.guardianLanguage}
+                              message="contact.streakMessage"
+                              params={{ name: s.name, school: school?.name, days: s.days }}
+                            />
+                          }
+                        />
                       ))}
-                    </List>
+                    </Box>
                   </CardContent>
                 </Card>
               )}
-              <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
-                <Stat label={t('dashboard.students')} value={data.counts.students} />
-                <Stat label={t('dashboard.teachers')} value={data.counts.teachers} />
-                <Stat label={t('dashboard.sections')} value={data.counts.sections} />
-                {today && (
-                  <Stat
-                    label={t('dashboard.classesDone')}
-                    value={`${done.length}/${today.sections.length}`}
-                    tone={done.length === today.sections.length ? 'success' : 'warning'}
-                  />
-                )}
-                {today && <Stat label={t('dashboard.absentToday')} value={today.absentees.length} tone="error" />}
-                {today && done.length > 0 && <Stat label={t('dashboard.mealsToday')} value={done.reduce((n, s) => n + (s.present || 0), 0)} />}
-              </Box>
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, md: 7 }}>
                   <Card sx={{ height: '100%' }}>
@@ -158,13 +168,23 @@ export default function DashboardPage() {
                           {t('common.viewAll')}
                         </Button>
                       </Stack>
-                      {today?.sections
-                        .filter((s) => !s.submittedAt)
-                        .map((s) => (
-                          <Button key={s.id} component={RouterLink} to={`/attendance/${s.id}`} sx={{ justifyContent: 'flex-start', display: 'flex' }}>
-                            {s.name}
-                          </Button>
-                        ))}
+                      <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mt: 1 }}>
+                        {today?.sections
+                          .filter((s) => !s.submittedAt)
+                          .map((s) => (
+                            <Chip
+                              key={s.id}
+                              clickable
+                              color="warning"
+                              variant="outlined"
+                              icon={<I.attendance />}
+                              label={s.name}
+                              component={RouterLink}
+                              to={`/attendance/${s.id}`}
+                              sx={{ minHeight: 40 }}
+                            />
+                          ))}
+                      </Stack>
                       {today && done.length === today.sections.length && <Typography sx={{ color: 'success.main' }}>{t('dashboard.allDone')}</Typography>}
                     </CardContent>
                   </Card>
@@ -177,9 +197,9 @@ export default function DashboardPage() {
                       </Typography>
                       {data.syllabus.map((s) => (
                         <Box key={s.sectionId} sx={{ mb: 1.5 }}>
-                          <Stack direction="row">
-                            <Typography sx={{ flex: 1 }}>{s.sectionName}</Typography>
-                            <Typography sx={{ fontVariantNumeric: 'tabular-nums' }}>{s.percent}%</Typography>
+                          <Stack direction="row" sx={{ mb: 0.5 }}>
+                            <Typography sx={{ flex: 1, fontWeight: 600 }}>{s.sectionName}</Typography>
+                            <Typography sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>{s.percent}%</Typography>
                           </Stack>
                           <ProgressBar percent={s.percent} />
                         </Box>
@@ -194,34 +214,33 @@ export default function DashboardPage() {
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {t('dashboard.atRiskHelp')}
                       </Typography>
-                      <List dense>
+                      <Box sx={{ mt: 1 }}>
                         {data.atRisk.map((s) => (
-                          <ListItem key={s.id} disableGutters sx={{ flexWrap: 'wrap', gap: 1 }}>
-                            <ListItemText
-                              primary={
-                                <RouterLink to={`/students/${s.id}`} style={{ color: 'inherit' }}>
-                                  {`${s.name} · ${s.sectionName}`}
-                                </RouterLink>
-                              }
-                              secondary={`${s.percent}%`}
-                              sx={{ flex: '1 1 200px', my: 0 }}
-                            />
-                            <ContactButtons
-                              phone={s.guardianPhone}
-                              language={s.guardianLanguage}
-                              message="contact.lowAttendanceMessage"
-                              params={{ name: s.name, school: school?.name, percent: s.percent }}
-                            />
-                          </ListItem>
+                          <PersonRow
+                            key={s.id}
+                            photo={s.thumbUrl}
+                            name={s.name}
+                            to={`/students/${s.id}`}
+                            detail={s.sectionName}
+                            badge={<Chip size="small" color={percentTone(s.percent)} label={`${s.percent}%`} />}
+                            actions={
+                              <ContactButtons
+                                phone={s.guardianPhone}
+                                language={s.guardianLanguage}
+                                message="contact.lowAttendanceMessage"
+                                params={{ name: s.name, school: school?.name, percent: s.percent }}
+                              />
+                            }
+                          />
                         ))}
                         {!data.atRisk.length && <Typography sx={{ color: 'success.main' }}>{t('dashboard.noneAtRisk')}</Typography>}
-                      </List>
+                      </Box>
                     </CardContent>
                   </Card>
                 </Grid>
                 {data.birthdays.length > 0 && (
                   <Grid size={{ xs: 12 }}>
-                    <Alert severity="success">
+                    <Alert severity="success" icon={<I.birthday />}>
                       {t('dashboard.birthdays', { names: data.birthdays.map((b) => `${b.name} (${b.sectionName})`).join(', ') })}
                     </Alert>
                   </Grid>

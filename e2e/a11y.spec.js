@@ -20,6 +20,8 @@ const PAGES = {
     '/holidays',
     '/audit',
     '/school',
+    '/school?tab=look',
+    '/me',
   ],
   'clerk@demo.test': ['/dashboard', '/students'],
 };

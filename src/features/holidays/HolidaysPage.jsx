@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { Button, Card, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -10,9 +9,11 @@ import { EmptyState, PageHeader, Query } from '../../shared/components/ui';
 import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import { fmtDate } from '../../shared/utils/format';
+import { useIcons } from '../../theme/LookContext';
 
 export default function HolidaysPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { selected } = useYear();
   const from = selected?.startDate || dayjs().startOf('year').format('YYYY-MM-DD');
   const to = selected?.endDate || dayjs().endOf('year').format('YYYY-MM-DD');
@@ -30,7 +31,7 @@ export default function HolidaysPage() {
 
   return (
     <>
-      <PageHeader title={t('nav.holidays')} subtitle={t('holidays.subtitle')} />
+      <PageHeader icon="holidays" title={t('nav.holidays')} subtitle={t('holidays.subtitle')} />
       <Card sx={{ p: 2, mb: 3 }}>
         <Stack component="form" onSubmit={submit} direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2 }}>
           <TextField
@@ -70,13 +71,13 @@ export default function HolidaysPage() {
                       run(() => remove.mutateAsync(h.id))
                     }
                   >
-                    <DeleteIcon />
+                    <I.delete />
                   </IconButton>
                 </Stack>
               ))}
             </Card>
           ) : (
-            <EmptyState title={t('holidays.none')} />
+            <EmptyState icon="holidays" title={t('holidays.none')} />
           )
         }
       </Query>

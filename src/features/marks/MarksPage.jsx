@@ -158,8 +158,16 @@ export default function MarksPage() {
   const save = useSend((entries) => api.put('/marks', { subjectId: subject, term, entries }), { invalidate: ['/marks'] });
   return (
     <>
-      <PageHeader title={t('nav.marks')} />
-      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, mb: 2 }}>
+      <PageHeader icon="marks" title={t('nav.marks')} />
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 1.5,
+          mb: 2,
+          gridTemplateColumns: { xs: '1fr 1fr', sm: '2fr 2fr 1fr' },
+          '& > :first-of-type': { gridColumn: { xs: '1 / -1', sm: 'auto' } },
+        }}
+      >
         <SectionSelect
           filter={(s) => sections.some((x) => x.id === s.id)}
           value={section?.id ?? ''}
@@ -182,11 +190,11 @@ export default function MarksPage() {
             </MenuItem>
           ))}
         </TextField>
-      </Stack>
+      </Box>
       {sectionsLoading || mine.isLoading ? (
         <Loading />
       ) : !subject ? (
-        <EmptyState title={t('marks.noSubjects')} />
+        <EmptyState icon="marks" title={t('marks.noSubjects')} />
       ) : (
         <Query q={q}>
           {({ data }) => (

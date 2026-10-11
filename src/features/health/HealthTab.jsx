@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Alert, Box, Button, Card, CardContent, Checkbox, FormControlLabel, IconButton, Stack, TextField, Typography } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, LocalHospital as LocalHospitalIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -10,6 +9,7 @@ import { EmptyState, Query } from '../../shared/components/ui';
 import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import { fmtDate, todayISO } from '../../shared/utils/format';
+import { useIcons } from '../../theme/LookContext';
 
 const blank = () => ({ checkedOn: todayISO(), heightCm: '', weightKg: '', needsFollowUp: false, notes: '' });
 const num = (v) => (v === '' || v === null ? null : Number(v));
@@ -71,6 +71,7 @@ function HealthForm({ onSave, onCancel }) {
 // Check-ups from health camps: growth (height/weight) and anything the doctor should see again.
 export default function HealthTab({ studentId, canWrite }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const { me, role } = useAuth();
   const run = useAction();
   const confirm = useConfirm();
@@ -92,7 +93,7 @@ export default function HealthTab({ studentId, canWrite }) {
             }}
           />
         ) : (
-          <Button startIcon={<AddIcon />} variant="outlined" onClick={() => setAdding(true)} sx={{ alignSelf: 'flex-start' }}>
+          <Button startIcon={<I.add />} variant="outlined" onClick={() => setAdding(true)} sx={{ alignSelf: 'flex-start' }}>
             {t('health.add')}
           </Button>
         ))}
@@ -101,7 +102,7 @@ export default function HealthTab({ studentId, canWrite }) {
           data.length ? (
             <>
               {data[0].needsFollowUp && (
-                <Alert severity="warning" icon={<LocalHospitalIcon />}>
+                <Alert severity="warning" icon={<I.health />}>
                   {t('health.followUpNeeded')}
                 </Alert>
               )}
@@ -118,7 +119,7 @@ export default function HealthTab({ studentId, canWrite }) {
                             run(() => remove.mutateAsync(h.id))
                           }
                         >
-                          <DeleteIcon />
+                          <I.delete />
                         </IconButton>
                       )}
                     </Stack>
@@ -135,7 +136,7 @@ export default function HealthTab({ studentId, canWrite }) {
               ))}
             </>
           ) : (
-            <EmptyState title={t('health.empty')} text={t('health.emptyText')} />
+            <EmptyState icon="health" title={t('health.empty')} text={t('health.emptyText')} />
           )
         }
       </Query>

@@ -35,7 +35,7 @@ export default function AuditPage() {
   };
   return (
     <>
-      <PageHeader title={t('nav.audit')} subtitle={t('audit.subtitle')} />
+      <PageHeader icon="audit" title={t('nav.audit')} subtitle={t('audit.subtitle')} />
       <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, mb: 2 }}>
         <TextField select label={t('audit.person')} value={userId} onChange={filter(setUserId)} sx={{ maxWidth: { sm: 280 } }}>
           <MenuItem value="">{t('common.all')}</MenuItem>
@@ -86,7 +86,7 @@ export default function AuditPage() {
               )}
             </Card>
           ) : (
-            <EmptyState title={t('audit.none')} />
+            <EmptyState icon="audit" title={t('audit.none')} />
           );
         }}
       </Query>
