@@ -16,7 +16,8 @@ COPY . .
 # Empty = the API is reached on the same origin under /api (through this nginx).
 ARG VITE_API_URL=
 ENV VITE_API_URL=$VITE_API_URL
-RUN npm run build
+# Readable by the unprivileged nginx user whatever the checkout's umask was (files are copied with their modes).
+RUN npm run build && chmod -R a+rX dist docker
 
 FROM ${NGINX_IMAGE}
 LABEL org.opencontainers.image.title="Signal School web app" \
@@ -28,8 +29,8 @@ RUN if [ "$UPGRADE_SYSTEM" = true ]; then apk upgrade --no-cache; fi \
  && rm -f /etc/nginx/conf.d/default.conf \
  && chown -R nginx:nginx /var/cache/nginx /etc/nginx/conf.d
 ENV API_UPSTREAM=http://api:3000
-COPY docker/nginx.conf.template /etc/nginx/templates/default.conf.template
-COPY docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
+COPY --from=build /app/docker/nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=build /app/docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 USER nginx
 EXPOSE 8080
