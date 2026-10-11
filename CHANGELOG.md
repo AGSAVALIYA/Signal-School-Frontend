@@ -47,6 +47,8 @@ versions: [Semantic Versioning](https://semver.org/).
 - Dashboard card for children absent several school days in a row, with call/WhatsApp.
 - Calendar of a child's attendance for any month (Past years tab).
 - `AGENTS.md`, `CONTRIBUTING.md`, README screenshots and `npm run screenshots` (#7).
+- Docker: `REAL_IP_HEADER` / `REAL_IP_FROM` let nginx take the visitor's IP from a tunnel or proxy header (Cloudflare:
+  `CF-Connecting-IP`), so the API's rate limits count each visitor.
 
 ### Fixed
 - Photos stored in Cloudflare R2 were blocked by the content security policy (only AWS S3 was allowed).

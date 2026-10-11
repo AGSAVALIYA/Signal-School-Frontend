@@ -63,7 +63,8 @@ and files to upload. Run the API on its QA data (`npm run db:seed:qa`) for it.
 forwards `/api` and `/files` to the API (`API_UPSTREAM`, default `http://api:3000`), gzips, sets security headers and
 caches hashed assets for a year. Rebuilds after a code change reuse the dependency layer and npm's download cache. The
 whole school (database, Redis, API, this app) starts with `npm run stack` in **Signal-School-Backend**, which clones
-this repository; see its `docs/deployment.md`.
+this repository; see its `docs/deployment.md`. Behind Cloudflare Tunnel (or another proxy) set `REAL_IP_HEADER` (e.g.
+`CF-Connecting-IP`) and `REAL_IP_FROM` so rate limits see each visitor's IP; see `docker/nginx.conf.template`.
 
 ```bash
 docker build -t signal-school-web .

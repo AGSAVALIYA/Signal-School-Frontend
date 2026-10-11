@@ -28,7 +28,8 @@ RUN if [ "$UPGRADE_SYSTEM" = true ]; then apk upgrade --no-cache; fi \
  && sed -i -e 's|^user .*;||' -e 's|^pid .*;|pid /tmp/nginx.pid;|' /etc/nginx/nginx.conf \
  && rm -f /etc/nginx/conf.d/default.conf \
  && chown -R nginx:nginx /var/cache/nginx /etc/nginx/conf.d
-ENV API_UPSTREAM=http://api:3000
+# REAL_IP_*: whose header names the visitor's IP (see docker/nginx.conf.template); by default nobody's.
+ENV API_UPSTREAM=http://api:3000 REAL_IP_FROM=127.0.0.1 REAL_IP_HEADER=X-Forwarded-For
 COPY --from=build /app/docker/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html
