@@ -19,7 +19,7 @@ npm run build          # production build + service worker
 npx playwright test    # e2e at 360×740 and 1280×800; needs the API running with `npm run db:seed` data
 npm run screenshots    # refresh docs/screenshots (same requirement)
 npm run icons          # regenerate src/theme/icons/<look>.js after editing scripts/icons.mjs
-E2E_BASE_URL=http://localhost:8080 npx playwright test   # e2e against the Docker stack (`npm run stack -- demo` in the API repo)
+E2E_BASE_URL=http://localhost:18080 npx playwright test  # e2e against the Docker stack (`npm run stack -- demo` in the API repo)
 docker build -t signal-school-web .                      # nginx image (docker/nginx.conf.template)
 ```
 Demo logins (password `password123`): `owner@demo.test`, `principal@demo.test`, `clerk@demo.test`, `sunita@demo.test`
