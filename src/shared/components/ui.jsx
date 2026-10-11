@@ -249,7 +249,7 @@ export function ProgressBar({ percent, label, tone }) {
           width: `${percent}%`,
           height: '100%',
           borderRadius: 5,
-          bgcolor: `${tone || (percent >= 75 ? 'success' : 'primary')}.main`,
+          bgcolor: `${tone || (percent >= 75 ? 'success' : 'secondary')}.main`,
           transition: 'width .4s',
         }}
       />

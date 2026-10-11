@@ -74,7 +74,14 @@ export function buildTheme(id, icons) {
       },
       MuiToggleButton: {
         // Unselected choices in the secondary text colour (the default grey is too faint on tinted rows).
-        styleOverrides: { root: { borderRadius: Math.min(r, 12), color: p.text.secondary, ...(bold && { border: '2px solid #000' }) } },
+        styleOverrides: {
+          root: {
+            borderRadius: Math.min(r, 12),
+            color: p.text.secondary,
+            ...(bold && { border: '2px solid #000' }),
+            '&.Mui-selected, &.Mui-selected:hover': { backgroundColor: p.primary.light, color: p.primary.dark, fontWeight: 700 },
+          },
+        },
       },
       MuiAvatar: {
         styleOverrides: { colorDefault: { backgroundColor: p.primary.light, color: p.primary.dark, fontWeight: 700 } },

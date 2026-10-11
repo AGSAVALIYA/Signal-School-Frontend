@@ -47,6 +47,7 @@ test('screens for the docs', async ({ page, request }) => {
     .getByRole('button', { name: /: Absent$/ })
     .nth(2)
     .click();
+  await page.evaluate(() => window.scrollTo(0, 0));
   await shot(page, 'take-attendance');
 
   await page.goto('/me');
@@ -87,14 +88,19 @@ test('screens for the docs', async ({ page, request }) => {
     await setLook(request, look);
     await login(page, 'sunita@demo.test');
     await settle(page);
-    await page.screenshot({ path: `${DIR}/look-${look}.png` });
+    await page.screenshot({ path: `e2e-results/looks/${look}.png` });
     await logout(page);
   }
   await setLook(request, 'signal');
-  const images = LOOKS.map((l) => `data:image/png;base64,${readFileSync(`${DIR}/look-${l}.png`).toString('base64')}`);
-  await page.setViewportSize({ width: 6 * 372 + 12, height: 760 });
-  await page.setContent(
+  const images = LOOKS.map((l) => `data:image/png;base64,${readFileSync(`e2e-results/looks/${l}.png`).toString('base64')}`);
+  // One device pixel per CSS pixel keeps the README image small.
+  const sheet = await page
+    .context()
+    .browser()
+    .newPage({ viewport: { width: 6 * 372 + 12, height: 760 }, deviceScaleFactor: 1 });
+  await sheet.setContent(
     `<body style="margin:0;background:#fff;display:flex;gap:12px;padding:6px">${images.map((src) => `<img src="${src}" width="360" style="border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.25)">`).join('')}</body>`,
   );
-  await page.screenshot({ path: `${DIR}/looks.png` });
+  await sheet.screenshot({ path: `${DIR}/looks.png` });
+  await sheet.close();
 });

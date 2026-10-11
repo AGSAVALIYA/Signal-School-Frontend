@@ -39,11 +39,11 @@ export function SectionCard({ s, onNote }) {
         {done ? t('today.editAttendance') : t('today.takeAttendance')}
       </Button>
       <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mt: 'auto' }}>
-        <Button startIcon={<I.students />} component={RouterLink} to={`/students?sectionId=${s.id}`} sx={{ flex: 1 }}>
+        <Button startIcon={<I.students />} component={RouterLink} to={`/students?sectionId=${s.id}`} sx={{ flex: 1, px: 1, whiteSpace: 'nowrap' }}>
           {t('today.students')}
         </Button>
         {onNote && (
-          <Button startIcon={<I.note />} onClick={() => onNote(s)} sx={{ flex: 1 }}>
+          <Button startIcon={<I.note />} onClick={() => onNote(s)} sx={{ flex: 1, px: 1, whiteSpace: 'nowrap' }}>
             {t('today.classNote')}
           </Button>
         )}

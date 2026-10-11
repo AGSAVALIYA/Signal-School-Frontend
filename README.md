@@ -9,9 +9,9 @@ API, security, testing strategy, deployment).
 |---|---|---|
 | <img src="docs/screenshots/phone-take-attendance.png" width="240" alt="Attendance sheet with P, A, L buttons"> | <img src="docs/screenshots/phone-teacher-today-marathi.png" width="240" alt="Teacher home in Marathi"> | <img src="docs/screenshots/phone-login.png" width="240" alt="Login with four languages"> |
 
-| Principal's dashboard | Child's profile |
-|---|---|
-| <img src="docs/screenshots/desktop-dashboard.png" width="420" alt="Dashboard"> | <img src="docs/screenshots/desktop-student-profile.png" width="420" alt="Student profile"> |
+| Principal's dashboard | Child's profile | Today's attendance (phone) |
+|---|---|---|
+| <img src="docs/screenshots/desktop-dashboard.png" width="360" alt="Dashboard with stat cards and children absent several days"> | <img src="docs/screenshots/desktop-student-profile.png" width="360" alt="Student profile with photo, class, guardian call buttons and tabs"> | <img src="docs/screenshots/phone-attendance-today.png" width="200" alt="Attendance overview on a phone with class cards"> |
 
 ### Looks
 
@@ -30,7 +30,7 @@ no dark look (phones are used outdoors, and printouts must match the screen).
 | **Calm teal** | The original quiet teal and white |
 | **Easy to read** | Black on white, thick borders, larger Atkinson Hyperlegible letters, yellow focus ring |
 
-More in [`docs/screenshots/`](docs/screenshots) (refresh with `npm run screenshots`). New here, human or AI agent?
+More in [`docs/screenshots/`](docs/screenshots) (refresh with `npm run screenshots` against `npm run db:seed -- --school-day`). New here, human or AI agent?
 Read [AGENTS.md](AGENTS.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Run
