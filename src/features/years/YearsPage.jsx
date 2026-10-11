@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link as RouterLink } from 'react-router';
 import { Button, Card, CardContent, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from '@mui/material';
-import { Autorenew as AutorenewIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -10,6 +9,7 @@ import { EmptyState, HelpTip, PageHeader } from '../../shared/components/ui';
 import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import { fmtDate, fmtDateTime } from '../../shared/utils/format';
+import { useIcons } from '../../theme/LookContext';
 
 const COLOR = { active: 'success', planned: 'info', closed: 'default' };
 
@@ -79,6 +79,7 @@ function UnlockDialog({ year, onClose, onSave }) {
 
 export default function YearsPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { years, current, refetch } = useYear();
   const run = useAction();
   const confirm = useConfirm();
@@ -94,12 +95,13 @@ export default function YearsPage() {
   return (
     <>
       <PageHeader
+        icon="years"
         title={t('nav.years')}
         help={t('help.years')}
         actions={
           <>
             {current && (
-              <Button variant="contained" startIcon={<AutorenewIcon />} component={RouterLink} to="/years/new">
+              <Button variant="contained" startIcon={<I.rollover />} component={RouterLink} to="/years/new">
                 {t('years.startNew')}
               </Button>
             )}
@@ -111,6 +113,7 @@ export default function YearsPage() {
       />
       {!years.length ? (
         <EmptyState
+          icon="years"
           title={t('years.none')}
           text={t('years.noneText')}
           action={

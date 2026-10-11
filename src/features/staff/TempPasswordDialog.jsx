@@ -1,11 +1,12 @@
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
-import { ContentCopy as ContentCopyIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNotify } from '../../shared/hooks/useNotify';
+import { useIcons } from '../../theme/LookContext';
 
 // Shown once after creating a user or resetting a password. The message can be pasted into WhatsApp.
 export default function TempPasswordDialog({ name, login, password, onClose }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const notify = useNotify();
   const message = t('staff.shareMessage', { name, login, password, url: window.location.origin });
   const copy = async () => {
@@ -31,7 +32,7 @@ export default function TempPasswordDialog({ name, login, password, onClose }) {
         </Stack>
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
-        <Button startIcon={<ContentCopyIcon />} onClick={copy}>
+        <Button startIcon={<I.copy />} onClick={copy}>
           {t('staff.copyMessage')}
         </Button>
         <Button variant="contained" onClick={onClose}>

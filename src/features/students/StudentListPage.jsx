@@ -7,25 +7,26 @@ import {
   Button,
   Card,
   Checkbox,
+  Fab,
   FormControlLabel,
+  Grid,
   InputAdornment,
   List,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
   MenuItem,
-  Stack,
   TextField,
   Typography,
 } from '@mui/material';
-import { Download as DownloadIcon, PersonAdd as PersonAddIcon, Search as SearchIcon, UploadFile as UploadFileIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
 import { useAuth } from '../../app/AuthContext';
 import { useYear } from '../../app/YearContext';
 import { can } from '../../shared/utils/permissions';
-import { EmptyState, PageHeader, Query, StatusChip } from '../../shared/components/ui';
+import { EmptyState, ListSkeleton, PageHeader, Query, StatusChip } from '../../shared/components/ui';
+import { useIcons } from '../../theme/LookContext';
 import SectionSelect from '../../shared/components/SectionSelect';
 import useDebounce from '../../shared/hooks/useDebounce';
 import { useAction, useNotify } from '../../shared/hooks/useNotify';
@@ -36,6 +37,7 @@ const PAGE = 50;
 
 export default function StudentListPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const navigate = useNavigate();
   const notify = useNotify();
   const { role } = useAuth();
@@ -45,6 +47,12 @@ export default function StudentListPage() {
   const [q, setQ] = useState('');
   const [status, setStatus] = useState('active');
   const [allYears, setAllYears] = useState(false);
+  // Searching all years is mostly for children who left, so it widens the default "Studying" filter (and back).
+  const toggleAllYears = (on) => {
+    setAllYears(on);
+    if (on && status === 'active') setStatus('all');
+    if (!on && status === 'all') setStatus('active');
+  };
   const [pageSize, setPageSize] = useState(PAGE);
   const [adding, setAdding] = useState(false);
   const search = useDebounce(q);
@@ -55,28 +63,31 @@ export default function StudentListPage() {
     { sectionId: sectionId || undefined, q: search || undefined, status, allYears: String(allYears), pageSize },
     { placeholderData: keepPreviousData },
   );
+  const canAdd = can(role, 'students.write') && !readOnly;
   const create = useSend((body) => api.post('/students', body), { invalidate: ['/students', '/sections', '/today'] });
 
   return (
     <>
       <PageHeader
         title={t('nav.students')}
+        icon="students"
+        subtitle={query.data?.meta ? t('students.count', { count: query.data.meta.total }) : undefined}
         help={t('help.students')}
         actions={
           <>
-            {can(role, 'students.write') && !readOnly && (
-              <Button variant="contained" startIcon={<PersonAddIcon />} onClick={() => setAdding(true)}>
+            {canAdd && (
+              <Button variant="contained" startIcon={<I.addPerson />} onClick={() => setAdding(true)} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
                 {t('students.add')}
               </Button>
             )}
             {can(role, 'students.import') && !readOnly && (
-              <Button startIcon={<UploadFileIcon />} component={RouterLink} to="/students/import" variant="outlined">
+              <Button startIcon={<I.upload />} component={RouterLink} to="/students/import" variant="outlined">
                 {t('import.title')}
               </Button>
             )}
             {role !== 'teacher' && (
               <Button
-                startIcon={<DownloadIcon />}
+                startIcon={<I.download />}
                 variant="outlined"
                 onClick={() => run(() => api.download('/students-export', { sectionId: sectionId || undefined }, 'students.xlsx'))}
               >
@@ -86,52 +97,55 @@ export default function StudentListPage() {
           </>
         }
       />
-      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, flexWrap: 'wrap', mb: 2 }}>
-        <TextField
-          placeholder={t('students.searchPlaceholder')}
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          sx={{ flex: 2, minWidth: 220 }}
-          slotProps={{
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-        <SectionSelect
-          allowAll
-          value={sectionId}
-          onChange={(v) => setParams(v ? { sectionId: String(v) } : {})}
-          sx={{ flex: 1, minWidth: 160 }}
-          disabled={allYears}
-        />
-        <TextField select label={t('common.status')} value={status} onChange={(e) => setStatus(e.target.value)} sx={{ flex: 1, minWidth: 140 }}>
-          {['active', 'left', 'graduated', 'all'].map((s) => (
-            <MenuItem key={s} value={s}>
-              {s === 'all' ? t('common.all') : t(`students.statuses.${s}`)}
-            </MenuItem>
-          ))}
-        </TextField>
-        <FormControlLabel control={<Checkbox checked={allYears} onChange={(e) => setAllYears(e.target.checked)} />} label={t('students.allYears')} />
-      </Stack>
-      <Query q={query}>
+      <Grid container spacing={1.5} sx={{ mb: 2, alignItems: 'center' }}>
+        <Grid size={{ xs: 12, md: 5 }}>
+          <TextField
+            placeholder={t('students.searchPlaceholder')}
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            slotProps={{
+              htmlInput: { 'aria-label': t('common.search') },
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <I.search />
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+          <SectionSelect allowAll value={sectionId} onChange={(v) => setParams(v ? { sectionId: String(v) } : {})} disabled={allYears} />
+        </Grid>
+        <Grid size={{ xs: 6, md: 2 }}>
+          <TextField select label={t('common.status')} value={status} onChange={(e) => setStatus(e.target.value)}>
+            {['active', 'left', 'graduated', 'all'].map((s) => (
+              <MenuItem key={s} value={s}>
+                {s === 'all' ? t('common.all') : t(`students.statuses.${s}`)}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid size={{ xs: 12, md: 2 }}>
+          <FormControlLabel control={<Checkbox checked={allYears} onChange={(e) => toggleAllYears(e.target.checked)} />} label={t('students.allYears')} />
+        </Grid>
+      </Grid>
+      <Query q={query} loading={<ListSkeleton />}>
         {({ data, meta }) =>
           data.length ? (
             <Card>
               <List component="div" disablePadding>
                 {data.map((s) => (
-                  <ListItemButton key={s.id} onClick={() => navigate(`/students/${s.id}`)} divider sx={{ gap: 1, flexWrap: 'wrap' }}>
+                  <ListItemButton key={s.id} onClick={() => navigate(`/students/${s.id}`)} divider sx={{ gap: 1, py: 1.25 }}>
                     <ListItemAvatar>
-                      <Avatar src={s.thumbUrl || undefined} alt="" slotProps={{ img: { loading: 'lazy' } }}>
+                      <Avatar src={s.thumbUrl || undefined} alt="" slotProps={{ img: { loading: 'lazy' } }} sx={{ width: 44, height: 44 }}>
                         {initials(s.name)}
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
                       primary={s.name}
+                      slotProps={{ primary: { sx: { fontWeight: 600 } } }}
                       secondary={[
                         s.enrollment?.sectionName,
                         s.enrollment?.rollNumber && `${t('students.fields.rollNumber')} ${s.enrollment.rollNumber}`,
@@ -158,10 +172,39 @@ export default function StudentListPage() {
               )}
             </Card>
           ) : (
-            <EmptyState title={t('students.none')} />
+            <EmptyState
+              icon="students"
+              title={t('students.none')}
+              action={
+                canAdd && (
+                  // On phones the floating button is already there.
+                  <Button variant="contained" startIcon={<I.addPerson />} onClick={() => setAdding(true)} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+                    {t('students.add')}
+                  </Button>
+                )
+              }
+            />
           )
         }
       </Query>
+      {canAdd && (
+        <Fab
+          variant="extended"
+          color="primary"
+          onClick={() => setAdding(true)}
+          sx={{
+            display: { xs: 'inline-flex', sm: 'none' },
+            position: 'fixed',
+            right: 16,
+            bottom: 'calc(84px + env(safe-area-inset-bottom, 0px))',
+            zIndex: 9,
+            gap: 1,
+          }}
+        >
+          <I.addPerson />
+          {t('students.add')}
+        </Fab>
+      )}
       {adding && (
         <StudentForm
           sectionId={sectionId}

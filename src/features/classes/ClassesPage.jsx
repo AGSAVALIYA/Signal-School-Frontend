@@ -22,7 +22,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Add as AddIcon, ArrowDownward as ArrowDownwardIcon, ArrowUpward as ArrowUpwardIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -31,11 +30,13 @@ import { EmptyState, PageHeader, Query } from '../../shared/components/ui';
 import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import SectionSelect from '../../shared/components/SectionSelect';
+import { useIcons } from '../../theme/LookContext';
 
 const INV = ['/sections', '/grades', '/activities', '/assignments', '/today', '/dashboard'];
 
 function AddInline({ label, onAdd, children }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const [v, setV] = useState('');
   return (
     <Stack
@@ -50,7 +51,7 @@ function AddInline({ label, onAdd, children }) {
     >
       {children}
       <TextField size="small" label={label} value={v} onChange={(e) => setV(e.target.value)} sx={{ flex: '1 1 160px' }} />
-      <Button type="submit" startIcon={<AddIcon />} disabled={!v.trim()}>
+      <Button type="submit" startIcon={<I.add />} disabled={!v.trim()}>
         {t('common.add')}
       </Button>
     </Stack>
@@ -59,6 +60,7 @@ function AddInline({ label, onAdd, children }) {
 
 function SectionCard({ s, teachers, readOnly }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const run = useAction();
   const confirm = useConfirm();
   const [name, setName] = useState(s.name);
@@ -91,7 +93,7 @@ function SectionCard({ s, teachers, readOnly }) {
               })) && run(() => remove.mutateAsync())
             }
           >
-            <DeleteIcon />
+            <I.delete />
           </IconButton>
         </Stack>
         <Typography sx={{ color: 'text.secondary' }}>
@@ -172,7 +174,7 @@ function SectionsTab() {
               ))}
             </Grid>
           ) : (
-            <EmptyState title={t('classes.noSections')} text={t('classes.noSectionsText')} />
+            <EmptyState icon="classes" title={t('classes.noSections')} text={t('classes.noSectionsText')} />
           )
         }
       </Query>
@@ -182,6 +184,7 @@ function SectionsTab() {
 
 function GradesTab() {
   const { t } = useTranslation();
+  const I = useIcons();
   const run = useAction();
   const confirm = useConfirm();
   const q = useGet('/grades');
@@ -237,10 +240,10 @@ function GradesTab() {
                       label={t('classes.finalGrade')}
                     />
                     <IconButton aria-label={t('common.moveUp')} onClick={() => move(i, -1)}>
-                      <ArrowUpwardIcon />
+                      <I.up />
                     </IconButton>
                     <IconButton aria-label={t('common.moveDown')} onClick={() => move(i, 1)}>
-                      <ArrowDownwardIcon />
+                      <I.down />
                     </IconButton>
                     <IconButton
                       aria-label={t('common.delete')}
@@ -249,7 +252,7 @@ function GradesTab() {
                         run(() => remove.mutateAsync(g.id))
                       }
                     >
-                      <DeleteIcon />
+                      <I.delete />
                     </IconButton>
                   </ListItem>
                 ))}
@@ -308,6 +311,7 @@ function MembersDialog({ group, onClose }) {
 
 function ActivitiesTab() {
   const { t } = useTranslation();
+  const I = useIcons();
   const run = useAction();
   const confirm = useConfirm();
   const [open, setOpen] = useState(null);
@@ -332,7 +336,7 @@ function ActivitiesTab() {
                       run(() => remove.mutateAsync(g.id))
                     }
                   >
-                    <DeleteIcon />
+                    <I.delete />
                   </IconButton>
                 </ListItem>
               ))}
@@ -351,7 +355,7 @@ export default function ClassesPage() {
   const [tab, setTab] = useState(0);
   return (
     <>
-      <PageHeader title={t('nav.classesSubjects')} />
+      <PageHeader icon="classes" title={t('nav.classesSubjects')} />
       <Tabs
         value={tab}
         onChange={(_, v) => setTab(v)}

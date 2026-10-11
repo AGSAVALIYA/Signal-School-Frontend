@@ -27,7 +27,7 @@ export default [
     },
   },
   {
-    files: ['**/*.test.{js,jsx}', 'src/test/**', 'e2e/**', '*.config.js'],
+    files: ['**/*.test.{js,jsx}', 'src/test/**', 'e2e/**', 'scripts/**', '*.config.js'],
     languageOptions: { globals: { ...globals.node, ...globals.vitest } },
     rules: { 'i18next/no-literal-string': 'off' },
   },

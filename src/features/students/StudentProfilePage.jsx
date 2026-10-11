@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link as RouterLink, useParams } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Chip, Grid, MenuItem, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
-import { Description as DescriptionIcon, Edit as EditIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -18,6 +17,8 @@ import LeaveDialog from './LeaveDialog';
 import DiaryList from '../diary/DiaryList';
 import HealthTab from '../health/HealthTab';
 import MonthAttendance from './MonthAttendance';
+import ContactButtons from '../../shared/components/ContactButtons';
+import { useIcons } from '../../theme/LookContext';
 
 function Info({ label, value }) {
   if (value === null || value === undefined || value === '') return null;
@@ -146,6 +147,7 @@ function ReportCardLink({ id }) {
 
 export default function StudentProfilePage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { id } = useParams();
   const { role } = useAuth();
   const { readOnly } = useYear();
@@ -174,18 +176,7 @@ export default function StudentProfilePage() {
     <Query q={q}>
       {({ data: s }) => (
         <>
-          <PageHeader
-            back
-            title={s.name}
-            subtitle={[s.enrollment?.sectionName, `GR ${s.grNumber}`].filter(Boolean).join(' · ')}
-            actions={
-              canWrite && (
-                <Button startIcon={<EditIcon />} variant="outlined" onClick={() => setEditing(true)}>
-                  {t('common.edit')}
-                </Button>
-              )
-            }
-          />
+          <PageHeader back title={s.name} />
           {s.status !== 'active' && (
             <Alert
               severity="warning"
@@ -208,20 +199,47 @@ export default function StudentProfilePage() {
               {s.leftToSchool && `· ${s.leftToSchool}`}
             </Alert>
           )}
-          <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2, alignItems: { sm: 'center' }, mb: 2 }}>
-            <PhotoPicker url={s.photoUrl} name={s.name} disabled={!canWrite} onUpload={(file) => run(() => photo.mutateAsync(file), t('common.saved'))} />
-            <Box sx={{ flex: 1 }} />
-            {can(role, 'students.leave') && s.status !== 'active' && (
-              <Button component={RouterLink} to={`/students/${s.id}/certificate`} startIcon={<DescriptionIcon />} variant="outlined">
-                {t('certificate.open')}
-              </Button>
-            )}
-            {can(role, 'students.leave') && s.status === 'active' && !readOnly && (
-              <Button color="warning" onClick={() => setLeaving(true)}>
-                {t('students.markLeft')}
-              </Button>
-            )}
-          </Stack>
+          <Card sx={{ p: { xs: 2, sm: 2.5 }, mb: 2 }}>
+            <Stack direction="row" sx={{ gap: { xs: 2, sm: 3 }, alignItems: 'center', flexWrap: 'wrap' }}>
+              <PhotoPicker url={s.photoUrl} name={s.name} disabled={!canWrite} onUpload={(file) => run(() => photo.mutateAsync(file), t('common.saved'))} />
+              <Box sx={{ flex: '1 1 200px', minWidth: 0 }}>
+                <Stack direction="row" sx={{ gap: 0.75, flexWrap: 'wrap', mb: 1 }}>
+                  {s.enrollment?.sectionName && <Chip color="primary" icon={<I.classes />} label={s.enrollment.sectionName} />}
+                  {s.enrollment?.rollNumber && <Chip variant="outlined" label={`${t('students.fields.rollNumber')} ${s.enrollment.rollNumber}`} />}
+                  <Chip variant="outlined" label={`GR ${s.grNumber}`} />
+                  {s.age !== null && s.age !== undefined && <Chip variant="outlined" label={t('students.ageYears', { count: s.age })} />}
+                </Stack>
+                {s.guardianPhone && (
+                  <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <Typography sx={{ color: 'text.secondary' }}>
+                      {[s.guardianName, s.guardianRelation].filter(Boolean).join(' · ') || t('students.fields.guardianPhone')}
+                    </Typography>
+                    <ContactButtons phone={s.guardianPhone} language={s.guardianLanguage} />
+                  </Stack>
+                )}
+              </Box>
+              <Stack
+                direction="row"
+                sx={{ gap: 1, flexWrap: 'wrap', width: { xs: '100%', md: 'auto' }, '& > *': { flex: { xs: '1 1 auto', md: '0 0 auto' } } }}
+              >
+                {canWrite && (
+                  <Button startIcon={<I.edit />} variant="outlined" onClick={() => setEditing(true)}>
+                    {t('common.edit')}
+                  </Button>
+                )}
+                {can(role, 'students.leave') && s.status !== 'active' && (
+                  <Button component={RouterLink} to={`/students/${s.id}/certificate`} startIcon={<I.certificate />} variant="outlined">
+                    {t('certificate.open')}
+                  </Button>
+                )}
+                {can(role, 'students.leave') && s.status === 'active' && !readOnly && (
+                  <Button color="warning" onClick={() => setLeaving(true)}>
+                    {t('students.markLeft')}
+                  </Button>
+                )}
+              </Stack>
+            </Stack>
+          </Card>
           <Tabs
             value={tab}
             onChange={(_, v) => setTab(v)}

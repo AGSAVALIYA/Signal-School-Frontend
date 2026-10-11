@@ -20,7 +20,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { PersonAdd as PersonAddIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -29,6 +28,7 @@ import { EmptyState, PageHeader, Query } from '../../shared/components/ui';
 import { useNotify } from '../../shared/hooks/useNotify';
 import { initials } from '../../shared/utils/format';
 import TempPasswordDialog from './TempPasswordDialog';
+import { useIcons } from '../../theme/LookContext';
 
 export const ROLES = ['teacher', 'clerk', 'admin', 'owner'];
 
@@ -82,6 +82,7 @@ function AddDialog({ onClose, onCreated }) {
 
 export default function StaffPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const navigate = useNavigate();
   const [status, setStatus] = useState('active');
   const [adding, setAdding] = useState(false);
@@ -90,9 +91,10 @@ export default function StaffPage() {
   return (
     <>
       <PageHeader
+        icon="staff"
         title={t('nav.staff')}
         actions={
-          <Button variant="contained" startIcon={<PersonAddIcon />} onClick={() => setAdding(true)}>
+          <Button variant="contained" startIcon={<I.addPerson />} onClick={() => setAdding(true)}>
             {t('staff.add')}
           </Button>
         }
@@ -120,7 +122,7 @@ export default function StaffPage() {
               </List>
             </Card>
           ) : (
-            <EmptyState title={t('staff.none')} />
+            <EmptyState icon="staff" title={t('staff.none')} />
           )
         }
       </Query>

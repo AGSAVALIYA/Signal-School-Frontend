@@ -20,6 +20,7 @@ const PAGES = {
     '/audit',
     '/me',
   ],
+  'principal@demo.test': ['/dashboard', '/school?tab=look', '/me'],
   'clerk@demo.test': ['/dashboard', '/attendance', '/students', '/students/import', '/syllabus', '/me'],
   'sunita@demo.test': ['/', '/attendance', '/students', '/syllabus', '/marks', '/me'],
 };
@@ -35,7 +36,7 @@ for (const [user, paths] of Object.entries(PAGES)) {
       await expect(page.getByText('Something went wrong')).toHaveCount(0);
       await expectNoHorizontalScroll(page);
       await page.screenshot({
-        path: `e2e-results/screens/${test.info().project.name}-${user.split('@')[0]}${path.replace(/\//g, '_') || '_home'}.png`,
+        path: `e2e-results/screens/${test.info().project.name}-${user.split('@')[0]}${path.replace(/[/?=]/g, '_') || '_home'}.png`,
         fullPage: true,
       });
     }

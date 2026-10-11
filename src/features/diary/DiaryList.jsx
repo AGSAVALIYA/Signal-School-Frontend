@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Box, Button, Card, CardContent, Chip, Dialog, IconButton, Stack, Typography } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet, useSend } from '../../api/hooks';
 import { api } from '../../api/client';
@@ -11,9 +10,11 @@ import { useAction } from '../../shared/hooks/useNotify';
 import { useConfirm } from '../../shared/hooks/useConfirm';
 import { fmtDate } from '../../shared/utils/format';
 import NoteDialog from './NoteDialog';
+import { useIcons } from '../../theme/LookContext';
 
 export default function DiaryList({ studentId, canWrite }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const { me, role } = useAuth();
   const run = useAction();
   const confirm = useConfirm();
@@ -26,7 +27,7 @@ export default function DiaryList({ studentId, canWrite }) {
   return (
     <Stack sx={{ gap: 2 }}>
       {canWrite && (
-        <Button startIcon={<AddIcon />} variant="outlined" onClick={() => setAdding(true)} sx={{ alignSelf: 'flex-start' }}>
+        <Button startIcon={<I.add />} variant="outlined" onClick={() => setAdding(true)} sx={{ alignSelf: 'flex-start' }}>
           {t('diary.addStudentNote')}
         </Button>
       )}
@@ -49,7 +50,7 @@ export default function DiaryList({ studentId, canWrite }) {
                           run(() => remove.mutateAsync(e))
                         }
                       >
-                        <DeleteIcon />
+                        <I.delete />
                       </IconButton>
                     )}
                   </Stack>
@@ -70,7 +71,7 @@ export default function DiaryList({ studentId, canWrite }) {
               </Card>
             ))
           ) : (
-            <EmptyState title={t('diary.empty')} />
+            <EmptyState icon="note" title={t('diary.empty')} />
           )
         }
       </Query>

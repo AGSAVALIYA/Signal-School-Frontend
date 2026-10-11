@@ -18,11 +18,11 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { api } from '../../api/client';
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { CheckField, Field, applyServerErrors } from '../../shared/components/fields';
 import { useSections } from '../../shared/components/SectionSelect';
 import { useNotify } from '../../shared/hooks/useNotify';
+import { useIcons } from '../../theme/LookContext';
 
 const phone = z
   .string()
@@ -82,6 +82,7 @@ const blankToNull = (o) => Object.fromEntries(Object.entries(o).map(([k, v]) => 
 // One form for teachers, clerks and admins: essentials first, everything else under "More details".
 export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const notify = useNotify();
   const { sections } = useSections();
   const [more, setMore] = useState(Boolean(student));
@@ -167,7 +168,7 @@ export default function StudentForm({ student, sectionId, onSubmit, onClose }) {
           {g('guardianName', t('students.fields.guardianName'))}
           {g('guardianPhone', t('students.fields.guardianPhone'), { type: 'tel', slotProps: { htmlInput: { inputMode: 'tel' } } })}
           <Grid size={{ xs: 12 }}>
-            <Button onClick={() => setMore((m) => !m)} endIcon={<ExpandMoreIcon sx={{ transform: more ? 'rotate(180deg)' : 'none' }} />}>
+            <Button onClick={() => setMore((m) => !m)} endIcon={<I.expand sx={{ transform: more ? 'rotate(180deg)' : 'none' }} />}>
               {t('students.moreDetails')}
             </Button>
           </Grid>

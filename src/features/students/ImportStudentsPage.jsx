@@ -1,16 +1,33 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Alert, Box, Button, Card, CardContent, Chip, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import { Download as DownloadIcon, UploadFile as UploadFileIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client';
 import { PageHeader } from '../../shared/components/ui';
 import { useAction, useNotify } from '../../shared/hooks/useNotify';
+import { useIcons } from '../../theme/LookContext';
 
 // Download template → upload → see every row with its problems → import only the good rows.
+// Sheet columns → the form's field names, so problems read "Date of birth: …" instead of "date_of_birth: …".
+const FIELD = {
+  name: 'students.fields.name',
+  class: 'students.fields.class',
+  gender: 'students.fields.gender',
+  date_of_birth: 'students.fields.dob',
+  approx_age: 'students.fields.approxAge',
+  guardian_name: 'students.fields.guardianName',
+  guardian_phone: 'students.fields.guardianPhone',
+  father_name: 'students.fields.fatherName',
+  mother_name: 'students.fields.motherName',
+  address: 'students.fields.address',
+  gr_number: 'students.fields.grNumber',
+  admission_date: 'students.fields.admissionDate',
+};
+
 export default function ImportStudentsPage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const navigate = useNavigate();
   const notify = useNotify();
   const qc = useQueryClient();
@@ -50,7 +67,7 @@ export default function ImportStudentsPage() {
             </Typography>
             <Typography sx={{ color: 'text.secondary', mb: 2 }}>{t('import.step1Text')}</Typography>
             <Button
-              startIcon={<DownloadIcon />}
+              startIcon={<I.download />}
               variant="outlined"
               onClick={() => run(() => api.download('/students-import/template', undefined, 'students-template.xlsx'))}
             >
@@ -63,7 +80,7 @@ export default function ImportStudentsPage() {
             <Typography variant="h3" gutterBottom>
               {t('import.step2')}
             </Typography>
-            <Button component="label" startIcon={<UploadFileIcon />} variant="contained" disabled={busy}>
+            <Button component="label" startIcon={<I.upload />} variant="contained" disabled={busy}>
               {t('import.chooseFile')}
               <input hidden type="file" accept=".xlsx,.csv" onChange={(e) => e.target.files[0] && upload(e.target.files[0])} />
             </Button>
@@ -95,7 +112,12 @@ export default function ImportStudentsPage() {
                           {Object.keys(r.errors).length ? (
                             <Stack direction="row" sx={{ gap: 0.5, flexWrap: 'wrap' }}>
                               {Object.entries(r.errors).map(([k, code]) => (
-                                <Chip key={k} size="small" color="error" label={`${k}: ${t(`fieldErrors.${code}`, { defaultValue: code })}`} />
+                                <Chip
+                                  key={k}
+                                  size="small"
+                                  color="error"
+                                  label={`${FIELD[k] ? t(FIELD[k]) : k}: ${t(`fieldErrors.${code}`, { defaultValue: code })}`}
+                                />
                               ))}
                             </Stack>
                           ) : (

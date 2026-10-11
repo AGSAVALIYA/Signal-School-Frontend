@@ -1,7 +1,8 @@
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router';
 import { Alert, Avatar, Box, Button, Chip, InputAdornment, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
-import { Save as SaveIcon, Search as SearchIcon } from '@mui/icons-material';
+import { alpha } from '@mui/material/styles';
+import { useIcons } from '../../theme/LookContext';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGet } from '../../api/hooks';
@@ -23,7 +24,7 @@ const Row = memo(function Row({ row, status, onChange, disabled }) {
   const choices = status === 'LATE' ? [...CHOICES, 'LATE'] : CHOICES;
   return (
     <Box
-      sx={{
+      sx={(th) => ({
         display: 'flex',
         gap: { xs: 1, sm: 1.5 },
         alignItems: 'center',
@@ -32,7 +33,10 @@ const Row = memo(function Row({ row, status, onChange, disabled }) {
         borderBottom: 1,
         borderColor: 'divider',
         minHeight: 64,
-      }}
+        // Absent and leave rows stand out, so a teacher can check the list at a glance before saving.
+        bgcolor: status === 'A' ? alpha(th.palette.error.main, 0.07) : status === 'L' ? alpha(th.palette.warning.main, 0.07) : 'transparent',
+        '&:last-of-type': { borderBottom: 0 },
+      })}
     >
       <Typography sx={{ width: 24, flexShrink: 0, color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{row.rollNumber ?? ''}</Typography>
       <Avatar
@@ -81,6 +85,7 @@ const Row = memo(function Row({ row, status, onChange, disabled }) {
 
 function Sheet({ sheet, sectionId, date }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const notify = useNotify();
   const qc = useQueryClient();
   // Everyone starts Present; saved statuses win.
@@ -141,7 +146,11 @@ function Sheet({ sheet, sectionId, date }) {
       {dirty && savedAt && !queued && <Alert severity="info">{t('attendance.unsaved')}</Alert>}
       {!savedAt && sheet.editable && <Alert severity="info">{t('help.attendance')}</Alert>}
 
-      <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }} aria-live="polite">
+      <Paper
+        sx={{ position: 'sticky', top: { xs: 64, sm: 76 }, zIndex: 4, p: 1.25, display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}
+        variant="outlined"
+        aria-live="polite"
+      >
         {['P', 'A', 'L'].map((c) => (
           <Chip
             key={c}
@@ -152,15 +161,11 @@ function Sheet({ sheet, sectionId, date }) {
         ))}
         <Box sx={{ flex: 1 }} />
         {sheet.editable && (
-          <Button
-            variant="outlined"
-            sx={{ width: { xs: '100%', sm: 'auto' } }}
-            onClick={() => setMarks(Object.fromEntries(sheet.rows.map((r) => [r.studentId, 'P'])))}
-          >
+          <Button variant="outlined" size="small" onClick={() => setMarks(Object.fromEntries(sheet.rows.map((r) => [r.studentId, 'P'])))}>
             {t('attendance.allPresent')}
           </Button>
         )}
-      </Stack>
+      </Paper>
       <TextField
         placeholder={t('common.search')}
         value={search}
@@ -170,7 +175,7 @@ function Sheet({ sheet, sectionId, date }) {
           input: {
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon />
+                <I.search />
               </InputAdornment>
             ),
           },
@@ -184,15 +189,15 @@ function Sheet({ sheet, sectionId, date }) {
         )}
       </Paper>
       {sheet.editable && sheet.rows.length > 0 && (
-        <Box sx={{ position: 'sticky', bottom: { xs: 72, md: 16 }, zIndex: 5 }}>
+        <Box sx={{ position: 'sticky', bottom: { xs: 'calc(80px + env(safe-area-inset-bottom, 0px))', md: 16 }, zIndex: 5 }}>
           <Button
             fullWidth
             size="large"
             variant="contained"
-            startIcon={<SaveIcon />}
+            startIcon={<I.save />}
             onClick={save}
             disabled={saving}
-            sx={{ minHeight: 56, fontSize: '1.1rem', boxShadow: 3 }}
+            sx={{ minHeight: 56, fontSize: '1.1rem', boxShadow: 4 }}
           >
             {saving ? t('common.saving') : t('attendance.save')}
           </Button>

@@ -42,7 +42,8 @@
     "newer": "Newer",
     "older": "Older",
     "pageOf": "Page {{page}} of {{pages}}",
-    "percentDone": "{{percent}}% done"
+    "percentDone": "{{percent}}% done",
+    "loading": "Loading…"
   },
   "lang": {
     "choose": "Choose your language"
@@ -60,7 +61,13 @@
     "holidays": "Holidays",
     "school": "School settings",
     "audit": "Activity log",
-    "me": "Me"
+    "me": "Me",
+    "more": "More",
+    "groups": {
+      "daily": "Every day",
+      "setup": "School setup",
+      "other": "Other"
+    }
   },
   "auth": {
     "title": "Log in",
@@ -84,7 +91,8 @@
     "firstLoginTitle": "Welcome, {{name}}",
     "firstLoginText": "Please choose your own password. Use the temporary password from the office as the current password.",
     "logoutPending_one": "{{count}} attendance is not uploaded yet and will be lost. Connect to the internet first if you can.",
-    "logoutPending_other": "{{count}} attendances are not uploaded yet and will be lost. Connect to the internet first if you can."
+    "logoutPending_other": "{{count}} attendances are not uploaded yet and will be lost. Connect to the internet first if you can.",
+    "tagline": "Attendance, children's records and lessons for our school, in your language."
   },
   "year": {
     "label": "Academic year",
@@ -111,7 +119,10 @@
     "weeklyOff": "Today is a weekly holiday",
     "noYear": "The academic year has not been set up yet. Please ask the school office.",
     "noClasses": "No class is assigned to you yet",
-    "noClassesText": "Ask the school office to assign your class."
+    "noClassesText": "Ask the school office to assign your class.",
+    "pendingSummary_one": "Attendance is waiting in {{count}} class",
+    "pendingSummary_other": "Attendance is waiting in {{count}} classes",
+    "allDoneSummary": "All attendance is done for today. Well done!"
   },
   "attendance": {
     "title": "Attendance · {{name}}",
@@ -142,7 +153,9 @@
     "registerLegend": "P = Present, A = Absent, L = Leave, LT = Late. Grey days are holidays. % counts only days that were marked.",
     "syncFailed_one": "{{count}} attendance could not be saved. Please take it again:",
     "syncFailed_other": "{{count}} attendances could not be saved. Please take them again:",
-    "unsaved": "You changed some marks. Press \"Save attendance\" to keep them."
+    "unsaved": "You changed some marks. Press \"Save attendance\" to keep them.",
+    "byClass": "Classes",
+    "classSummary": "{{present}} present · {{absent}} absent"
   },
   "students": {
     "add": "Add student",
@@ -231,7 +244,9 @@
     },
     "monthTitle": "Attendance this month",
     "monthTotals": "Present {{present}} · Absent {{absent}} · Leave {{leave}} · {{percent}}%",
-    "dayOff": "Holiday"
+    "dayOff": "Holiday",
+    "count_one": "{{count}} child",
+    "count_other": "{{count}} children"
   },
   "import": {
     "title": "Import from Excel",
@@ -454,7 +469,8 @@
   "school": {
     "tabs": {
       "school": "This school",
-      "organization": "All schools"
+      "organization": "All schools",
+      "look": "Look"
     },
     "name": "School name",
     "location": "Area / city",
@@ -508,7 +524,10 @@
     "streakTitle": "Absent several days in a row",
     "streakHelp": "Call the family now: the child may have moved away or need help.",
     "streakDays_one": "{{count}} school day absent, since {{since}}",
-    "streakDays_other": "{{count}} school days absent in a row, since {{since}}"
+    "streakDays_other": "{{count}} school days absent in a row, since {{since}}",
+    "daysChip_one": "{{count}} day",
+    "daysChip_other": "{{count}} days",
+    "since": "since {{date}}"
   },
   "audit": {
     "subtitle": "Who changed what, and when",
@@ -618,6 +637,7 @@
     "DATE_IN_FUTURE": "You cannot choose a future date",
     "DATE_OUTSIDE_YEAR": "This date is outside the academic year",
     "ATTENDANCE_LOCKED": "This date is too old to change. Ask the principal.",
+    "VIEW_ONLY": "You can see this attendance, but only teachers and the principal can change it.",
     "WRONG_PASSWORD": "Current password is wrong",
     "ROLLOVER_INVALID": "Some students still need a new class",
     "FILE_TYPE": "This file type is not allowed",
@@ -684,5 +704,32 @@
     "date": "Date: {{date}}",
     "clerkSign": "Prepared by",
     "stillActive": "This child is still studying here. Mark the child as left before printing the certificate."
+  },
+  "look": {
+    "help": "Choose the colours, letters and pictures of the app for everyone in this school. Tap a look to try it on this screen; nothing changes for others until you press “Use for the whole school”.",
+    "tip": "Each person can still make the letters bigger on their own phone from the “Me” page.",
+    "sample": "Std 3 A",
+    "current": "In use",
+    "trying": "You are trying “{{name}}”. Only you can see it.",
+    "use": "Use for the whole school",
+    "saved": "Everyone in the school now sees “{{name}}”.",
+    "names": {
+      "signal": "Signal Shala",
+      "chalkboard": "Blackboard",
+      "notebook": "Notebook",
+      "marigold": "Marigold",
+      "classic": "Calm teal",
+      "clear": "Easy to read"
+    },
+    "about": {
+      "signal": "The school's own colours: red with the traffic-light signal, friendly round shapes.",
+      "chalkboard": "Green board, chalk-yellow marks and handwritten headings, like a classroom.",
+      "notebook": "Blue ink on ruled pages with a margin line, neat and sharp.",
+      "marigold": "Warm saffron and maroon, soft round letters, festive and cheerful.",
+      "classic": "Quiet teal and white, the original simple look.",
+      "clear": "Black on white with thick borders and bigger letters: best for weak eyesight and bright sunlight."
+    },
+    "profileHint": "Change the colours and icons of the app for your whole school.",
+    "choose": "Choose a look"
   }
 }

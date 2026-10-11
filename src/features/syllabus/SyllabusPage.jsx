@@ -3,7 +3,7 @@ import { Box, Card, CardActionArea, CardContent, Grid, Stack, Typography } from 
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
 import { useAuth } from '../../app/AuthContext';
-import { EmptyState, HelpTip, PageHeader, ProgressBar, Query } from '../../shared/components/ui';
+import { EmptyState, PageHeader, ProgressBar, Query } from '../../shared/components/ui';
 import { fmtDate } from '../../shared/utils/format';
 
 // Teachers see their own subjects first; everyone can open any subject of the school.
@@ -15,10 +15,10 @@ export default function SyllabusPage() {
   const mineIds = new Set((mine.data?.data.subjects || []).map((s) => s.id));
   return (
     <>
-      <PageHeader title={t('nav.syllabus')} actions={<HelpTip text={t('help.syllabus')} />} />
+      <PageHeader icon="syllabus" title={t('nav.syllabus')} help={t('help.syllabus')} />
       <Query q={progress}>
         {({ data }) => {
-          if (!data.length) return <EmptyState title={t('syllabus.noSubjects')} />;
+          if (!data.length) return <EmptyState icon="syllabus" title={t('syllabus.noSubjects')} />;
           const groups = [];
           const sorted = role === 'teacher' ? [...data].sort((a, b) => Number(mineIds.has(b.subjectId)) - Number(mineIds.has(a.subjectId))) : data;
           sorted.forEach((r) => {

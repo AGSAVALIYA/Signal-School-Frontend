@@ -18,20 +18,24 @@ npm test               # Vitest unit tests (locale parity, offline queue, compon
 npm run build          # production build + service worker
 npx playwright test    # e2e at 360×740 and 1280×800; needs the API running with `npm run db:seed` data
 npm run screenshots    # refresh docs/screenshots (same requirement)
+npm run icons          # regenerate src/theme/icons/<look>.js after editing scripts/icons.mjs
 E2E_BASE_URL=http://localhost:8080 npx playwright test   # e2e against the Docker stack (`npm run stack -- demo` in the API repo)
 docker build -t signal-school-web .                      # nginx image (docker/nginx.conf.template)
 ```
-Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sunita@demo.test` (teacher), `rahul@demo.test`.
+Demo logins (password `password123`): `owner@demo.test`, `principal@demo.test`, `clerk@demo.test`, `sunita@demo.test`
+(teacher, Std 1 A), `rahul@demo.test`.
 
 ## Map
 | Path | What |
 |---|---|
 | `src/api/` | `client.js` (axios, token refresh, errors → `{ code, fields }`), `hooks.js` (`useGet`, `useSend`), `session.js` (shared across tabs) |
-| `src/app/` | `App.jsx`, `routes.jsx` (lazy + `perm`), `AppLayout.jsx` (`NAV`, teacher bottom tabs), `AuthContext`, `YearContext`, `ErrorBoundary`, `theme.js` |
+| `src/app/` | `App.jsx`, `routes.jsx` (lazy + `perm`), `AppLayout.jsx` (`NAV`, side menu, phone bottom tabs + "More" sheet), `AuthContext`, `YearContext`, `ErrorBoundary` |
+| `src/theme/` | School looks: `looks.js` (tokens per look), `build.jsx` (MUI theme from a look), `LookContext.jsx` (`useLook`, `useIcons`), `fonts.js`, `icons/<look>.js` (generated) |
 | `src/features/<area>/` | One folder per screen area (today, attendance, students, diary, syllabus, marks, health, classes, staff, years, holidays, school, dashboard, audit, profile, auth) |
 | `src/shared/` | `components/` (ui, fields, PhotoPicker, SectionSelect, ContactButtons), `hooks/` (useNotify/useAction, useConfirm, useDraft, useTextSize…), `utils/` (format, permissions) |
 | `src/i18n/locales/{en,hi,mr,gu}.json` | Every visible string |
 | `e2e/` | Playwright: `smoke.spec.js` (all pages × roles, journeys), `a11y.spec.js` (axe WCAG 2.1 AA scan of every screen), `screenshots.spec.js` |
+| `manual-qa/` | Hand-testing pack for non-technical testers (PDF guide, Excel test cases, upload files). Built by `scripts/manual-qa/`; names the API's QA seed data (`npm run db:seed:qa`, its `scripts/demo/qa.js`). When a screen, label or flow changes, update the test cases and rebuild |
 
 ## Invariants — do not break
 1. **No literal UI text.** Use `t('area.key')`; add the key to **all four** locale files with the same `{{placeholders}}`
@@ -49,9 +53,14 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 7. **Past years are read-only:** hide write actions when `useYear().readOnly`.
 8. **Offline attendance** goes through `features/attendance/offlineQueue.js`: temporary errors keep the item, refusals are shown; logout clears it.
 9. **Children's data:** never log it, never send it to third parties; WhatsApp/call links only open the user's own apps.
+10. **Looks (themes):** never import from `@mui/icons-material` in screens; use `const I = useIcons(); <I.attendance />`
+    (meanings listed in `scripts/icons.mjs`; add one there for every look, then `npm run icons`). Colours come from the
+    palette (`primary.main`, `success.main`…), never hex values in screens. A new look goes in `looks.js` (and its id in
+    the API's `src/modules/schools/themes.js`), must pass `looks.test.js` (contrast) and `e2e/looks.spec.js`. No dark looks.
 
 ## Adding a screen (checklist)
 - [ ] `src/features/<area>/<Page>.jsx`, route in `app/routes.jsx` with `perm`, menu entry in `NAV` if needed.
+- [ ] `PageHeader` with an `icon`, shared pieces from `shared/components/ui.jsx` (`Stat`, `StatGrid`, `PersonRow`, `EmptyState`, `SectionTitle`).
 - [ ] Strings in en/hi/mr/gu.
 - [ ] Add the path for the relevant roles to `PAGES` in `e2e/smoke.spec.js` and `e2e/a11y.spec.js`; add a journey test if it has a task flow.
 - [ ] `npm run lint && npm test && npm run build`, and e2e against a seeded API.
@@ -60,6 +69,8 @@ Demo logins (password `password123`): `owner@demo.test`, `clerk@demo.test`, `sun
 ## Gotchas
 - `useDraft(source)` resets local edits when the server object changes; don't copy server data into `useState` by hand.
 - The service worker caches some GET endpoints (see `vite.config.js`); logout deletes that cache.
+- `useIcons()` works outside a `LookProvider` (blank icons), so component tests need no theme wrapper.
+- The look is cached per device (`localStorage['ss.look']`) and replaced by the school's look from `/me` after login.
 - Lists with one input per child (attendance, marks, rollover) use memoised rows with stable callbacks
   (`useCallback`, functional `setState`); keep it that way or a tap re-renders the whole class.
 - Only English is bundled; other locales load on demand (`src/i18n/index.js`). To read another language's text in code

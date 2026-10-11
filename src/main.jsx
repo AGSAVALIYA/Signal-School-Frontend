@@ -2,20 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-// Only the scripts we write in (no Cyrillic/Greek/Vietnamese, no duplicate Latin from the Indic packages).
-// The browser downloads a subset only when the page shows characters from it.
-import '@fontsource/noto-sans/latin-400.css';
-import '@fontsource/noto-sans/latin-700.css';
-import '@fontsource/noto-sans/latin-ext-400.css';
-import '@fontsource/noto-sans/latin-ext-700.css';
-import '@fontsource/noto-sans-devanagari/devanagari-400.css';
-import '@fontsource/noto-sans-devanagari/devanagari-700.css';
-import '@fontsource/noto-sans-gujarati/gujarati-400.css';
-import '@fontsource/noto-sans-gujarati/gujarati-700.css';
+import './theme/fonts';
 import { i18nReady } from './i18n';
 import './styles.css';
-import { makeTheme } from './app/theme';
+import { LookProvider, lookReady } from './theme/LookContext';
 import { AuthProvider } from './app/AuthContext';
 import { NotifyProvider } from './shared/hooks/useNotify';
 import { ConfirmProvider } from './shared/hooks/useConfirm';
@@ -34,12 +24,11 @@ startQueue();
 applyTextSize();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-// Render once the starting language is loaded (instant from the offline cache; falls back to English on error).
-i18nReady.finally(() =>
+// Render once the starting language and look are loaded (instant from the offline cache; English and plain icons on error).
+Promise.allSettled([i18nReady, lookReady]).then(() =>
   root.render(
     <React.StrictMode>
-      <ThemeProvider theme={makeTheme()}>
-        <CssBaseline />
+      <LookProvider>
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
             <NotifyProvider>
@@ -53,7 +42,7 @@ i18nReady.finally(() =>
             </NotifyProvider>
           </BrowserRouter>
         </QueryClientProvider>
-      </ThemeProvider>
+      </LookProvider>
     </React.StrictMode>,
   ),
 );

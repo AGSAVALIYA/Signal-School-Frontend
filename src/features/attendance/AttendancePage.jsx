@@ -1,11 +1,11 @@
-import { Link as RouterLink, useNavigate } from 'react-router';
-import { Alert, Box, Button, Card, Grid, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
-import { TableView as TableViewIcon } from '@mui/icons-material';
+import { Link as RouterLink } from 'react-router';
+import { Alert, Box, Button, Card, CardActionArea, Grid, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
 import { useAuth } from '../../app/AuthContext';
 import { isStaff } from '../../shared/utils/permissions';
-import { EmptyState, PageHeader, Query, Stat } from '../../shared/components/ui';
+import { EmptyState, IconTile, PageHeader, PersonRow, Query, SectionTitle, Stat, StatGrid, percentTone } from '../../shared/components/ui';
+import { useIcons } from '../../theme/LookContext';
 import { fmtDate } from '../../shared/utils/format';
 import { SectionCard } from '../today/TodayPage';
 import ContactButtons from '../../shared/components/ContactButtons';
@@ -14,14 +14,16 @@ import ContactButtons from '../../shared/components/ContactButtons';
 export default function AttendancePage() {
   const { t } = useTranslation();
   const { role, school } = useAuth();
-  const navigate = useNavigate();
+  const I = useIcons();
   const staff = isStaff(role) || role === 'clerk';
   const q = useGet(staff ? '/attendance/today' : '/today');
   const header = (
     <PageHeader
       title={t('nav.attendance')}
+      icon="attendance"
+      subtitle={q.data ? fmtDate(q.data.data.date) : undefined}
       actions={
-        <Button startIcon={<TableViewIcon />} component={RouterLink} to="/attendance/register" variant="outlined">
+        <Button startIcon={<I.register />} component={RouterLink} to="/attendance/register" variant="outlined">
           {t('attendance.registerTitle')}
         </Button>
       }
@@ -42,79 +44,76 @@ export default function AttendancePage() {
                 ))}
               </Grid>
             ) : (
-              <EmptyState title={t('today.noClasses')} text={t('today.noClassesText')} />
+              <EmptyState icon="classes" title={t('today.noClasses')} text={t('today.noClassesText')} />
             );
           const done = data.sections.filter((s) => s.submittedAt);
           const present = done.reduce((n, s) => n + (s.present || 0), 0);
           const marked = done.reduce((n, s) => n + (s.present || 0) + (s.absent || 0) + (s.leave || 0), 0);
+          const rate = marked ? Math.round((100 * present) / marked) : 0;
           return (
             <Stack sx={{ gap: 3 }}>
-              <Typography sx={{ color: 'text.secondary' }}>{fmtDate(data.date)}</Typography>
               {data.holiday && <Alert severity="info">{data.holiday.name || t('today.weeklyOff')}</Alert>}
-              <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))' }}>
-                <Stat label={t('dashboard.classesDone')} value={`${done.length}/${data.sections.length}`} />
-                <Stat label={t('dashboard.attendanceRate')} value={marked ? `${Math.round((100 * present) / marked)}%` : '–'} tone="success" />
-                <Stat label={t('dashboard.absentToday')} value={data.absentees.length} tone="error" />
-                <Stat label={t('dashboard.mealsToday')} value={done.length ? present : '–'} />
+              <StatGrid>
+                <Stat
+                  icon="attendance"
+                  label={t('dashboard.classesDone')}
+                  value={`${done.length}/${data.sections.length}`}
+                  tone={done.length === data.sections.length ? 'success' : 'warning'}
+                />
+                <Stat icon="present" label={t('dashboard.attendanceRate')} value={marked ? `${rate}%` : '–'} tone={marked ? percentTone(rate) : undefined} />
+                <Stat icon="absent" label={t('dashboard.absentToday')} value={data.absentees.length} tone="error" />
+                <Stat icon="meals" tone="secondary" label={t('dashboard.mealsToday')} value={done.length ? present : '–'} />
+              </StatGrid>
+              <Box>
+                <SectionTitle>{t('attendance.byClass')}</SectionTitle>
+                <Grid container spacing={1.5}>
+                  {data.sections.map((s) => {
+                    const ok = Boolean(s.submittedAt);
+                    return (
+                      <Grid key={s.id} size={{ xs: 12, sm: 6, lg: 4 }}>
+                        <Card>
+                          <CardActionArea
+                            component={RouterLink}
+                            to={`/attendance/${s.id}`}
+                            sx={{ p: 1.5, display: 'flex', gap: 1.5, alignItems: 'center', justifyContent: 'flex-start' }}
+                          >
+                            <IconTile name={ok ? 'done' : 'attendance'} tone={ok ? 'success' : 'warning'} />
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                              <Typography sx={{ fontWeight: 700 }}>{s.name}</Typography>
+                              <Typography variant="body2" sx={{ color: ok ? 'success.main' : 'warning.main', fontWeight: 600 }}>
+                                {ok ? t('attendance.classSummary', { present: s.present ?? 0, absent: s.absent ?? 0 }) : t('common.pending')}
+                              </Typography>
+                            </Box>
+                            <I.chevron sx={{ color: 'text.secondary' }} />
+                          </CardActionArea>
+                        </Card>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
               </Box>
-              <Card sx={{ overflowX: 'auto' }} tabIndex={0} role="region" aria-label={t('nav.attendance')}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>{t('students.fields.class')}</TableCell>
-                      <TableCell>{t('common.status')}</TableCell>
-                      <TableCell align="right">{t('attendance.status.P')}</TableCell>
-                      <TableCell align="right">{t('attendance.status.A')}</TableCell>
-                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }} />
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.sections.map((s) => (
-                      <TableRow key={s.id} hover onClick={() => navigate(`/attendance/${s.id}`)} sx={{ cursor: 'pointer' }}>
-                        <TableCell>{s.name}</TableCell>
-                        <TableCell sx={{ color: s.submittedAt ? 'success.main' : 'warning.main', fontWeight: 600 }}>
-                          {s.submittedAt ? t('common.done') : t('common.pending')}
-                        </TableCell>
-                        <TableCell align="right">{s.present ?? '–'}</TableCell>
-                        <TableCell align="right">{s.absent ?? '–'}</TableCell>
-                        <TableCell align="right" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                          <Button size="small" component={RouterLink} to={`/attendance/${s.id}`}>
-                            {t('common.open')}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </Card>
               {data.absentees.length > 0 && (
                 <Box>
-                  <Typography variant="h2" gutterBottom>
-                    {t('dashboard.absentees')}
-                  </Typography>
-                  <Card>
+                  <SectionTitle>{t('dashboard.absentees')}</SectionTitle>
+                  <Card sx={{ px: 2 }}>
                     {data.absentees.map((a) => (
-                      <Stack
+                      <PersonRow
                         key={a.id}
-                        direction="row"
-                        sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap', p: 1.5, borderBottom: 1, borderColor: 'divider' }}
-                      >
-                        <Typography component={RouterLink} to={`/students/${a.id}`} sx={{ flex: 1, minWidth: 160 }}>
-                          {a.name} · {a.sectionName}
-                        </Typography>
-                        {a.guardianPhone && (
-                          <Typography sx={{ fontVariantNumeric: 'tabular-nums', color: 'text.secondary' }}>
-                            {a.guardianName ? `${a.guardianName}: ` : ''}
-                            {a.guardianPhone}
-                          </Typography>
-                        )}
-                        <ContactButtons
-                          phone={a.guardianPhone}
-                          language={a.guardianLanguage}
-                          message="contact.absentMessage"
-                          params={{ name: a.name, school: school?.name, date: fmtDate(data.date) }}
-                        />
-                      </Stack>
+                        photo={a.thumbUrl}
+                        name={a.name}
+                        to={`/students/${a.id}`}
+                        detail={[a.sectionName, a.guardianPhone && `${a.guardianName ? `${a.guardianName}: ` : ''}${a.guardianPhone}`]
+                          .filter(Boolean)
+                          .join(' · ')}
+                        actions={
+                          <ContactButtons
+                            phone={a.guardianPhone}
+                            language={a.guardianLanguage}
+                            message="contact.absentMessage"
+                            params={{ name: a.name, school: school?.name, date: fmtDate(data.date) }}
+                          />
+                        }
+                      />
                     ))}
                   </Card>
                 </Box>

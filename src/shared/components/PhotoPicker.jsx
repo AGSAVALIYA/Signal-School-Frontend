@@ -1,9 +1,9 @@
 import { useCallback, useId, useState } from 'react';
 import { Avatar, Box, Button, CircularProgress, IconButton } from '@mui/material';
-import { PhotoCamera as PhotoCameraIcon } from '@mui/icons-material';
 import imageCompression from 'browser-image-compression';
 import { useTranslation } from 'react-i18next';
 import { initials } from '../utils/format';
+import { useIcons } from '../../theme/LookContext';
 
 // Compresses on the phone before upload (≈200 KB), so photos upload fast on slow networks.
 export const compressImage = (file) =>
@@ -30,6 +30,7 @@ export function PhotoInput({ onFile, children }) {
 // Avatar with a camera button that uploads immediately via onUpload(file).
 export default function PhotoPicker({ url, name, onUpload, size = 96, disabled }) {
   const { t } = useTranslation();
+  const I = useIcons();
   const [busy, setBusy] = useState(false);
   const upload = async (file) => {
     setBusy(true);
@@ -63,7 +64,7 @@ export default function PhotoPicker({ url, name, onUpload, size = 96, disabled }
                 '&:hover': { bgcolor: 'primary.dark' },
               }}
             >
-              {busy ? <CircularProgress size={18} color="inherit" /> : <PhotoCameraIcon fontSize="small" />}
+              {busy ? <CircularProgress size={18} color="inherit" /> : <I.camera fontSize="small" />}
             </IconButton>
           )}
         </Box>
@@ -74,11 +75,12 @@ export default function PhotoPicker({ url, name, onUpload, size = 96, disabled }
 
 export function PhotoField({ file, onChange }) {
   const { t } = useTranslation();
+  const I = useIcons();
   return (
     <PhotoInput onFile={onChange}>
       {(open) => (
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-          <Button variant="outlined" startIcon={<PhotoCameraIcon />} onClick={open}>
+          <Button variant="outlined" startIcon={<I.camera />} onClick={open}>
             {file ? t('common.changePhoto') : t('common.addPhoto')}
           </Button>
           {file && <Box component="img" src={URL.createObjectURL(file)} alt="" sx={{ height: 64, borderRadius: 1 }} />}

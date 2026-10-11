@@ -1,21 +1,22 @@
 import { useParams } from 'react-router';
 import { Box, Button, Card, CardContent, Stack, Table, TableBody, TableCell, TableRow, Typography } from '@mui/material';
-import { Print as PrintIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useGet } from '../../api/hooks';
 import { EmptyState, Loading, PageHeader } from '../../shared/components/ui';
 import { fmtDate, todayISO } from '../../shared/utils/format';
+import { useIcons } from '../../theme/LookContext';
 
 // School leaving certificate, printed by the browser so every Indian script prints correctly.
 // Families need it to admit the child to the next (mainstream) school.
 export default function LeavingCertificatePage() {
   const { t } = useTranslation();
+  const I = useIcons();
   const { id } = useParams();
   const student = useGet(`/students/${id}`);
   const history = useGet(`/students/${id}/history`);
   const school = useGet('/school');
   if (student.isLoading || history.isLoading || school.isLoading) return <Loading />;
-  if (!student.data || !school.data) return <EmptyState title={t('errors.NOT_FOUND')} />;
+  if (!student.data || !school.data) return <EmptyState icon="certificate" title={t('errors.NOT_FOUND')} />;
   const s = student.data.data;
   const sc = school.data.data;
   const last = history.data?.data?.[0];
@@ -46,7 +47,7 @@ export default function LeavingCertificatePage() {
           back
           title={t('certificate.title')}
           actions={
-            <Button startIcon={<PrintIcon />} variant="contained" onClick={() => window.print()}>
+            <Button startIcon={<I.print />} variant="contained" onClick={() => window.print()}>
               {t('common.print')}
             </Button>
           }
