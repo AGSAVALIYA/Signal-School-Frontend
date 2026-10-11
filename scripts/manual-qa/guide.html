@@ -1,0 +1,331 @@
+<!doctype html>
+<!-- Source of manual-qa/Signal-School-QA-Guide.pdf. Build: node scripts/manual-qa/build-guide.mjs -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Signal School – Testing Guide</title>
+    <style>
+      @font-face { font-family: 'DM Sans'; font-weight: 400; src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2'); }
+      @font-face { font-family: 'DM Sans'; font-weight: 600; src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2'); }
+      @font-face { font-family: 'DM Sans'; font-weight: 700; src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2'); }
+      @font-face { font-family: 'Noto Sans Devanagari'; font-weight: 400; src: url('../../node_modules/@fontsource/noto-sans-devanagari/files/noto-sans-devanagari-devanagari-400-normal.woff2'); }
+      @font-face { font-family: 'Noto Sans Devanagari'; font-weight: 700; src: url('../../node_modules/@fontsource/noto-sans-devanagari/files/noto-sans-devanagari-devanagari-700-normal.woff2'); }
+      @font-face { font-family: 'Noto Sans Gujarati'; font-weight: 400; src: url('../../node_modules/@fontsource/noto-sans-gujarati/files/noto-sans-gujarati-gujarati-400-normal.woff2'); }
+      @font-face { font-family: 'Noto Sans Gujarati'; font-weight: 700; src: url('../../node_modules/@fontsource/noto-sans-gujarati/files/noto-sans-gujarati-gujarati-700-normal.woff2'); }
+
+      :root {
+        --red: #c8102e;
+        --red-soft: #fdecee;
+        --amber: #f59e0b;
+        --green: #2e9d3a;
+        --ink: #2b2024;
+        --muted: #6b5a60;
+        --line: #eadfe2;
+        --paper: #ffffff;
+      }
+      @page { size: A4; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 10.5pt/1.5 'DM Sans', 'Noto Sans Devanagari', 'Noto Sans Gujarati', sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+      }
+      .page { page-break-after: always; position: relative; }
+      .page:last-child { page-break-after: auto; }
+      h1, h2, h3 { line-height: 1.2; margin: 0 0 6pt; }
+      h2 { font-size: 19pt; color: var(--red); margin-top: 0; }
+      h2 .n { display: inline-block; min-width: 26pt; color: var(--muted); font-weight: 600; }
+      h3 { font-size: 12.5pt; margin-top: 14pt; }
+      p { margin: 0 0 7pt; }
+      ul, ol { margin: 0 0 8pt; padding-left: 16pt; }
+      li { margin-bottom: 3pt; }
+      .signal { height: 5pt; display: flex; border-radius: 3pt; overflow: hidden; margin: 4pt 0 14pt; }
+      .signal i { flex: 1; } .signal i:nth-child(1) { background: var(--red); } .signal i:nth-child(2) { background: var(--amber); } .signal i:nth-child(3) { background: var(--green); }
+      .lead { font-size: 12pt; color: var(--muted); }
+      .box { border: 1pt solid var(--line); border-radius: 8pt; padding: 9pt 11pt; margin: 8pt 0; break-inside: avoid; }
+      .box.red { background: var(--red-soft); border-color: #f5c2c9; }
+      .box h3 { margin-top: 0; }
+      .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10pt; }
+      .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10pt; }
+      table { width: 100%; border-collapse: collapse; margin: 6pt 0 10pt; font-size: 9.5pt; break-inside: auto; }
+      th { background: var(--red); color: #fff; text-align: left; padding: 5pt 6pt; font-weight: 600; }
+      td { border-bottom: 1pt solid var(--line); padding: 5pt 6pt; vertical-align: top; }
+      tr { break-inside: avoid; }
+      code, .mono { font-family: 'DM Sans', monospace; background: #f6f1f2; border-radius: 3pt; padding: 0 3pt; font-weight: 600; }
+      .shot { text-align: center; break-inside: avoid; }
+      .shot img { width: 100%; border-radius: 9pt; border: 1pt solid var(--line); box-shadow: 0 2pt 6pt rgba(0, 0, 0, 0.08); }
+      .shot .cap { font-size: 9pt; color: var(--muted); margin-top: 4pt; }
+      .shot b { color: var(--ink); }
+      .tag { display: inline-block; padding: 0 6pt; border-radius: 10pt; font-size: 8.5pt; font-weight: 700; color: #fff; }
+      .pass { background: #2e9d3a; } .fail { background: #c62828; } .blocked { background: #b7791f; } .skipped { background: #8a8a8a; } .notrun { background: #bdb3b6; }
+      .num { display: inline-flex; width: 18pt; height: 18pt; border-radius: 9pt; background: var(--red); color: #fff; font-weight: 700; align-items: center; justify-content: center; font-size: 9pt; margin-right: 5pt; }
+      .step { display: flex; align-items: flex-start; margin-bottom: 6pt; }
+      .step div { flex: 1; }
+      .tour .shot img { width: 80%; }
+
+      /* Cover */
+      .cover { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; }
+      .cover .top { display: flex; align-items: center; gap: 12pt; }
+      .cover .top img { width: 64pt; height: 64pt; }
+      .cover h1 { font-size: 34pt; margin-top: 40mm; }
+      .cover h1 span { color: var(--red); }
+      .cover .phones { display: flex; gap: 10pt; justify-content: center; }
+      .cover .phones img { width: 31%; border-radius: 12pt; border: 1pt solid var(--line); box-shadow: 0 3pt 10pt rgba(0, 0, 0, 0.12); }
+      .langs span { display: inline-block; border: 1pt solid #f0b8c0; color: var(--red); border-radius: 12pt; padding: 1pt 9pt; margin-right: 4pt; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <!-- 1. Cover -->
+    <section class="page cover">
+      <div>
+        <div class="top">
+          <img src="../../public/sslogo.png" alt="" />
+          <div>
+            <div style="font-weight: 700; font-size: 14pt">Signal School</div>
+            <div style="color: var(--muted)">The school app of Signal Shala</div>
+          </div>
+        </div>
+        <div class="signal"><i></i><i></i><i></i></div>
+        <h1>Testing guide<br /><span>for the QA team</span></h1>
+        <p class="lead">What Signal Shala is, what the app does, and how to test it step by step on a phone and a computer.</p>
+      </div>
+      <div class="phones">
+        <img src="img/today.jpg" alt="" />
+        <img src="img/take.jpg" alt="" />
+        <img src="img/dashboard.jpg" alt="" />
+      </div>
+      <div style="color: var(--muted); font-size: 9.5pt">
+        In this folder: this guide · <b>Signal-School-Test-Cases.xlsx</b> (the list of tests) · <b>test-files</b> (photos and sheets to upload).
+      </div>
+    </section>
+
+    <!-- 2. About -->
+    <section class="page">
+      <h2><span class="n">1</span>What is Signal Shala?</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <p class="lead">A school for children who live and work at traffic signals.</p>
+      <p>
+        In big cities many children spend the whole day at traffic signals with their families – selling flowers, toys or books between the cars. Most of them have
+        never been to school. <b>Signal Shala</b> (“signal school”) started in 2016 right under the Teen Hath Naka flyover in Thane, Maharashtra, in classrooms made
+        from shipping containers. It is run by the trust <b>Samarth Bharat Vyaspeeth</b> together with the Thane Municipal Corporation.
+      </p>
+      <p>The school gives these children lessons, a meal, health check-ups and a safe place, and helps them move on to regular schools.</p>
+
+      <div class="box red">
+        <h3>Why this matters for testing</h3>
+        <ul>
+          <li>The <b>teachers</b> use cheap Android phones, often with weak internet. The app must be <b>simple, big and quick</b>.</li>
+          <li>Many children <b>join and leave during the year</b> (families move). Admitting, leaving and re-admitting must be easy.</li>
+          <li>Attendance is taken <b>every morning</b>. It is the most important screen – it must never lose data.</li>
+          <li>Users speak <b>Marathi, Hindi, Gujarati or English</b>.</li>
+        </ul>
+      </div>
+
+      <h2 style="margin-top: 18pt"><span class="n">2</span>What does the app do?</h2>
+      <div class="cols">
+        <div class="box">
+          <h3>Every day</h3>
+          <ul>
+            <li><b>Attendance</b> in a few taps (works without internet too)</li>
+            <li><b>Children’s records</b>: photo, parents, phone, health</li>
+            <li><b>Diary</b>: notes about a child or the whole class</li>
+            <li><b>Syllabus</b>: tick topics as they are taught</li>
+            <li><b>Dashboard</b> for the principal: who is absent, who needs a call</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Now and then</h3>
+          <ul>
+            <li><b>Marks</b> and printable <b>report cards</b></li>
+            <li><b>Import</b> many children from Excel</li>
+            <li><b>Leaving certificate</b> when a child leaves</li>
+            <li><b>New academic year</b>: move children up a class</li>
+            <li><b>Looks</b>: 6 colour styles for the whole school</li>
+          </ul>
+        </div>
+      </div>
+      <p>Languages: <span class="langs"><span>English</span><span>हिंदी</span><span>मराठी</span><span>ગુજરાતી</span></span></p>
+    </section>
+
+    <!-- 3. Roles + words -->
+    <section class="page">
+      <h2><span class="n">3</span>Who uses the app</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <table>
+        <tr><th style="width: 22%">Role</th><th style="width: 18%">First screen</th><th>What they do</th></tr>
+        <tr><td><b>Teacher</b></td><td>Today</td><td>Takes attendance of their class, writes the diary, ticks syllabus topics, enters marks, looks at children’s records. Only on a phone.</td></tr>
+        <tr><td><b>Office clerk</b></td><td>Dashboard</td><td>Admits new children, imports from Excel, records health check-ups, marks children as left, prints leaving certificates. Can <u>see</u> attendance but not take it.</td></tr>
+        <tr><td><b>Principal</b> (admin)</td><td>Dashboard</td><td>Everything in the school: teachers and staff, classes and subjects, holidays, academic years, school settings and look, activity log.</td></tr>
+        <tr><td><b>Trust owner</b></td><td>Dashboard</td><td>Like the principal, but for all schools of the trust (Thane and Nerul), and can add schools.</td></tr>
+      </table>
+
+      <h2 style="margin-top: 16pt"><span class="n">4</span>Words you will see</h2>
+      <table>
+        <tr><th style="width: 26%">Word</th><th>Meaning</th></tr>
+        <tr><td><b>Std 1 A</b></td><td>A class: “Standard 1”, division A. <b>Balwadi</b> is the class before Std 1 (pre-school).</td></tr>
+        <tr><td><b>GR / Register number</b></td><td>The child’s school register number, e.g. <span class="mono">SS-168</span>. Given automatically.</td></tr>
+        <tr><td><b>Roll no.</b></td><td>The child’s number inside the class list (in name order).</td></tr>
+        <tr><td><b>P · A · L · LT</b></td><td>Present · Absent · Leave · Late (attendance marks).</td></tr>
+        <tr><td><b>Academic year</b></td><td>School year, e.g. <span class="mono">2026-27</span> (June to April). Old years can be seen but not changed (“Closed”). A new year can be prepared early (“Planned”).</td></tr>
+        <tr><td><b>Look</b></td><td>The colours, letters and icons of the app. The principal chooses one for the whole school.</td></tr>
+        <tr><td><b>Re-admit</b></td><td>A child who left comes back: the old record is reused, nothing is lost.</td></tr>
+        <tr><td><b>Activity log</b></td><td>A list of who changed what and when (for the principal).</td></tr>
+      </table>
+    </section>
+
+    <!-- 4. Tour -->
+    <section class="page tour">
+      <h2><span class="n">5</span>A quick tour</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <div class="cols3">
+        <div class="shot"><img src="img/login.jpg" alt="" /><div class="cap"><b>Login</b> – choose the language, then mobile number or email and password.</div></div>
+        <div class="shot"><img src="img/today.jpg" alt="" /><div class="cap"><b>Today</b> (teacher) – the class, a big “Take attendance” button and syllabus progress.</div></div>
+        <div class="shot"><img src="img/take.jpg" alt="" /><div class="cap"><b>Take attendance</b> – everyone starts Present; tap A or L, then “Save attendance”.</div></div>
+      </div>
+      <div class="cols3" style="margin-top: 10pt">
+        <div class="shot"><img src="img/profile.jpg" alt="" /><div class="cap"><b>Child’s profile</b> – photo, class, parent with call and WhatsApp, tabs for diary, past years, report card, health.</div></div>
+        <div class="shot"><img src="img/dashboard-streak.jpg" alt="" /><div class="cap"><b>Dashboard</b> (principal) – today’s numbers and children absent many days in a row.</div></div>
+        <div class="shot"><img src="img/look-trying.jpg" alt="" /><div class="cap"><b>Look</b> – the principal tries a look (here “Blackboard”) before using it for everyone.</div></div>
+      </div>
+      <p style="margin-top: 10pt; color: var(--muted)">On a phone the menu is the bar at the bottom: <b>Today/Dashboard, Attendance, Students, Syllabus, More</b>. On a computer it is on the left side.</p>
+    </section>
+
+    <!-- 5. How to test -->
+    <section class="page">
+      <h2><span class="n">6</span>How to test</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <h3>Before you start</h3>
+      <ul>
+        <li>An <b>Android phone</b> with Chrome, and a <b>computer</b> with Chrome. (A second phone helps for the “Looks” tests.)</li>
+        <li>The <b>app link</b> you received. Open it in Chrome.</li>
+        <li>Copy the folder <b>test-files</b> to the phone (e.g. through Google Drive or a USB cable) so you can upload photos and sheets from the phone.</li>
+        <li>Open <b>Signal-School-Test-Cases.xlsx</b> (Excel or Google Sheets). Read the sheet “Start here”.</li>
+      </ul>
+
+      <h3>For every test case</h3>
+      <div class="step"><span class="num">1</span><div>Read the row: <b>Who logs in</b>, <b>Device</b>, <b>Where</b>. Log in as that person (passwords are on the sheet “Logins”).</div></div>
+      <div class="step"><span class="num">2</span><div>Do the <b>Steps</b> exactly, with the <b>Test data</b> given.</div></div>
+      <div class="step"><span class="num">3</span><div>Compare with the <b>Expected result</b>. Look at the whole screen, not only the one thing.</div></div>
+      <div class="step"><span class="num">4</span><div>Choose a <b>Status</b>: <span class="tag pass">Pass</span> <span class="tag fail">Fail</span> <span class="tag blocked">Blocked</span> <span class="tag skipped">Skipped</span> (it starts as <span class="tag notrun">Not run</span>). Write the date and your name.</div></div>
+      <div class="step"><span class="num">5</span><div>Anything strange? Write it in <b>Comments</b>, even if the test passed. For a Fail, also fill a row in the sheet <b>“Bugs”</b>.</div></div>
+
+      <div class="box red">
+        <h3>On every screen, also check</h3>
+        <div class="cols">
+          <ul>
+            <li>All text can be read; nothing is cut off or overlapping</li>
+            <li>No sideways scrolling on a phone</li>
+            <li>Buttons are easy to tap with a thumb</li>
+            <li>The bottom bar never hides a button</li>
+          </ul>
+          <ul>
+            <li>Messages are clear and in the chosen language</li>
+            <li>Nothing keeps “loading” for more than a few seconds</li>
+            <li>After saving, the change is still there when you reopen</li>
+            <li>Photos and names match the right child</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Test in this order</h3>
+      <table>
+        <tr><th style="width: 18%">Day</th><th>Sheet “Test cases”, rows starting with…</th></tr>
+        <tr><td><b>Day 1</b></td><td><b>LG</b> (Login) and <b>TC</b> (Teacher) – on a phone</td></tr>
+        <tr><td><b>Day 2</b></td><td><b>CL</b> (Office clerk) and <b>PR</b> (Principal) – computer and phone</td></tr>
+        <tr><td><b>Day 3</b></td><td><b>OW</b> (Trust owner), <b>LK</b> (Looks) and <b>GN</b> (General) – then re-check every Fail</td></tr>
+      </table>
+    </section>
+
+    <!-- 6. Bugs + cautions -->
+    <section class="page">
+      <h2><span class="n">7</span>Writing a good bug</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <p>A developer must be able to see the same problem. Write short, simple sentences and add a screenshot.</p>
+      <table>
+        <tr><th style="width: 24%">Column (sheet “Bugs”)</th><th>Example</th></tr>
+        <tr><td>Test case ID</td><td>TC-06</td></tr>
+        <tr><td>Screen</td><td>Take attendance · Std 1 A</td></tr>
+        <tr><td>What happened</td><td>After “Save attendance” the Today page still says “Attendance not taken yet”.</td></tr>
+        <tr><td>What should happen</td><td>Today shows “Attendance done: 18 of 19 present”.</td></tr>
+        <tr><td>Steps to see it again</td><td>1. Log in as sunita@demo.test 2. Take attendance 3. Mark Aryan Mhatre A 4. Save 5. Go back to Today</td></tr>
+        <tr><td>Phone / Computer</td><td>Redmi 9A, Android 11, Chrome 129</td></tr>
+        <tr><td>Screenshot file</td><td>bug-01.png (put all screenshots in one folder)</td></tr>
+        <tr><td>How bad</td><td><b>Blocker</b> (cannot continue) · <b>Major</b> (wrong result) · <b>Minor</b> (works, but confusing) · <b>Cosmetic</b> (looks wrong only)</td></tr>
+      </table>
+      <p>Screenshot on Android: press <b>Power + Volume down</b> together. Also write the <b>time</b> when it happened.</p>
+
+      <div class="box red">
+        <h3>Please do NOT</h3>
+        <ul>
+          <li>Make the new year <b>2027-28 “current”</b> (test PR-20). Keep it “Planned”, or all classes change for everyone.</li>
+          <li>Add a holiday for <b>today</b>, or change the school’s <b>weekly holidays</b> – attendance tests would stop working.</li>
+          <li>Use real children’s names, photos or phone numbers.</li>
+          <li>Forget to set the look back to <b>“Signal Shala”</b> at the end (test LK-12).</li>
+        </ul>
+      </div>
+
+      <h3>Something is stuck?</h3>
+      <ul>
+        <li><b>Page looks old or empty</b> – pull down to reload, or close and open the tab.</li>
+        <li><b>“Too many wrong attempts”</b> – that login waits 15 minutes. Use another login meanwhile.</li>
+        <li><b>The test data is mixed up</b> (e.g. a child is already “left”) – ask for a <b>test data reset</b>. It brings back everything as described in this guide (your changes are removed).</li>
+        <li><b>A test depends on an earlier one</b> that failed – mark it <span class="tag blocked">Blocked</span> and say which one in Comments.</li>
+      </ul>
+    </section>
+
+    <!-- 7. Logins and data -->
+    <section class="page">
+      <h2><span class="n">8</span>Logins and test data</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <p>Two made-up schools: <b>Signal Shala, Thane</b> (Balwadi to Std 7, red “Signal Shala” look) and <b>Signal Shala, Nerul</b> (Balwadi to Std 2, “Marigold” look). Every day counts as a school day in the test data.</p>
+      <table>
+        <tr><th>Role</th><th>Name</th><th>Login</th><th>Password</th><th>Notes</th></tr>
+        <tr><td>Teacher</td><td>Sunita Patil</td><td>sunita@demo.test<br />9820000004</td><td>password123</td><td>Class teacher Std 1 A (not taken today)</td></tr>
+        <tr><td>Teacher</td><td>Rahul Verma</td><td>rahul@demo.test</td><td>password123</td><td>Std 5 A; Maths, English Std 5–7</td></tr>
+        <tr><td>Teacher</td><td>Kavita Jadhav</td><td>kavita@demo.test</td><td>password123</td><td>Std 2 A and Std 3 A (Std 3 A not taken today)</td></tr>
+        <tr><td>New teacher</td><td>Neha Joshi</td><td>newteacher@demo.test</td><td>Welcome@123</td><td>First login: must choose a password</td></tr>
+        <tr><td>Inactive</td><td>Deepak Rane</td><td>inactive@demo.test</td><td>password123</td><td>Must not be able to log in</td></tr>
+        <tr><td>Office clerk</td><td>Ganesh Pawar</td><td>clerk@demo.test</td><td>password123</td><td></td></tr>
+        <tr><td>Principal</td><td>Anita Deshmukh</td><td>principal@demo.test</td><td>password123</td><td>Signal Shala, Thane</td></tr>
+        <tr><td>Trust owner</td><td>Meera Kulkarni</td><td>owner@demo.test</td><td>password123</td><td>Both schools</td></tr>
+        <tr><td>Teacher (Nerul)</td><td>Imran Shaikh</td><td>imran@demo.test</td><td>password123</td><td>Second school</td></tr>
+      </table>
+
+      <h3>Children prepared for tests (Thane)</h3>
+      <table>
+        <tr><th style="width: 20%">Child</th><th style="width: 14%">Class</th><th>Prepared as</th></tr>
+        <tr><td>Riya Kale</td><td>Std 1 A</td><td>Photo; parent Sunil Kale 9123400001; was in Balwadi last year</td></tr>
+        <tr><td>Aryan Mhatre</td><td>Std 1 A</td><td>No photo yet</td></tr>
+        <tr><td>Ishaan Jagtap</td><td>Std 2 A</td><td>Birthday today</td></tr>
+        <tr><td>Swati Gholap</td><td>Std 2 A</td><td>Needs a doctor again (eyes)</td></tr>
+        <tr><td>Nikhil Sonawane</td><td>Std 3 A</td><td>To be marked as left (clerk test)</td></tr>
+        <tr><td>Kiran Thakur</td><td>Std 4 A</td><td>Absent the last 5 days, low attendance; parent 9123400004</td></tr>
+        <tr><td>Lata Bhalerao</td><td>left last year</td><td>Found with “Search all years”; to be re-admitted</td></tr>
+      </table>
+      <div class="box" style="margin-top: 14pt">
+        <h3>Thank you!</h3>
+        <p style="margin: 0">Your testing helps teachers at Signal Shala spend less time on registers and more time with the children. If something is unclear in this guide or a test case, write it in Comments – unclear things are worth fixing too.</p>
+      </div>
+
+    </section>
+
+    <!-- 8. Import example -->
+    <section class="page">
+      <h2><span class="n">9</span>Files to upload</h2>
+      <div class="signal"><i></i><i></i><i></i></div>
+      <p>All in the folder <b>test-files</b>.</p>
+            <table>
+        <tr><th style="width: 38%">File</th><th>Use</th></tr>
+        <tr><td>child-photo-girl.jpg, child-photo-boy.jpg, teacher-photo.jpg</td><td>Photos to upload</td></tr>
+        <tr><td>school-logo.png</td><td>School logo</td></tr>
+        <tr><td>photo-too-big-9MB.png · not-a-photo.pdf</td><td>Must be refused (too large · wrong type)</td></tr>
+        <tr><td>students-import-5-good.xlsx · students-import-3-rows.csv</td><td>Import: all rows ready</td></tr>
+        <tr><td>students-import-with-errors.xlsx</td><td>Import: 1 ready, 4 with problems (picture below)</td></tr>
+      </table>
+      <h3>Example: import with mistakes</h3>
+      <p>This is what you should see after choosing <b>students-import-with-errors.xlsx</b> (test CL-08). Only the green “Ready” row is imported.</p>
+      <div class="shot" style="width: 62%; margin: 6pt auto"><img src="img/import-errors.jpg" alt="" /></div>
+    </section>
+  </body>
+</html>

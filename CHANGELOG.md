@@ -14,6 +14,9 @@ versions: [Semantic Versioning](https://semver.org/).
   axe scan (`e2e/looks.spec.js`).
 - Bottom tabs on phones for every role (the four daily screens plus "More" with large tiles); the side menu on wider
   screens is grouped into daily work, school setup and other.
+- `manual-qa/`: a testing guide (PDF), 116 test cases for teachers, office, principal, owner, looks and phones (Excel
+  with status, comments, a bug sheet and a summary) and files to upload, all matching the API's QA data
+  (`npm run db:seed:qa`). Built from `scripts/manual-qa/`.
 
 ### Changed
 - Redesigned for teachers: a greeting card with today's to-do on the teacher home, class cards with clear done /
@@ -31,6 +34,10 @@ versions: [Semantic Versioning](https://semver.org/).
 - First download 313 → 244 KB (gzip): other languages, the form libraries and unused font subsets load only when
   needed; the offline cache on first visit is 1.4 MB instead of 2.0 MB.
 - Student list and activity log keep the current rows on screen while more rows, a search or the next page load.
+- Student list: ticking "Search all years" also shows children who left or finished school (it was limited to those
+  studying, so a former student could not be found); one "Add student" button on phones when the list is empty.
+- Attendance sheet for the office clerk is view-only with an explanation, instead of a Save button that was refused.
+- Import problems name the field as on the form ("Date of birth: …") instead of the sheet column ("date_of_birth: …").
 
 ### Added
 - `Dockerfile` (Vite build served by nginx with the API proxied under `/api` and `/files`); CI builds it.

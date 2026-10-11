@@ -9,6 +9,22 @@ import { useAction, useNotify } from '../../shared/hooks/useNotify';
 import { useIcons } from '../../theme/LookContext';
 
 // Download template → upload → see every row with its problems → import only the good rows.
+// Sheet columns → the form's field names, so problems read "Date of birth: …" instead of "date_of_birth: …".
+const FIELD = {
+  name: 'students.fields.name',
+  class: 'students.fields.class',
+  gender: 'students.fields.gender',
+  date_of_birth: 'students.fields.dob',
+  approx_age: 'students.fields.approxAge',
+  guardian_name: 'students.fields.guardianName',
+  guardian_phone: 'students.fields.guardianPhone',
+  father_name: 'students.fields.fatherName',
+  mother_name: 'students.fields.motherName',
+  address: 'students.fields.address',
+  gr_number: 'students.fields.grNumber',
+  admission_date: 'students.fields.admissionDate',
+};
+
 export default function ImportStudentsPage() {
   const { t } = useTranslation();
   const I = useIcons();
@@ -96,7 +112,12 @@ export default function ImportStudentsPage() {
                           {Object.keys(r.errors).length ? (
                             <Stack direction="row" sx={{ gap: 0.5, flexWrap: 'wrap' }}>
                               {Object.entries(r.errors).map(([k, code]) => (
-                                <Chip key={k} size="small" color="error" label={`${k}: ${t(`fieldErrors.${code}`, { defaultValue: code })}`} />
+                                <Chip
+                                  key={k}
+                                  size="small"
+                                  color="error"
+                                  label={`${FIELD[k] ? t(FIELD[k]) : k}: ${t(`fieldErrors.${code}`, { defaultValue: code })}`}
+                                />
                               ))}
                             </Stack>
                           ) : (

@@ -54,6 +54,9 @@ npx playwright test       # end-to-end at phone (360 px) and desktop width; need
 npm run screenshots       # refresh docs/screenshots
 ```
 
+Manual testing by non-technical testers: [`manual-qa/`](manual-qa/README.md) has a PDF guide, the test cases in Excel
+and files to upload. Run the API on its QA data (`npm run db:seed:qa`) for it.
+
 ## Deploy with Docker
 
 `Dockerfile` builds the app and serves it with nginx (running as an unprivileged user on port 8080), which also

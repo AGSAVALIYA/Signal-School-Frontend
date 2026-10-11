@@ -35,6 +35,7 @@ Demo logins (password `password123`): `owner@demo.test`, `principal@demo.test`, 
 | `src/shared/` | `components/` (ui, fields, PhotoPicker, SectionSelect, ContactButtons), `hooks/` (useNotify/useAction, useConfirm, useDraft, useTextSize…), `utils/` (format, permissions) |
 | `src/i18n/locales/{en,hi,mr,gu}.json` | Every visible string |
 | `e2e/` | Playwright: `smoke.spec.js` (all pages × roles, journeys), `a11y.spec.js` (axe WCAG 2.1 AA scan of every screen), `screenshots.spec.js` |
+| `manual-qa/` | Hand-testing pack for non-technical testers (PDF guide, Excel test cases, upload files). Built by `scripts/manual-qa/`; names the API's QA seed data (`npm run db:seed:qa`, its `scripts/demo/qa.js`). When a screen, label or flow changes, update the test cases and rebuild |
 
 ## Invariants — do not break
 1. **No literal UI text.** Use `t('area.key')`; add the key to **all four** locale files with the same `{{placeholders}}`
