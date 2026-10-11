@@ -1,6 +1,6 @@
 # Rendered by the nginx image at start-up (envsubst): ${API_UPSTREAM} comes from the environment.
 server {
-  listen 80;
+  listen 8080;
   server_name _;
   root /usr/share/nginx/html;
   server_tokens off;

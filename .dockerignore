@@ -1,12 +1,12 @@
-node_modules
-dist
-e2e-results
-playwright-report
-test-results
-coverage
-.git
-.github
-.env
-.env.*
-!.env.example
-*.log
+# Only what the Vite build needs goes into the image build.
+*
+!package.json
+!package-lock.json
+!index.html
+!vite.config.js
+!public
+!src
+!docker
+src/**/*.test.js
+src/**/*.test.jsx
+src/test
