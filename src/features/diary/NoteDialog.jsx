@@ -5,9 +5,9 @@ import { PhotoField } from '../../shared/components/PhotoPicker';
 import { todayISO } from '../../shared/utils/format';
 
 // Shared note form for a whole class or one student: date, text, subjects, one photo.
-export default function NoteDialog({ title, subjects = [], onSubmit, onClose }) {
+export default function NoteDialog({ title, subjects = [], date: initialDate, onSubmit, onClose }) {
   const { t } = useTranslation();
-  const [date, setDate] = useState(todayISO());
+  const [date, setDate] = useState(initialDate || todayISO());
   const [note, setNote] = useState('');
   const [picked, setPicked] = useState([]);
   const [photo, setPhoto] = useState(null);

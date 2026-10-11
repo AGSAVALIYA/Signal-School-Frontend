@@ -6,6 +6,7 @@ import { useIcons } from '../../theme/LookContext';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGet } from '../../api/hooks';
+import { useAuth } from '../../app/AuthContext';
 import { api } from '../../api/client';
 import { session } from '../../api/session';
 import { PageHeader, Query } from '../../shared/components/ui';
@@ -13,6 +14,8 @@ import { useNotify } from '../../shared/hooks/useNotify';
 import { fmtTime, initials, todayISO } from '../../shared/utils/format';
 import { enqueue } from './offlineQueue';
 import useDraft from '../../shared/hooks/useDraft';
+import { can } from '../../shared/utils/permissions';
+import ClassNoteDialog from '../diary/ClassNoteDialog';
 
 const TONE = { P: 'success', A: 'error', L: 'warning', LATE: 'info' };
 const CHOICES = ['P', 'A', 'L'];
@@ -94,6 +97,8 @@ function Sheet({ sheet, sectionId, date }) {
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useDraft(sheet, (s) => s.session?.submittedAt || null);
   const [queued, setQueued] = useState(false);
+  const [noting, setNoting] = useState(false);
+  const { role } = useAuth();
   const mark = useCallback((studentId, v) => setMarks((m) => ({ ...m, [studentId]: v })), [setMarks]);
 
   const counts = useMemo(() => {
@@ -142,7 +147,23 @@ function Sheet({ sheet, sectionId, date }) {
       )}
       {!sheet.editable && <Alert severity="warning">{t(`errors.${sheet.lockReason}`)}</Alert>}
       {queued && <Alert severity="warning">{t('attendance.offlineQueued')}</Alert>}
-      {savedAt && !dirty && !queued && <Alert severity="success">{t('attendance.savedAt', { time: fmtTime(savedAt) })}</Alert>}
+      {savedAt && !dirty && !queued && (
+        <Alert severity="success">
+          {t('attendance.savedAt', { time: fmtTime(savedAt) })}
+          {/* Next step after attendance: one note for every child who was not absent. */}
+          {can(role, 'diary.write') && (
+            <Box sx={{ mt: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                {t('attendance.classNoteHint')}
+              </Typography>
+              <Button variant="outlined" color="success" size="small" startIcon={<I.note />} onClick={() => setNoting(true)}>
+                {t('attendance.writeClassNote')}
+              </Button>
+            </Box>
+          )}
+        </Alert>
+      )}
+      {noting && <ClassNoteDialog section={sheet.section} date={date} onClose={() => setNoting(false)} />}
       {dirty && savedAt && !queued && <Alert severity="info">{t('attendance.unsaved')}</Alert>}
       {!savedAt && sheet.editable && <Alert severity="info">{t('help.attendance')}</Alert>}
 

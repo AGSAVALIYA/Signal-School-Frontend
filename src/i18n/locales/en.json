@@ -129,6 +129,8 @@
     "allPresent": "Mark everyone present",
     "save": "Save attendance",
     "savedAt": "Saved at {{time}}. You can still change it and save again.",
+    "writeClassNote": "Write class diary",
+    "classNoteHint": "The note goes into the diary of every child who was not absent.",
     "savedSummary": "Attendance saved: {{present}} present, {{absent}} absent",
     "offlineQueued": "No internet. Attendance is saved on this phone and will be sent automatically when internet returns.",
     "pendingSync_one": "{{count}} attendance waiting for internet",

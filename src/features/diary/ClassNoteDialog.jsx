@@ -5,16 +5,17 @@ import { useAction } from '../../shared/hooks/useNotify';
 import { useSections } from '../../shared/components/SectionSelect';
 import NoteDialog from './NoteDialog';
 
-export default function ClassNoteDialog({ section, onClose }) {
+export default function ClassNoteDialog({ section, date, onClose }) {
   const { t } = useTranslation();
   const run = useAction();
   const { sections } = useSections();
-  const subjects = sections.find((s) => s.id === section.id)?.Subjects || [];
+  const subjects = sections.find((s) => s.id === Number(section.id))?.Subjects || [];
   const save = useSend(({ date, fd }) => api.put(`/diary/sections/${section.id}/${date}`, fd), { invalidate: ['/diary'] });
   return (
     <NoteDialog
       title={t('diary.classNoteTitle', { name: section.name })}
       subjects={subjects}
+      date={date}
       onClose={onClose}
       onSubmit={(date, fd) => run(() => save.mutateAsync({ date, fd }), t('diary.saved'))}
     />

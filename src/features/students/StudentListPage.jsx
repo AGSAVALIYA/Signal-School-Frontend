@@ -188,6 +188,10 @@ export default function StudentListPage() {
         }
       </Query>
       {canAdd && (
+        // Room under the last child so the floating button never covers it.
+        <Box sx={{ display: { xs: 'block', sm: 'none' }, height: 72 }} />
+      )}
+      {canAdd && (
         <Fab
           variant="extended"
           color="primary"

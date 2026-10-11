@@ -55,7 +55,7 @@ export function buildTheme(id, icons) {
         },
       },
       MuiIconButton: { styleOverrides: { root: { minWidth: 44, minHeight: 44 } } },
-      MuiFab: { styleOverrides: { root: { borderRadius: look.buttonRadius === 999 ? '50%' : look.buttonRadius * 2 } } },
+      MuiFab: { styleOverrides: { root: { borderRadius: look.buttonRadius === 999 ? 999 : look.buttonRadius * 2 } } },
       MuiTextField: { defaultProps: { fullWidth: true } },
       MuiOutlinedInput: {
         styleOverrides: {

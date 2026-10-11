@@ -12,9 +12,10 @@ versions: [Semantic Versioning](https://semver.org/).
   letters). Each has its own colours, fonts, shapes, surfaces and icon set; there is no dark look. "Try it" previews a
   look on the principal's screen only until it is saved. Contrast is checked by unit tests and every look passes the
   axe scan (`e2e/looks.spec.js`).
+- "Write class diary" right after saving attendance (same date); the note reaches every child who was not absent.
 - Bottom tabs on phones for every role (the four daily screens plus "More" with large tiles); the side menu on wider
   screens is grouped into daily work, school setup and other.
-- `manual-qa/`: a testing guide (PDF), 116 test cases for teachers, office, principal, owner, looks and phones (Excel
+- `manual-qa/`: a testing guide (PDF), 118 test cases for teachers, office, principal, owner, looks and phones (Excel
   with status, comments, a bug sheet and a summary) and files to upload, all matching the API's QA data
   (`npm run db:seed:qa`). Built from `scripts/manual-qa/`.
 
@@ -51,6 +52,7 @@ versions: [Semantic Versioning](https://semver.org/).
   `CF-Connecting-IP`), so the API's rate limits count each visitor.
 
 ### Fixed
+- The floating "Add student" button on phones was an oval in the default look and covered the last child in the list.
 - Photos stored in Cloudflare R2 were blocked by the content security policy (only AWS S3 was allowed).
 - Vercel previews/deploys: `vercel.json` declares the Vite build (`dist/`), SPA routing and security headers
   (the project was still configured for the old Create React App `build/` output).
